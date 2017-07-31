@@ -1,0 +1,165 @@
+/* axis */
+
+.axis { /* axis labels */
+    fill: #808080;
+    font-family: sans-serif;
+    font-size: 10px;
+}
+
+.axis line{ /* axis tick marks */
+    stroke-width : 1;
+    stroke: grey;
+    shape-rendering: crispEdges;
+}
+
+.axis path { /* axis line */
+    stroke-width : 1;
+    stroke: grey;
+    shape-rendering: crispEdges;
+}
+
+/* timeline band */
+
+.band { /* band background */
+    fill: #FAFAFA;
+}
+
+/* labels */
+
+.bandLabel {
+    fill: #F0F0F0;
+    font: 10px sans-serif;
+    font-weight: bold;
+}
+
+.bandMinMaxLabel {
+    fill: blue;
+    font: 10px sans-serif;
+    font-weight: bold;
+}
+
+.bandMidLabel {
+    fill: red;
+    font: 10px sans-serif;
+    font-style: italic;
+    font-weight: bold;
+}
+
+/* brush */
+
+.brush .extent {
+    stroke: gray;
+    fill: blue;
+    fill-opacity: .1;
+}
+
+.chart {
+    fill: #EEEEEE;
+}
+
+.interval {
+    fill: #AAFFFF;
+    stroke-width: 6;
+    cursor : default;
+    /*pointer-events: true;*/
+}
+
+.instant {
+    fill: #FFAAFF;
+    stroke-width: 6;
+    cursor : default;
+    /*pointer-events: true;*/
+}
+
+.instantLabel {
+    fill : blue;
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+}
+
+.intervalLabel {
+    fill : black;
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+}
+
+.item {
+    cursor : default;
+    pointer-events: auto;
+}
+
+.svg {
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    background-color: #FFFFFF;
+}
+
+.tooltip {
+    width: auto;
+    position: absolute;
+    visibility: hidden;
+    color : black;
+    cursor:default;
+    background-color: #FFFFEE;
+    border: 1px solid;
+    padding: 4px;
+    shape-rendering: crispEdges;
+    pointer-events: none;
+}
+
+.button rect {
+    stroke: #999faa; /* navy 40% */
+    stroke-width: 2px;
+}
+
+.button rect.pressed {
+    fill: #000f2b; /* navy 100% */
+}
+
+.button #gradient-start {
+    stop-color: #999faa; /* navy 40% */
+    stop-opacity: 1;
+}
+
+.button #gradient-stop {
+    stop-color: #4d576b; /* navy 70% */
+    stop-opacity: 1;
+}
+
+.button #gradient-start.active, .button #gradient-start.pressed {
+    stop-color: #4d576b; /* navy 70% */
+}
+
+.button #gradient-stop.active, .button #gradient-stop.pressed {
+    stop-color: #000f2b; /* navy 100% */
+}
+
+.button text {
+    font-size: 30px;
+    color: black;
+    fill: #eee;
+    pointer-events: none;
+    text-anchor: middle;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.fo{
+    color: black;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    background-color: #FFFFFF;
+    fill: white;text-align: center;
+    font-size: medium;
+    font-weight: bold;
+
+}
+
+#timeline{
+    height: 510px;
+    width: 1000px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
