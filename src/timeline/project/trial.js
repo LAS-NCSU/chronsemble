@@ -1,7 +1,3 @@
-/**
- * Created by Dharshini on 7/26/2017.
- */
-
 function init() {
     console.log("Inside Trial");
     var domElement = "#timeline";
