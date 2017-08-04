@@ -1,3 +1,5 @@
+var random = 0;
+
 function init() {
     console.log("Inside Trial");
     var domElement = "#timeline";
@@ -89,7 +91,8 @@ function timeline(domElement) {
         .attr("y", 0);
     var div1 = fo1.append("xhtml:button").text("+");
     div1.on("click", function () {
-        populateData(domElement);
+        populateData(domElement, random);
+        random += 1;
     });
 
     var group2 = button_svg.append("g").attr("id", "group2");
@@ -250,7 +253,6 @@ function timeline(domElement) {
         data.maxDate = d3.max(data.items, function (d) {
             return d.end;
         });
-
         return timeline;
     };
 

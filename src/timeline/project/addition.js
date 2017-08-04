@@ -1,17 +1,17 @@
 // Need to pass the source file that is selected in the drop down
-function populateData(domElement) {
+function populateData(domElement, random) {
     var source = "philosophers.csv";
     d3.csv(source, function (dataset) {
-        timelineAddition(domElement)
+        timelineAddition(domElement , random)
             .data(dataset)
-            .band("mainBand", 0.82)
-            .band("naviBand", 0.08)
-            .xAxis("mainBand")
-            .tooltips("mainBand")
-            .xAxis("naviBand")
-            .labels("mainBand")
-            .labels("naviBand")
-            .brush("naviBand", ["mainBand"])
+            .band("mainBand1", 0.82)
+            .band("naviBand1", 0.08)
+            .xAxis("mainBand1")
+            .tooltips("mainBand1")
+            .xAxis("naviBand1")
+            .labels("mainBand1")
+            .labels("naviBand1")
+            .brush("naviBand1", ["mainBand1"])
             .redraw();
     });
 }
@@ -19,7 +19,7 @@ function populateData(domElement) {
 //  A timelineAddition component for d3
 //  version v0.1
 
-function timelineAddition(domElement) {
+function timelineAddition(domElement, random) {
 
     //--------------------------------------------------------------------------
     //
@@ -229,7 +229,7 @@ function timelineAddition(domElement) {
     timelineAddition.band = function (bandName, sizeFactor) {
 
         var band = {};
-        band.id = "band" + bandNum + bandNum;
+        band.id = "band" + bandNum + random;
         band.x = 0;
         band.y = bandY;
         band.w = width;
@@ -271,7 +271,7 @@ function timelineAddition(domElement) {
                 return d.instant ? "part instant" : "part interval";
             });
 
-        var intervals = d3.select("#band" + bandNum).selectAll(".interval");
+        var intervals = d3.select("#band" + bandNum + random).selectAll(".interval");
         intervals.append("rect")
             .attr("width", "100%")
             .attr("height", "100%");
@@ -283,7 +283,7 @@ function timelineAddition(domElement) {
                 return d.label;
             });
 
-        var instants = d3.select("#band" + bandNum).selectAll(".instant");
+        var instants = d3.select("#band" + bandNum +random).selectAll(".instant");
         instants.append("circle")
             .attr("cx", band.itemHeight / 2)
             .attr("cy", band.itemHeight / 2)
