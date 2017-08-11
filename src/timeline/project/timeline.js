@@ -1,6 +1,3 @@
-//  A timeline component for d3
-//  version v0.1
-
 function timeline(domElement) {
 
     //--------------------------------------------------------------------------

@@ -1,13 +1,10 @@
 var random = 0;
 
 function init() {
-    console.log("Inside Trial");
     var domElement = "#timeline";
-    var sourceFile = "philosophers.csv";
-
+    var sourceFile = "./csv/philosophers.csv";
     d3.csv(sourceFile, function (dataset) {
-        console.log(dataset);
-        timeline(domElement)
+        timeline(domElement, sourceFile)
             .data(dataset)
             .band("mainBand", 0.82)
             .band("naviBand", 0.08)
@@ -22,7 +19,24 @@ function init() {
 }
 init();
 
-function timeline(domElement) {
+function generateTimelineAdd() {
+    var domElement = "#timeline";
+    var file = document.getElementById('timelineDataAdd').value;
+    var sourceFile = "./csv/" + file;
+    var timeline = populateData(domElement, random, sourceFile);
+    if(timeline !== null){
+        random = random + 1;
+    }
+}
+
+function generateTimelineSub() {
+    var domElement = "#timeline";
+    var file = document.getElementById('timelineDataSub').value;
+    removeTimeline(domElement, file);
+}
+
+
+function timeline(domElement, source) {
 
     //--------------------------------------------------------------------------
     //
@@ -45,16 +59,20 @@ function timeline(domElement) {
     var timeline = {},   // The timeline
         data = {},       // Container for the data
         components = [], // All the components of the timeline for redrawing
-        bandGap = 25,    // Arbitray gap between to consecutive bands
+        bandGap = 25,    // Arbitrary gap between to consecutive bands
         bands = {},      // Registry for all the bands in the timeline
         bandY = 0,       // Y-Position of the next band
         bandNum = 0;     // Count of bands for ids
 
     // Create svg element
 
+    var idSvg = source;
+    var res = idSvg.split("/");
+    var pos = res.length - 1;
+
     var svg = d3.select(domElement).append("svg")
         .attr("class", "svg")
-        .attr("id", "svg")
+        .attr("id", res[pos])
         .attr("width", outerWidth)
         .attr("height", outerHeight)
         .append("g")
@@ -77,7 +95,7 @@ function timeline(domElement) {
 
     var button_svg = d3.select(domElement).append("svg")
         .attr("class", "svg")
-        .attr("id", "svg1")
+        .attr("id", "buttonSvg")
         .attr("y", yAxis)
         .attr("width", buttonWidth)
         .attr("height", buttonHeight)
@@ -90,9 +108,8 @@ function timeline(domElement) {
         .attr("class", "fo")
         .attr("y", 0);
     var div1 = fo1.append("xhtml:button").text("+");
-    div1.on("click", function () {
-        populateData(domElement, random);
-        random += 1;
+    div1.on("click", function (d) {
+        createDialog('add');
     });
 
     var group2 = button_svg.append("g").attr("id", "group2");
@@ -103,7 +120,16 @@ function timeline(domElement) {
         .attr("y", 70);
     var div2 = fo2.append("xhtml:button").text("-");
     div2.on("click", function () {
-        console.log("Button - is working");
+        var id = deleteTimeline();
+        var select = document.getElementById('timelineDataSub');
+        for(var i = 0; i < id.length; i++) {
+            var opt = id[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+        }
+        createDialog('sub');
     });
 
 

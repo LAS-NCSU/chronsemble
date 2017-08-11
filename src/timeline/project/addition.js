@@ -1,17 +1,16 @@
 // Need to pass the source file that is selected in the drop down
-function populateData(domElement, random) {
-    var source = "philosophers.csv";
+function populateData(domElement, random, source) {
     d3.csv(source, function (dataset) {
-        timelineAddition(domElement , random)
+        timelineAddition(domElement, random, source)
             .data(dataset)
-            .band("mainBand1", 0.82)
-            .band("naviBand1", 0.08)
-            .xAxis("mainBand1")
-            .tooltips("mainBand1")
-            .xAxis("naviBand1")
-            .labels("mainBand1")
-            .labels("naviBand1")
-            .brush("naviBand1", ["mainBand1"])
+            .band("mainBand", 0.82)
+            .band("naviBand", 0.08)
+            .xAxis("mainBand")
+            .tooltips("mainBand")
+            .xAxis("naviBand")
+            .labels("mainBand")
+            .labels("naviBand")
+            .brush("naviBand", ["mainBand"])
             .redraw();
     });
 }
@@ -19,7 +18,7 @@ function populateData(domElement, random) {
 //  A timelineAddition component for d3
 //  version v0.1
 
-function timelineAddition(domElement, random) {
+function timelineAddition(domElement, random, source) {
 
     //--------------------------------------------------------------------------
     //
@@ -49,9 +48,12 @@ function timelineAddition(domElement, random) {
 
     // Create svg element
 
+    var idSvg = source;
+    var res = idSvg.split("/");
+    var pos = res.length - 1;
     var svg = d3.select(domElement).append("svg")
         .attr("class", "svg")
-        .attr("id", "svg2")
+        .attr("id", res[pos])
         .attr("width", outerWidth)
         .attr("height", outerHeight)
         .append("g")
@@ -200,7 +202,8 @@ function timelineAddition(domElement, random) {
             // Comment out, if dates in the future should be allowed.
             if (item.end > today) {
                 item.end = today
-            };
+            }
+            ;
         });
 
         //calculateTracks(data.items);
@@ -283,7 +286,7 @@ function timelineAddition(domElement, random) {
                 return d.label;
             });
 
-        var instants = d3.select("#band" + bandNum +random).selectAll(".instant");
+        var instants = d3.select("#band" + bandNum + random).selectAll(".instant");
         instants.append("circle")
             .attr("cx", band.itemHeight / 2)
             .attr("cy", band.itemHeight / 2)
