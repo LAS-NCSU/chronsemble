@@ -1,0 +1,51 @@
+body{
+    background: gray;
+}
+
+.demo {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: start;
+    align-items: flex-start;
+}
+
+.properties {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: left;
+    justify-content: left;
+    padding: 10px;
+    background: rgb(250, 250, 250);
+    margin: 20px;
+}
+
+form {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding: 10px;
+    border-right: solid #d0d0d0 1px;
+    color: #525252;
+}
+
+form > div {
+    display: -ms-flexbox;
+    display: flex;
+    padding: 3px;
+}
+form > div * {
+    padding: 1px;
+}
+form > div input[type=number],
+form > div input[type=color] {
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    border-width: 0 1px 1px 0;
+    background: white;
+}
+
+form > div input:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
