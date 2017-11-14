@@ -11,7 +11,7 @@ function timeline(domElement) {
     // chart geometry
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
         outerWidth = 960,
-        outerHeight = 500,
+        outerHeight = 400,
         width = outerWidth - margin.left - margin.right,
         height = outerHeight - margin.top - margin.bottom;
 
@@ -31,7 +31,8 @@ function timeline(domElement) {
         .attr("width", outerWidth)
         .attr("height", outerHeight)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top +  ")");
+//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + 20 + "," + 20 + ")");
 
     svg.append("clipPath")
         .attr("id", "chart-area")
