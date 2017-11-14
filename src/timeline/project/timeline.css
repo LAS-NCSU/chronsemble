@@ -109,7 +109,7 @@
 }
 
 /* Info-flow */
-
+/*
 .infoFlow {
   border-style: solid;
   border-width: 1px;
@@ -118,7 +118,7 @@
   width: 960px;
   height: 200px;
 }
-
+*/
 .referenceline{
    stroke-dasharray: 5,5;
    stroke-width: 1px;

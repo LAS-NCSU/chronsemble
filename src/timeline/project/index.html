@@ -17,6 +17,7 @@
     <!-- Store these two files in your application directory or on your path. -->
     <script src="timeline.js"></script>
     <script src="infoFlow.js"></script>
+    <script src="spatioFlow.js"></script>
     <link href="timeline.css" rel="stylesheet" type="text/css" />
 
 </head>
@@ -32,6 +33,7 @@
     // Define domElement and sourceFile
     var domTimeline = "#timeline";
     var domInfoFlow = ".infoFlow";
+    var domSpatioFlow = ".spatioFlow";
     var sourceFile = "philosophers.csv";
 
     // Read in the data and construct the timeline
@@ -51,12 +53,16 @@
             .mainReference("mainBand")
             .redraw();
 
-        infoFlow(domInfoFlow);
+          infoFlow(domInfoFlow);
+          spatioFlow(domSpatioFlow);
 
     });
 
 // d3.select(".infoFlow").append("p").html("testing");
 </script>
+
+<div class="spatioFlow">
+</div>
 
 </body>
 
