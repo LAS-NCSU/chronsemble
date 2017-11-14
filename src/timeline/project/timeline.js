@@ -31,8 +31,7 @@ function timeline(domElement) {
         .attr("width", outerWidth)
         .attr("height", outerHeight)
         .append("g")
-//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        .attr("transform", "translate(" + 20 + "," + 20 + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     svg.append("clipPath")
         .attr("id", "chart-area")
