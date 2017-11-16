@@ -8,7 +8,7 @@ function spatioFlow(domElement) {
   // map geometry
   var margin = {top: 20, right: 20, bottom: 20, left: 20},
       outerWidth = 960,
-      outerHeight = 300,
+      outerHeight = 440,
       width = outerWidth - margin.left - margin.right,
       height = outerHeight - margin.top - margin.bottom;
 
@@ -30,6 +30,17 @@ function spatioFlow(domElement) {
       .attr("height", height);
 
   var map = svg.append("g")
-      .attr("class", "map")
-      .attr("clip-path", "url(#map-area)" );
+      .attr("class", "band")
+      .attr("id", "map")
+      .attr("clip-path", "url(#map-area)" )
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+
+  var world = d3.geomap()
+      .geofile('/d3-geomap/topojson/world/countries.json');
+
+  d3.select('#map')
+      .call(world.draw, world);
+
 }
