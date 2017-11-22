@@ -38,10 +38,16 @@
     var domTimeline = "#timeline";
     var domInfoFlow = ".infoFlow";
     var domSpatioFlow = ".spatioFlow";
-    var sourceFile = "philosophers.csv";
+    //var sourceFile = "philosophers.csv";
+    //var sourceFile = "philosophers.json";
+    //var sourceFile = "philosophers2.json";
+    //var sourceFile = "philosophers3.json";
+    var sourceFile = "Intra-StateWarData_v4.1.2.csv";
+    //var sourceFile = "Inter-StateWarData_v4.0.1.csv";
 
     // Read in the data and construct the timeline
     d3.csv(sourceFile, function(dataset) {
+    //d3.json(sourceFile, function(dataset) {
 
         timeline(domTimeline)
             .data(dataset)

@@ -31,13 +31,19 @@ function timeline(domElement) {
         .attr("width", outerWidth)
         .attr("height", outerHeight)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// Translation does not include the margin.top in the Y coordinate to prevent
+// clipping of labels in the top margin.
+//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + ", 0)");
 
     svg.append("clipPath")
         .attr("id", "chart-area")
         .append("rect")
         .attr("width", width)
-        .attr("height", height);
+// Size of clip path updated to encompass margin.top and margin.bottom to enable
+//  using the top and bottom margins as a label region.
+      //  .attr("height", height);
+        .attr("height", height + margin.top + margin.bottom);
 
     var chart = svg.append("g")
             .attr("class", "chart")
@@ -68,9 +74,27 @@ function timeline(domElement) {
             items.forEach(function (d) {
                 count++;
                 if (count > n) return;
-                console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
+                //console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
+                console.log(d.start + " - " + d.end + ": " + d.label);
             })
         }
+
+        function showJsonItems(n) {
+            var count = 0, n = n || 10;
+            console.log("\n");
+            console.log(Object.keys(items));
+            /*
+            for (var prop in items) {
+              if (items.hasOwnProperty(prop)) {
+                count++;
+                if (count > n) return;
+                console.log(prop);
+              }
+            }
+            */
+          };
+
+// showItems(100);
 
         function compareAscending(item1, item2) {
             // Every item must have two fields: 'start' and 'end'.
@@ -197,10 +221,14 @@ function timeline(domElement) {
         band.yScale = function (track) {
             return band.trackOffset + track * band.trackHeight;
         };
+  // Translating y coordinate by + margin.top here because the margin.top
+  // translation was removed from the chart clip area translation to enable
+  // using the top margin for label data. This means margin.top must be added
+  // to all chart elements separately.
 
         band.g = chart.append("g")
             .attr("id", band.id)
-            .attr("transform", "translate(0," + band.y +  ")");
+            .attr("transform", "translate(0," + (band.y + margin.top) + ")");
 
         band.g.append("rect")
             .attr("class", "band")
@@ -274,21 +302,37 @@ function timeline(domElement) {
             y = band.y + band.h + 1,
             yText = 15;
 
-        var labelDefs = [
+  // Condition on bandName used to resrict labeling the main band with only the
+  // middle label - this is purely for aesthetics as the start and end labels
+  // don't necessarily add much to the main band when the scrubber window is
+  // active. To add the start and end labels back to the mainBand, remove the
+  // check for bandName along with the false branch.
+
+        var labelDefs = (bandName === "naviBand") ? [
                 ["start", "bandMinMaxLabel", 0, 4,
                     function(min, max) { return toYear(min); },
-                    "Start of the selected interval", band.x + 30, labelTop],
+                    "Start of the data window", band.x + 30, labelTop],
                 ["end", "bandMinMaxLabel", band.w - labelWidth, band.w - 4,
                     function(min, max) { return toYear(max); },
-                    "End of the selected interval", band.x + band.w - 152, labelTop],
+                    "End of the data window", band.x + band.w - 152, labelTop],
                 ["middle", "bandMidLabel", (band.w - labelWidth) / 2, band.w / 2,
                     function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                    "Length of the selected interval", band.x + band.w / 2 - 75, labelTop]
+                    "Range of data window", band.x + band.w / 2 - 75, labelTop]] :
+      // if bandName = mainBand then only set the middle label
+                [["middle", "bandMidLabel", (band.w - labelWidth) / 2, band.w / 2,
+                    function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
+                    "Range of scrubber window", band.x + band.w / 2 - 75, labelTop]
             ];
 
         var bandLabels = chart.append("g")
             .attr("id", bandName + "Labels")
-            .attr("transform", "translate(0," + (band.y + band.h + 1) +  ")")
+
+    // Check for mainBand and if so, don't translate the y coordinate to place
+    // mainBand labels in the top margin (0 translation) and naviBand labels in
+    //  the bottom margin.
+
+            .attr("transform", "translate(0," + ((bandName === "mainBand") ? 0 :
+                    (band.y + band.h + 1 + margin.top + margin.bottom)) +  ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
             .enter().append("g")
@@ -325,6 +369,8 @@ function timeline(domElement) {
 
         band.parts.push(labels);
         components.push(labels);
+
+        //console.log("labels d:", bandName);
 
         return timeline;
     };
@@ -394,7 +440,9 @@ function timeline(domElement) {
 
         var xAxis = chart.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(0," + (band.y + band.h)  + ")");
+
+      // Add margin.top to y coordinate translation to account for top margin.
+            .attr("transform", "translate(0," + (band.y + band.h + margin.top) + ")");
 
         xAxis.redraw = function () {
             xAxis.call(axis);
@@ -424,6 +472,7 @@ function timeline(domElement) {
                 targetNames.forEach(function(d) {
                     bands[d].xScale.domain(domain);
                     bands[d].redraw();
+                    console.log("moving: d",d,domain);
                 });
             });
 
@@ -447,7 +496,8 @@ function timeline(domElement) {
       var mainReference = chart.append("g")
           .attr("class", "referenceline")
           .append("line")
-          .attr("x1", band.w/2).attr("y1", "0").attr("x2", band.w/2).attr("y2", band.h);
+    // Add margin.top to y coordinate translations to leave gap for top margin.
+          .attr("x1", band.w/2).attr("y1", margin.top).attr("x2", band.w/2).attr("y2", band.h + margin.top);
         return timeline;
     };
 
