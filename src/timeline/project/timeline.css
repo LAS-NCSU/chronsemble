@@ -32,19 +32,24 @@
     font-weight: bold;
 }
 
-.bandMinMaxLabel {
+.bandBoundLabel {
     fill: blue;
     font: 10px sans-serif;
     font-weight: bold;
 }
 
-.bandMidLabel {
+.bandRangeLabel {
     fill: red;
     font: 10px sans-serif;
     font-style: italic;
     font-weight: bold;
 }
 
+.bandReferenceLabel {
+    fill: green;
+    font: 10px sans-serif;
+    font-weight: bold;
+}
 /* brush */
 
 .brush .extent {

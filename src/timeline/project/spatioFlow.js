@@ -29,7 +29,7 @@ function spatioFlow(domElement) {
       .attr("width", width)
       .attr("height", height);
 
-  var map = svg.append("g")
+  var spatioLayout = svg.append("g")
       .attr("class", "band")
       .attr("id", "map")
       .attr("clip-path", "url(#map-area)" )
@@ -37,10 +37,16 @@ function spatioFlow(domElement) {
       .attr("width", width)
       .attr("height", height);
 
-  var world = d3.geomap()
+  //var map = d3.geomap.choropleth()
+  var map = d3.geomap()
       .geofile('/d3-geomap/topojson/world/countries.json');
+    //  .colors(['green','red'])
+    //  .column('hit')
+    //  .domain([0, 1])
+    //  .legend(false)
+    //  .unitId('Country');
 
   d3.select('#map')
-      .call(world.draw, world);
+      .call(map.draw, map);
 
 }

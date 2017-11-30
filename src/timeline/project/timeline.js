@@ -1,7 +1,7 @@
 //  A timeline component for d3
 //  version v0.1
 
-function timeline(domElement) {
+function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) {
 
     //--------------------------------------------------------------------------
     //
@@ -25,7 +25,7 @@ function timeline(domElement) {
         bandNum = 0;     // Count of bands for ids
 
     // Create svg element
-    var svg = d3.select(domElement).append("svg")
+    var svg = d3.select(domTimelineElement).append("svg")
         .attr("class", "svg")
         .attr("id", "svg")
         .attr("width", outerWidth)
@@ -308,20 +308,28 @@ function timeline(domElement) {
   // active. To add the start and end labels back to the mainBand, remove the
   // check for bandName along with the false branch.
 
+  // labelDefs[<element id>, <element class>, <rect x position>, <text x position>,
+  //           <fcn returning text value>, <tooltip text>, <tooltip x offset>,
+  //           <tooltip y offset>]
+
         var labelDefs = (bandName === "naviBand") ? [
-                ["start", "bandMinMaxLabel", 0, 4,
+                ["start", "bandBoundLabel", 0, labelWidth / 4,
                     function(min, max) { return toYear(min); },
                     "Start of the data window", band.x + 30, labelTop],
-                ["end", "bandMinMaxLabel", band.w - labelWidth, band.w - 4,
+                ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
                     function(min, max) { return toYear(max); },
                     "End of the data window", band.x + band.w - 152, labelTop],
-                ["middle", "bandMidLabel", (band.w - labelWidth) / 2, band.w / 2,
+                ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
                     function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
                     "Range of data window", band.x + band.w / 2 - 75, labelTop]] :
       // if bandName = mainBand then only set the middle label
-                [["middle", "bandMidLabel", (band.w - labelWidth) / 2, band.w / 2,
+                [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
                     function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                    "Range of scrubber window", band.x + band.w / 2 - 75, labelTop]
+                    "Range of scrubber window", band.x + band.w / 2 - 75, labelTop],
+                  ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
+                     band.w / 2 - labelWidth / 3,
+                     function(min, max) {return ((max.getUTCFullYear() + max.getUTCMonth()/12) - (min.getUTCFullYear() + min.getUTCMonth()/12))/2 + min.getUTCFullYear() + min.getUTCMonth()/12;},
+                     "Reference Instant", 0, 0]
             ];
 
         var bandLabels = chart.append("g")
@@ -329,9 +337,9 @@ function timeline(domElement) {
 
     // Check for mainBand and if so, don't translate the y coordinate to place
     // mainBand labels in the top margin (0 translation) and naviBand labels in
-    //  the bottom margin.
+    // the bottom margin.
 
-            .attr("transform", "translate(0," + ((bandName === "mainBand") ? 0 :
+            .attr("transform", "translate(0," + ((bandName === "mainBand") ? "0" :
                     (band.y + band.h + 1 + margin.top + margin.bottom)) +  ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
@@ -364,7 +372,8 @@ function timeline(domElement) {
             var min = band.xScale.domain()[0],
                 max = band.xScale.domain()[1];
 
-            labels.text(function (d) { return d[4](min, max); })
+            labels.text(function (d) { return d[4](min, max).toFixed(1); })
+
         };
 
         band.parts.push(labels);
@@ -563,7 +572,8 @@ function timeline(domElement) {
         // if will be placed in front of the year.
         bcString = bcString || " BC" // With blank!
         var year = date.getUTCFullYear();
-        if (year > 0) return year.toString();
+//        if (year > 0) return year.toString();
+        if (year > 0) return year;
         if (bcString[0] == '-') return bcString + (-year);
         return (-year) + bcString;
     }
