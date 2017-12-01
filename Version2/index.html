@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" lang="de" content="Zeitleiste, Zeitlinie, Zeitkarte, Geschichte, Chronologie">
+    <meta name="keywords" lang="en" content="Timeline, Timemap, History, Chronology">
+    <title>Timeline - Proof-of-concept</title>
+
+    <!-- That's my local d3 path. When working locally, use your local path. -->
+    <!-- <script src="d3.v3.min.js"></script> -->
+    <!-- <script src="../../../lib/d3/d3.v3.js"></script> -->
+
+<!--    &lt;!&ndash; That's the 'official' path. Comment out, when working locally. &ndash;&gt;
+    <script src="http://d3js.org/d3.v3.min.js"></script>-->
+
+    <!-- Store these two files in your application directory or on your path. -->
+    <script src="timeline.js"></script>
+    <script src="infoFlow.js"></script>
+    <script src="spatioFlow.js"></script>
+    <link href="d3-geomap/css/d3.geomap.css" rel="stylesheet">
+    <script src="d3-geomap/vendor/d3.geomap.dependencies.min.js"></script>
+    <script src="d3-geomap/js/d3.geomap.min.js"></script>
+    <link href="timeline.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+<div class="infoFlow">
+</div>
+
+<div id="timeline"></div>
+
+<script>
+
+    // Define domElement and sourceFile
+    var domTimeline = "#timeline";
+    var domInfoFlow = ".infoFlow";
+    var domSpatioFlow = ".spatioFlow";
+    //var sourceFile = "philosophers.csv";
+    //var sourceFile = "philosophers.json";
+    //var sourceFile = "philosophers2.json";
+    //var sourceFile = "philosophers3.json";
+    var sourceFile = "Intra-StateWarData_v4.1.3.csv";
+    //var sourceFile = "Inter-StateWarData_v4.0.1.csv";
+
+    // Read in the data and construct the timeline
+    d3.csv(sourceFile, function(dataset) {
+        //d3.json(sourceFile, function(dataset) {
+
+        infoFlow(domInfoFlow);
+        spatioFlow(domSpatioFlow);
+
+        timeline(domTimeline, domSpatioFlow, domInfoFlow)
+            .data(dataset)
+            .band("mainBand", 0.82)
+            .band("naviBand", 0.05)
+            /*  .band("dummyBand", 0.08) */
+            .xAxis("mainBand")
+            .tooltips("mainBand")
+            .xAxis("naviBand")
+            .labels("mainBand")
+            .labels("naviBand")
+            .brush("naviBand", ["mainBand"])
+            .mainReference("mainBand")
+            .redraw();
+    });
+
+    // d3.select(".infoFlow").append("p").html("testing");
+</script>
+
+<div class="spatioFlow">
+</div>
+</body>
+</html>

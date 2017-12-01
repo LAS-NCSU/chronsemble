@@ -1,0 +1,257 @@
+WarNum,label,WarType,CcodeA,SideA,CcodeB,SideB,Intnl,StartMonth1,StartDay1,start,EndMonth1,EndDay1,end,StartMonth2,StartDay2,StartYear2,EndMonth2,EndDay2,EndYear2,TransFrom,WhereFought,loc,Initiator,Outcome,TransTo,SideADeaths,SideBDeaths,Version
+500,First Caucasus,5,365,Russia,-8,"Georgians, Dhagestania, Chechens",0,6,10,1818,-9,-9,1822,-8,-8,-8,-8,-8,-8,-8,2,RUS,Chechens,1,-8,5000,6000,4.1
+501,Sidon-Damascus,6,-8,Sidon,-8,Damascus & Aleppo,0,6,-9,1820,7,21,1821,-8,-8,-8,-8,-8,-8,-8,6,SYR,Sidon,2,-8,-9,-9,4.1
+502,First Two Sicilies,4,300,Austria,-8,-8,1,3,-9,1821,3,23,1821,-8,-8,-8,-8,-8,-8,-8,2,AUT,Liberals,1,-8,-9,-8,4.1
+502,First Two Sicilies,4,329,Two Sicilies,-8,Liberals,1,7,2,1820,3,23,1821,-8,-8,-8,-8,-8,-8,-8,2,ITA,Liberals,1,-8,-9,-9,4.1
+503,Spanish Royalists,4,230,Spain,-8,Royalists,0,12,1,1821,4,6,1823,-8,-8,-8,-8,-8,-8,-8,2,ESP,Royalists,4,1,-9,-9,4.1
+505,Sardinian Revolt,4,300,Austria,-8,-8,1,3,10,1821,5,8,1821,-8,-8,-8,-8,-8,-8,-8,2,AUT,Carbonari,1,-8,-9,-8,4.1
+505,Sardinian Revolt,4,325,Sardinia,-8,Carbonari,1,3,10,1821,5,8,1821,-8,-8,-8,-8,-8,-8,-8,2,ITA,Carbonari,1,-8,-9,-9,4.1
+506,Greek Independence,5,640,Ottoman Empire,-8,Greeks,1,3,25,1821,4,25,1828,-8,-8,-8,-8,-8,-8,-8,2,GRC,Greeks,4,4,6000,3000,4.1
+506,Greek Independence,5,-8,-8,200,United Kingdom,1,10,20,1827,10,27,1827,-8,-8,-8,-8,-8,-8,-8,2,GBR,Greeks,4,4,-8,80,4.1
+506,Greek Independence,5,-8,-8,220,France,1,10,20,1827,10,27,1827,-8,-8,-8,-8,-8,-8,-8,2,FRA,Greeks,4,4,-8,40,4.1
+506,Greek Independence,5,-8,-8,365,Russia,1,10,20,1827,4,25,1828,-8,-8,-8,-8,-8,-8,-8,2,RUS,Greeks,4,4,-8,60,4.1
+507,Egypt-Mehdi,6,-8,Egypt,-8,Mehdi army,0,3,20,1824,4,-9,1824,-8,-8,-8,-8,-8,-8,-8,6,EGY,Mehdi army,1,-8,-9,-9,4.1
+508,Janissari Revolt,4,640,Ottoman Empire,-8,Janissaries,0,6,14,1826,9,30,1826,-8,-8,-8,-8,-8,-8,-8,6,GRC,Janissaries,1,-8,300,6000,4.1
+510,Miguelite War,4,-8,-8,200,United Kingdom,1,7,1,1831,5,26,1834,-8,-8,-8,-8,-8,-8,-8,2,PRT,Constitutionalists,2,-8,-8,100,4.1
+510,Miguelite War,4,235,Portugal,-8,Constitutionalists,1,7,11,1828,5,26,1834,-8,-8,-8,-8,-8,-8,-8,2,PRT,Constitutionalists,2,-8,12000,8000,4.1
+511,First Murid War,5,365,Russia,-8,Ghazi Muhammad,0,-9,-9,1830,10,17,1832,-8,-8,-8,-8,-8,-8,-8,2,RUS,Ghazi Muhammad,1,-8,1000,500,4.1
+512,First Albanian Revolt,5,640,Ottoman Empire,-8,Albanians,0,2,-9,1830,11,-9,1831,-8,-8,-8,-8,-8,-8,-8,2,ALB,Albanians,1,-8,5000,10000,4.1
+513,First French Insurrection,4,220,France,-8,Liberals,0,7,25,1830,7,29,1830,-8,-8,-8,-8,-8,-8,-8,2,FRA,Liberals,2,-8,400,1800,4.1
+515,Belgian Independence,5,210,Netherlands,-8,Belgians,0,8,25,1830,11,4,1830,-8,-8,-8,-8,-8,-8,-8,2,BEL,Belgians,2,-8,500,600,4.1
+516,Egyptian Taka Expedition,6,-8,Egypt,-8,Hadendowa,0,-9,-9,1831,-9,-9,1832,-8,-8,-8,-8,-8,-8,-8,6,EGY,Egypt,2,-8,1500,-9,4.1
+517,First Polish,5,365,Russia,-8,Poles,0,2,7,1831,10,18,1831,-8,-8,-8,-8,-8,-8,-8,2,POL,Poles,1,-8,15000,20000,4.1
+518,First Syrian,5,640,Ottoman Empire,-8,Egyptians & Bashir,0,10,1,1831,12,27,1832,-8,-8,-8,-8,-8,-8,-8,6,SYR,Egyptians,2,-8,8000,4000,4.1
+520,First Mexican,4,70,Mexico,-8,Liberals,0,1,2,1832,12,11,1832,-8,-8,-8,-8,-8,-8,-8,1,MEX,Liberals,2,-8,-9,-9,4.1
+521,Egypt- Palestinian Anti-Conscription Revolt,6,-8,Palestinians,-8,Egypt,0,4,19,1834,10,-9,1834,-8,-8,-8,-8,-8,-8,-8,6,PSE,Palestinians,2,-8,1500,500,4.1
+522,First Carlist War,4,235,Portugal,-8,-8,1,10,15,1835,2,15,1836,-8,-8,-8,-8,-8,-8,-8,2,PRT,Carlists,1,-8,50,-8,4.1
+522,First Carlist War,4,230,Spain,-8,Carlists,1,7,15,1834,7,15,1840,-8,-8,-8,-8,-8,-8,-8,2,ESP,Carlists,1,-8,65000,60000,4.1
+522,First Carlist War,4,220,France,-8,-8,1,10,31,1835,1,17,1839,-8,-8,-8,-8,-8,-8,-8,2,FRA,Carlists,1,-8,7700,-8,4.1
+522,First Carlist War,4,200,United Kingdom,-8,-8,1,7,10,1835,9,1,1837,-8,-8,-8,-8,-8,-8,-8,2,GBR,Carlists,1,-8,2500,-8,4.1
+523,Second Murid,5,365,Russia,-8,Shamil,0,9,26,1834,10,27,1834,-8,-8,-8,-8,-8,-8,-8,2,RUS,Shamil,7,-8,-9,-9,4.1
+525,Cabanos Revolt,5,140,Brazil,-8,Cabanos,0,1,6,1835,5,-9,1837,-8,-8,-8,-8,-8,-8,-8,1,BRA,Cabanos,1,-8,-9,-9,4.1
+526,Farroupilha War,5,140,Brazil,-8,Farrapos,0,9,19,1835,3,1,1845,-8,-8,-8,-8,-8,-8,-8,1,BRA,Farrapos,1,-8,-9,-9,4.1
+527,Texan,5,70,Mexico,-8,Texans,0,10,1,1835,4,22,1836,-8,-8,-8,-8,-8,-8,-8,1,USA,Texans,2,-8,1500,700,4.1
+528,First Bosnian,5,640,Ottoman Empire,-8,Bosnians,0,-9,-9,1836,-9,-9,1837,-8,-8,-8,-8,-8,-8,-8,2,BIH,Bosnians,1,-8,-9,-9,4.1
+530,Third Murid,5,365,Russia,-8,Shamil,0,7,-9,1836,-9,-9,1852,-8,-8,-8,-8,-8,-8,-8,2,RUS,Shamil,1,-8,15000,-9,4.1
+531,Sabinada Rebellion,5,140,Brazil,-8,Bahian Sabinada,0,11,7,1837,3,13,1838,-8,-8,-8,-8,-8,-8,-8,1,BRA,Bahian Sabinada,1,-8,600,1200,4.1
+532,Druze Rebellion,6,-8,Egypt & Bashir,-8,Druze,0,9,27,1837,8,22,1838,-8,-8,-8,-8,-8,-8,-8,6,EGY,Druze,1,-8,15000,-9,4.1
+533,"Second Syrian, Phase 1",5,640,Ottoman Empire,-8,Egypt,0,6,10,1839,6,24,1839,-8,-8,-8,-8,-8,-8,-8,6,SYR,Mehmet Ali,2,-8,2000,1000,4.1
+535,Lebanon Insurgency,6,-8,Lebanese Maronites,-8,Amir Bashir & Egypt,0,5,27,1840,7,13,1840,-8,-8,-8,-8,-8,-8,-8,6,LBN,Amir Bashir & Egypt,2,-8,3500,1000,4.1
+536,First Colombian,4,100,Colombia,-8,Progressives,0,7,15,1840,7,15,1842,-8,-8,-8,-8,-8,-8,-8,1,COL,Progressives,2,-8,-9,-9,4.1
+537,"Second Syrian, Phase 2",5,200,United Kingdom,-8,-8,1,9,9,1840,11,27,1840,-8,-8,-8,-8,-8,-8,-8,6,GBR,United Kingdom,1,-8,14,-8,4.1
+537,"Second Syrian, Phase 2",5,640,Ottoman Empire,-8,Egypt,1,9,9,1840,11,27,1840,-8,-8,-8,-8,-8,-8,-8,6,SYR,United Kingdom,1,-8,8000,19000,4.1
+538,"First Argentina War, Phase 2",4,160,Argentina,-8,Unitarios,0,1,1,1841,12,6,1842,-8,-8,-8,-8,-8,-8,1527,1,ARG,Unitarios,1,-8,300,3000,4.1
+540,Second Bosnian,5,640,Ottoman Empire,-8,Bosnians,0,-9,-9,1841,-9,-9,1841,-8,-8,-8,-8,-8,-8,-8,2,RUS,Bosnians,1,-8,-9,-9,4.1
+541,Triangular Revolt,4,70,Mexico,-8,Military,0,9,4,1841,10,6,1841,-8,-8,-8,-8,-8,-8,-8,1,MEX,Military,2,-8,-9,-9,4.1
+542,Karbala Revolt,5,640,Ottoman Empire,-8,Karbala,0,12,19,1842,1,13,1843,-8,-8,-8,-8,-8,-8,-8,6,IRQ,Ottomans,1,-8,1600,3000,4.1
+543,First Maronite-Druze,7,-8,Maronites,-8,Druze,0,4,30,1845,5,31,1845,-8,-8,-8,-8,-8,-8,-8,6,SYR,Maronites,2,-8,2000,1000,4.1
+545,"Mayan Caste War, Phase 1",6,-8,Mayans,-8,Yucutan,0,1,15,1847,8,16,1848,-8,-8,-8,-8,-8,-8,-8,1,MEX,Mayans,4,553,-9,1800,4.1
+546,Second Carlist,4,230,Spain,-8,Carlists,0,5,15,1847,5,1,1849,-8,-8,-8,-8,-8,-8,-8,2,ESP,Carlists,1,-8,3000,7000,4.1
+547,Second Two Sicilies,4,329,Two Sicilies,-8,Liberals,0,1,12,1848,1,27,1848,5,15,1848,5,15,1849,-8,2,ITA,Liberals,1,-8,1500,-9,4.1
+548,First Venezuelan,4,101,Venezuela,-8,Paez led Conservatives ,0,2,4,1848,8,15,1849,-8,-8,-8,-8,-8,-8,-8,1,VEN,Former Pres. Paez,1,-8,1500,-9,4.1
+550,Viennese Revolt,4,300,Austria,-8,Viennese,0,3,13,1848,10,31,1848,-8,-8,-8,-8,-8,-8,-8,2,AUT,Viennese,1,-8,249,3000,4.1
+551,Milan Five Day Revolt,5,300,Austria,-8,Milan,0,3,18,1848,3,23,1848,-8,-8,-8,-8,-8,-8,-8,2,ITA,Milan,4,10,600,430,4.1
+552,Second French Insurrection,4,220,France,-8,Radicals,0,6,23,1848,6,26,1848,-8,-8,-8,-8,-8,-8,-8,2,FRA,Radicals,1,-8,1200,1600,4.1
+553,"Mayan Caste War, Phase 2",5,70,Mexico,-8,Yucatan Maya,0,8,17,1848,3,4,1855,-8,-8,-8,-8,-8,-8,545,1,MEX,Mexico,1,-8,-9,-9,4.1
+554,Hungarian,5,300,Austria,-8,Hungary,1,9,9,1848,8,13,1849,-8,-8,-8,-8,-8,-8,-8,2,HUN,Magyars,1,-8,46000,20000,4.1
+554,Hungarian,5,365,Russia,-8,-8,1,7,16,1849,8,13,1849,-8,-8,-8,-8,-8,-8,-8,2,RUS,Magyars,1,-8,14500,-8,4.1
+555,First Chilean,4,155,Chile,-8,Liberals,0,9,5,1851,12,15,1851,-8,-8,-8,-8,-8,-8,-8,1,CHL,Liberals,1,-8,1500,2500,4.1
+556,First Turco-Montenegrin,5,640,Ottoman Empire,-8,Montenegro & Hercegovina,0,12,2,1852,3,13,1853,-8,-8,-8,-8,-8,-8,-8,2,MNE,Turkey,2,-8,-9,-9,4.1
+557,First Peru,4,135,Peru,-8,Liberals,0,12,21,1853,1,7,1855,-8,-8,-8,-8,-8,-8,-8,1,PER,Liberals,2,-8,-9,-9,4.1
+558,Puebla War,4,70,Mexico,-8,Puebla,0,12,11,1855,3,21,1856,-8,-8,-8,-8,-8,-8,-8,1,MEX,Military,1,-8,600,3000,4.1
+560,Second Peru,4,135,Peru,-8,Conservatives,0,10,31,1856,3,7,1858,-8,-8,-8,-8,-8,-8,-8,1,PER,Conservatives,1,-8,-9,-9,4.1
+561,Mexican Reform,4,70,Mexico,-8,Liberals,0,2,15,1858,1,1,1861,-8,-8,-8,-8,-8,-8,-8,1,MEX,Liberals,4,-8,-9,-9,4.1
+562,Second Turco-Montenegrin,5,640,Ottoman Empire,-8,Montenegrins,0,5,4,1858,6,1,1859,-8,-8,-8,-8,-8,-8,-8,2,MNE,Montenegrins,2,-8,3000,1400,4.1
+563,Second Venezuelan/Federalist,4,101,Venezuela,-8,Liberals,0,2,1,1859,5,23,1863,-8,-8,-8,-8,-8,-8,-8,1,VEN,Liberals,2,-8,15000,5000,4.1
+565,Second Colombian,4,100,Colombia,-8,Liberals,0,5,15,1860,7,18,1861,-8,-8,-8,-8,-8,-8,-8,1,COL,Liberals,2,-8,-9,-9,4.1
+566,Second Maronite-Druze,7,-8,Maronites,-8,Druze,0,5,26,1860,7,12,1860,-8,-8,-8,-8,-8,-8,-8,6,SYR,Maronites,2,-8,8000,1500,4.1
+567,"Taiping Rebellion, Phase 2",4,710,China,-8,Taipings,1,10,25,1860,2,9,1866,-8,-8,-8,-8,-8,-8,1534,7,CHN,Taipings,1,-8,26000,85000,4.1
+567,"Taiping Rebellion, Phase 2",4,200,United Kingdom,-8,-8,1,3,1,1862,8,1,1862,-8,-8,-8,-8,-8,-8,1534,7,CHN,Taipings,1,-8,25,-8,4.1
+568,Second Nien Revolt,5,710,China,-8,Niens,0,10,25,1860,8,16,1868,-8,-8,-8,-8,-8,-8,,7,CHN,Niens,1,-8,-9,-9,4.1
+570,Miao Revolt Phase 2,5,710,China,-8,Miaos,0,10,25,1860,5,1,1872,-8,-8,-8,-8,-8,-8,1537,7,CHN,Miaos,1,-8,-9,-9,4.1
+571,Panthay Rebellion Phase 2,5,710,China,-8,Muslims (Hui),0,10,25,1860,12,26,1872,-8,-8,-8,-8,-8,-8,1542,7,CHN,Muslims,1,-8,-9,-9,4.1
+572,U.S. Civil War,5,2,United States of America,-8,Confederacy,0,4,10,1861,4,9,1865,-8,-8,-8,-8,-8,-8,-8,1,USA,Confederacy,1,-8,360000,258000,4.1
+573,Third Buenos Aires,5,160,Argentina,-8,Buenos Aires,0,8,20,1861,12,2,1861,-8,-8,-8,-8,-8,-8,-8,1,ARG,Buenos Aires,2,-8,500,500,4.1
+575,Third Turco-Montenegrin,5,640,Turkey,-8,Montenegro,0,12,-9,1861,8,31,1862,-8,-8,-8,-8,-8,-8,-8,2,TUR,Ottoman Empire,3,-8,-9,-9,4.1
+576,Tungan Rebellion,5,710,China,-8,Muslims  in Sinkiang,0,5,-9,1862,10,24,1873,-8,-8,-8,-8,-8,-8,-8,7,CHN,Muslims  in Sinkiang,1,-8,-9,-9,4.1
+577,Sioux-Minnesota,6,-8,Santee Sioux,-8,Settlers & militia,0,8,17,1862,9,26,1862,-8,-8,-8,-8,-8,-8,-8,1,USA,Santee Sioux,2,-8,217,851,4.1
+578,Bolivan Perez Rebellion,4,145,Boliva,-8,Gregorio Perez's followers,0,9,15,1862,9,15,1862,-8,-8,-8,-8,-8,-8,-8,1,BOL,Gregorio Perez,1,-8,-9,-9,4.1
+580,Second Polish,5,365,Russia,-8,Poles,0,1,22,1863,4,19,1864,-8,-8,-8,-8,-8,-8,-8,2,POL,Poles,1,-8,10000,6500,4.1
+581,Second Argentina,4,160,Argentina,-8,Montoneros,0,4,2,1863,11,12,1863,-8,-8,-8,-8,-8,-8,-8,1,ARG,Montoneros,1,-8,-9,-9,4.1
+582,Xinjiang Muslim Revolt,5,365,Russia,-8,-8,1,6,24,1871,7,3,1871,-8,-8,-8,-8,-8,-8,-8,7,RUS,Muslims,2,-8,-9,-8,4.1
+582,Xinjiang Muslim Revolt,5,710,China,-8,Muslims,1,7,-9,1864,7,3,1871,-8,-8,-8,-8,-8,-8,-8,7,CHN,Muslims,2,-8,-9,-9,4.1
+583,First  Cretan,5,640,Ottoman Empire,-8,Cretans,0,5,29,1866,2,22,1867,-8,-8,-8,-8,-8,-8,-8,2,GRC,Cretans,1,-8,-9,-9,4.1
+585,Yellow Cliff Revolt,5,710,China,-8,Zhang Jizhong's followers,0,10,-9,1866,10,-91866,,-8,-8,-8,-8,-8,-8,-8,7,CHN,Zhang Jizhong,1,-8,-9,-9,4.1
+586,Third Argentina,4,160,Argentina,-8,Montoneros,0,12,15,1866,10,15,1867,-8,-8,-8,-8,-8,-8,-8,1,ARG,Federalists,1,-8,-9,-9,4.1
+587,Queretaro,4,70,Mexico,-8,Liberals,0,2,6,1867,5,14,1867,-8,-8,-8,-8,-8,-8,40,1,MEX,Liberals,2,-8,1500,1000,4.1
+588,Meiji Restoration,4,740,Japan,-8,Tokugawa,0,1,3,1868,7,4,1868,-8,-8,-8,-8,-8,-8,-8,7,JPN,Japan,1,-8,-9,-9,4.1
+590,Third Venezuelan,4,101,Venezuela,-8,Conservatives,0,1,11,1868,8,14,1868,8,14,1869,1,7,1871,-8,1,VEN,Conservatives,2,-8,-9,-9,4.1
+591,Spanish Liberals,4,230,Spain,-8,Liberals,0,9,18,1868,9,29,1868,-8,-8,-8,-8,-8,-8,-8,2,ESP,Liberals,2,-8,-9,-9,4.1
+592,Guerre des Cacos,4,41,Haiti,-8,Black peasants,0,2,-9,1869,12,18,1869,-8,-8,-8,-8,-8,-8,-8,1,HTI,Black peasants,2,-8,-9,-9,4.1
+593,Fourth Argentina,5,160,Argentina,-8,Entre Rios Province,0,5,20,1870,3,13,1871,-8,-8,-8,-8,-8,-8,-8,1,ARG,Entre Rios Province,1,-8,-9,-9,4.1
+595,Bolivia-Criollos,4,145,Bolivia,-8,Crillos,0,11,24,1870,1,15,1871,-8,-8,-8,-8,-8,-8,-8,1,BOL,Crillos,2,-8,-9,-9,4.1
+596,Paris Commune,4,220,France,-8,Communards,0,4,2,1871,5,29,1871,-8,-8,-8,-8,-8,-8,-8,2,FRA,Communards,1,-8,879,25000,4.1
+597,Third Carlist,4,230,Spain,-8,Carlists,0,4,20,1872,2,20,1876,-8,-8,-8,-8,-8,-8,-8,2,ESP,Carlists,1,-8,7000,43000,4.1
+598,Catonalist Uprising,5,230,Spain,-8,Rebel cities (cantons),0,-9,-9,1874,1,-9,1875,-8,-8,-8,-8,-8,-8,-8,2,ESP,Rebel cities (cantons),1,-8,-9,-9,4.1
+600,Fifth Argentina,4,160,Argentina,-8,Mitre led Rebels,0,9,-9,1874,11,6,1874,-8,-8,-8,-8,-8,-8,-8,1,ARG,Mitre led Rebels,1,-8,-9,-9,4.1
+601,Bosnia & Bulgaria Revolt,5,640,Ottoman Empire,-8,Bosnia & Bulgaria,0,6,30,1875,6,29,1876,-8,-8,-8,-8,-8,-8,-8,2,BOS,Bosnia & Bulgaria,4,373,6000,3000,4.1
+602,Diaz Revolt,4,70,Mexico,-8,Rebels,0,3,-9,1876,11,23,1876,-8,-8,-8,-8,-8,-8,-8,1,MEX,Rebels,2,-8,1900,-9,4.1
+603,Defeat of Xinjiang Muslims,5,710,China,-8,Muslims,0,4,-9,1876,12,1,1877,-8,-8,-8,-8,-8,-8,-8,7,CHN,China,1,-8,-9,-9,4.1
+605,Third Colombian,4,100,Colombia,-8,Conservatives,0,7,26,1876,7,1,1877,-8,-8,-8,-8,-8,-8,-8,1,COL,Conservatives,1,-8,2100,1770,4.1
+607,Satsuma Rebellion,5,740,Japan,-8,Satsumas,0,1,29,1877,9,24,1877,-8,-8,-8,-8,-8,-8,-8,7,JPN,Satsumas,1,-8,7000,10000,4.1
+608,Argentine Indians,5,160,Argentina,-8,Indians,0,4,6,1879,7,8,1880,-8,-8,-8,-8,-8,-8,-8,1,ARG,Argentina,1,-8,200,1500,4.1
+610,Fourth Buenos Aires,5,160,Argentina,-8,Buenos Aires,0,6,21,1880,7,21,1880,-8,-8,-8,-8,-8,-8,-8,1,ARG,Buenos Aires,1,-8,400,800,4.1
+611,Haitian Civil War,4,41,Haiti,-8,Liberals,0,3,27,1883,1,8,1884,-8,-8,-8,-8,-8,-8,-8,1,HTI,Liberals,1,-8,8000,100,4.1
+612,Fourth Colombian,4,100,Colombia,-8,Liberals,0,11,15,1884,8,26,1885,-8,-8,-8,-8,-8,-8,-8,1,COL,Liberals,1,-8,300,700,4.1
+613,Peru's National Problem,5,135,Peru,-8,Indians,0,3,2,1885,5,25,1885,-8,-8,-8,-8,-8,-8,-8,1,PER,Indians,1,-8,200,2000,4.1
+616,First Yemen Rebellion,5,640,Ottoman Empire,-8,Zaidi Imam,0,4,-9,1890,9,-9,1892,-8,-8,-8,-8,-8,-8,-8,6,YEM,Zaidi Imam,1,-8,-9,-9,4.1
+617,Second Chilean,4,155,Chile,-8,Congressists,0,1,7,1891,8,29,1891,-8,-8,-8,-8,-8,-8,-8,1,CHL,Congressists,2,-8,1000,700,4.1
+618,Zaili-Jinden Revolt,5,710,China,-8,Zaili & Jindan Sects,0,11,11,1891,12,27,1891,-8,-8,-8,-8,-8,-8,-8,7,CHN,Zaili & Jindan Sects,1,-8,500,10000,4.1
+620,Brazil Federalists,5,140,Brazil,-8,Rio Grande do Sul,0,2,2,1893,8,31,1894,-8,-8,-8,-8,-8,-8,-8,1,BRA,Rio Grande do Sul,1,-8,1500,-9,4.1
+621,Brazil Naval,4,140,Brazil,-8,Naval Royalists,0,9,6,1893,4,16,1894,-8,-8,-8,-8,-8,-8,-8,1,BRA,Naval Royalists,1,-8,1000,-9,4.1
+623,Tonghak Rebellion,4,740,Japan,-8,-8,1,10,24,1894,11,28,1894,-8,-8,-8,-8,-8,-8,-8,7,JPN,Tonghak Society,1,-8,-9,-8,4.1
+623,Tonghak Rebellion,4,730,Korea,-8,Tonghak Society,1,2,29,1894,5,6,1894,9,14,1894,11,28,1894,-8,7,KOR,Tonghak Society,1,-8,-9,-9,4.1
+625,Third Peru,4,135,Peru,-8,Liberals,0,10,15,1894,3,19,1895,-8,-8,-8,-8,-8,-8,-8,1,PER,Liberals,2,-8,-9,-9,4.1
+626,Fifth Colombian,4,100,Colombia,-8,Liberals,0,1,22,1895,3,15,1895,-8,-8,-8,-8,-8,-8,-8,1,COL,Liberals,1,-8,400,800,4.1
+627,Ecuador Liberals,4,130,Ecuador,-8,liberal caudillos,0,2,18,1895,9,22,1895,-8,-8,-8,-8,-8,-8,-8,1,ECU,liberal caudillos,2,-8,900,100,4.1
+628,First Gansu Muslim,5,710,China,-8,Gansu Muslims,0,4,-9,1895,4,-9,1896,-8,-8,-8,-8,-8,-8,-8,7,CHN,Gansu Muslims,1,-8,-9,-9,4.1
+630,Druze-Turkish,5,640,Ottoman Empire,-8,Druze,0,10,-9,1895,-9,-9,1896,-8,-8,-8,-8,-8,-8,-8,6,TUR,Druze,1,-8,-9,-9,4.1
+631,Second Cretan,5,640,Ottoman Empire,-8,Cretan Muslims,0,3,10,1896,2,14,1897,-8,-8,-8,-8,-8,-8,-8,2,GRC,Cretan Muslims,4,76,-9,-9,4.1
+632,Third Brazil-Canudos,5,140,Brazil,-8,Canudos,0,10,1,1896,10,5,1897,-8,-8,-8,-8,-8,-8,-8,1,BRA,Brazil,1,-8,2200,3000,4.1
+633,Fourth Venezuelan,4,101,Venezuela,-8,Castro Led Rebels,0,5,24,1899,10,22,1899,-8,-8,-8,-8,-8,-8,-8,1,VEN,Castro Led Rebels,2,-8,1200,900,4.1
+635,Second Yaqui War,5,70,Mexico,-8,Yaqui Indians,0,7,21,1899,1,18,1900,-8,-8,-8,-8,-8,-8,-8,1,MEX,Yaqui Indians,1,-8,100,1500,4.1
+636,Sixth Colombian (War of the 1000 Days),4,100,Colombia,-8,Liberals,0,10,17,1899,11,21,1902,-8,-8,-8,-8,-8,-8,-8,1,COL,Liberals,1,-8,47000,53000,4.1
+638,Fifth Venezuelan,4,101,Venezuela,-8,Matos Led Rebels,0,12,19,1901,7,19,1903,-8,-8,-8,-8,-8,-8,-8,1,VEN,Matos Led Rebels,1,-8,1000,3000,4.1
+640,Ilinden,5,640,Ottoman Empire,-8,IMRO Rebels,0,8,2,1903,11,2,1903,-8,-8,-8,-8,-8,-8,-8,2,BGR,IMRO Rebels,1,-8,5330,1000,4.1
+641,First Uruguay,4,165,Uruguay,-8,Blancos,0,1,1,1904,9,1,1904,-8,-8,-8,-8,-8,-8,-8,1,URU,Blancos,1,-8,-9,-9,4.1
+642,Second Yemen Rebellion,5,640,Ottoman Empire,-8,Imam Yahya's forces,0,11,8,1904,1,10,1906,-8,-8,-8,-8,-8,-8,-8,6,YEM,Yemen,6,-8,30000,-9,4.1
+643,Bloody Sunday,4,365,Russia,-8,Workers/Peasants,0,1,22,1905,1,1,1906,-8,-8,-8,-8,-8,-8,-8,2,RUS,Workers/Peasants,1,-8,1500,-9,4.1
+645,Romanian Peasant Revolt,4,360,Romania,-8,Peasants,0,3,15,1907,4,30,1907,-8,-8,-8,-8,-8,-8,-8,2,ROU,Peasants,1,-8,2000,-9,4.1
+646,Overthrow of Abd el-Aziz,4,220,France,-8,-8,1,8,7,1907,6,15,1908,-8,-8,-8,-8,-8,-8,-8,6,FRA,Mulai el-Hafid,2,-8,200,-8,4.1
+646,Overthrow of Abd el-Aziz,4,600,Morocco,-8,Mulai el-Hafid,1,8,1,1907,9,1,1908,-8,-8,-8,-8,-8,-8,-8,6,Mar,Mulai el-Hafid,2,-8,400,800,4.1
+647,Iranian Constitution War,4,365,Russia,-8,-8,1,4,30,1909,7,17,1909,-8,-8,-8,-8,-8,-8,-8,6,RUS,Constitutionalists,2,-8,100,-8,4.1
+647,Iranian Constitution War,4,630,Iran,-8,Constitutionalists,1,6,23,1908,7,17,1909,-8,-8,-8,-8,-8,-8,-8,6,IRN,Constitutionalists,2,-8,-9,-9,4.1
+648,Young Turks Counter-coup,4,640,Ottoman Empire,-8,Anti-government troops,0,4,14,1909,4,28,1909,-8,-8,-8,-8,-8,-8,-8,6,TUR,Anti-government troops,1,-8,-9,-9,4.1
+650,Second Albanian Revolt,5,640,Ottoman Empire,-8,Albania,0,3,-9,1910,10,16,1912,-8,-8,-8,-8,-8,-8,-8,2,ALB,Albania,4,100,-9,-9,4.1
+651,Asir-Yemen Revolt,5,640,Ottoman Empire,-8,Yemen & Asir Imam Ibn Idris & Sayyid Muhammad,0,10,15,1910,10,9,1911,-8,-8,-8,-8,-8,-8,-8,6,YEM,Yemen & Asir,6,-8,7000,2000,4.1
+652,Third Mexican,4,70,Mexico,-8,Liberals & Radicals,0,11,20,1910,7,15,1914,-8,-8,-8,-8,-8,-8,-8,1,MEX,Liberals & Radicals,2,-8,56250,37500,4.1
+656,Paraguay,4,150,Paraguay,-8,Radicals,0,7,15,1911,5,11,1912,-8,-8,-8,-8,-8,-8,-8,1,PRY,Radicals,2,-8,4000,1000,4.1
+657,First Nationalist,4,710,China,-8,Nat. Rel. Alliance,0,10,11,1911,12,31,1911,-8,-8,-8,-8,-8,-8,-8,7,CHN,Republicans,2,-8,800,200,4.1
+658,Cuban Black Uprising,5,40,Cuba,-8,Patri do Indepentente,0,5,20,1912,6,27,1912,-8,-8,-8,-8,-8,-8,-8,1,CUB,Patri do Indepentente,1,-8,50,1000,4.1
+670,Ecuadorian Civil War,5,130,Ecuador,-8,Esmeraldas province,0,-9,-9,1912,-9,-9,1914,-8,-8,-8,-8,-8,-8,-8,1,ECU,Esmeraldas province,1,-8,-9,-9,4.1
+671,Second Nationalist,4,710,China,-8,Republicans,0,7,12,1913,9,1,1913,-8,-8,-8,-8,-8,-8,-8,7,CHN,Republicans,1,-8,-9,-9,4.1
+672,China Pai Ling (White Wolf),5,710,China,-8,Pai-Lings,0,3,15,1914,9,15,1914,-8,-8,-8,-8,-8,-8,-8,7,CHN,Pai-Lings,1,-8,-9,-9,4.1
+673,Fourth Mexican,4,2,United States,-8,-8,1,3,15,1915,2,5,1917,-8,-8,-8,-8,-8,-8,-8,1,MEX,Conventionists,1,-8,15,-8,4.1
+673,Fourth Mexican,4,70,Mexico,-8,Conventionists,1,11,19,1914,7,28,1920,-8,-8,-8,-8,-8,-8,-8,1,MEX,Conventionists,1,-8,18750,12500,4.1
+675,Southern China Revolt,5,710,China,-8,Yunnan Rebels,0,1,-9,1916,11,17,1918,-8,-8,-8,-8,-8,-8,-8,7,CHN,Yunnan Rebels,1,-8,-9,-9,4.1
+676,Russia-Turkestan,5,365,Russia,-8,Kirghiz & Kazaks,0,7,4,1916,2,27,1917,-8,-8,-8,-8,-8,-8,-8,2,RUS,Kirghiz & Kazables,1,-8,350,1000,4.1
+677,Russian Civil War,4,-8,-8,375,Finland,1,4,15,1919,4,30,1919,-8,-8,-8,-8,-8,-8,-8,2,FIN,,1,-8,-8,50,4.1
+677,Russian Civil War,4,-8,-8,740,Japan,1,8,3,1918,10,15,1920,-8,-8,-8,-8,-8,-8,-8,2,JPN,,1,-8,-8,1500,4.1
+677,Russian Civil War,4,365,USSR,-8,Anti-Bolsheviks,1,12,9,1917,3,18,1921,-8,-8,-8,-8,-8,-8,-8,2,RUS,Anti-Bolsheviks,1,-8,475000,325000,4.1
+677,Russian Civil War,4,-8,-8,200,United Kingdom,1,6,23,1918,3,15,1920,-8,-8,-8,-8,-8,-8,-8,2,GBR,,1,-8,-8,350,4.1
+677,Russian Civil War,4,-8,-8,2,United States of America,1,7,1,1918,4,20,1920,-8,-8,-8,-8,-8,-8,-8,2,USA,,1,-8,-8,275,4.1
+677,Russian Civil War,4,-8,-8,220,France,1,6,23,1918,9,30,1919,-8,-8,-8,-8,-8,-8,-8,2,FRA,,1,-8,-8,50,4.1
+680,Finnish Civil War,4,255,Germany,-8,-8,1,4,3,1918,5,16,1918,-8,-8,-8,-8,-8,-8,-8,2,GER,,1,-8,950,-8,4.1
+680,Finnish Civil War,4,-8,-8,365,USSR,1,1,28,1918,5,16,1918,-8,-8,-8,-8,-8,-8,-8,2,RUS,,1,-8,-8,400,4.1
+680,Finnish Civil War,4,375,Finland,-8,Red Guard,1,1,28,1918,4,30,1918,-8,-8,-8,-8,-8,-8,-8,2,FIN,Communists,1,-8,5300,8500,4.1
+681,Western Ukrainian,6,-8,Ukraine Poles,-8,Ukrainians,0,11,1,1918,2,13,1919,-8,-8,-8,-8,-8,-8,-8,2,UKR,Poles,4,109,-9,-9,4.1
+682,Sparticist Rising,7,-8,Socialists,-8,German Freikorps,0,1,6,1919,5,1919,,-8,-8,-8,-8,-8,-8,-8,2,GER,Socialists,2,-8,2100,70,4.1
+683,Hungary's Red Terror,4,310,Hungary,-8,Anti-Communists,0,3,25,1919,2,15,1920,-8,-8,-8,-8,-8,-8,-8,2,HUN,Anti-Communists,2,-8,1000,500,4.1
+685,First Chinese Warlord,7,-8,Anhui army,-8,Chihli & Fengtien,0,7,14,1920,7,19,1920,-8,-8,-8,-8,-8,-8,-8,7,CHN,Chihli army,2,-8,-9,-9,4.1
+686,Green Rebellion,5,365,USSR,-8,Peasants in Ta,0,8,-9,1920,8,-9,1921,-8,-8,-8,-8,-8,-8,-8,2,RUS,Peasants in Ta,1,-8,1700,5000,4.1
+687,Gilan Marxists,4,-8,-8,365,USSR,1,8,10,1920,11,11,1921,-8,-8,-8,-8,-8,-8,-8,6,RUS,SSRI,1,-8,-8,-9,4.1
+687,Gilan Marxists,4,630,Iran,-8,SSRI,1,8,10,1920,11,11,1921,-8,-8,-8,-8,-8,-8,-8,6,IRN,SSRI,1,-8,-9,-9,4.1
+688,Italian Fascist,7,-8,Blackshirts,-8,Leftists,0,10,-9,1920,10,1,1922,-8,-8,-8,-8,-8,-8,-8,2,ITA,Blackshirts,1,-8,300,3000,4.1
+690,Kronstadt Rebellion,5,365,USSR,-8,Sailors,0,3,7,1921,3,18,1921,-8,-8,-8,-8,-8,-8,-8,2,RUS,Sailors,1,-8,2000,600,4.1
+691,Bashmachi in Turkestan,5,365,USSR,-8,Basmachi/Enver Pasha,0,11,10,1921,7,-9,1923,-8,-8,-8,-8,-8,-8,-8,2,RUS,Muslims/Enver Pasha,1,-8,1000,2500,4.1
+692,Second Chinese Warlord,7,-8,Chihli army,-8,Fengtien army,0,4,8,1922,5,5,1922,-8,-8,-8,-8,-8,-8,-8,7,CHN,Fengtien army,1,-8,-9,-9,4.1
+693,Agrarian Rising,4,355,Bulgaria,-8,Agrarian League,0,9,23,1923,9,28,1923,-8,-8,-8,-8,-8,-8,-8,2,BUL,Agrarian League,1,-8,-9,-9,4.1
+695,De La Huerta Rebellion,4,70,Mexico,-8,Huerta Led Rebels,0,12,4,1923,2,-9,1924,-8,-8,-8,-8,-8,-8,-8,1,MEX,Huerta Led Rebels,1,-8,-9,-9,4.1
+696,Honduran Conservative,4,91,Honduras,-8,Conservatives,0,2,9,1924,3,31,1924,-8,-8,-8,-8,-8,-8,-8,1,HON,Conservatives,2,-8,-9,-9,4.1
+697,First Afghan Anti-Reform,4,700,Afghanistan,-8,Khost rebels (anti-reformists),0,3,15,1924,1,15,1925,-8,-8,-8,-8,-8,-8,-8,7,AFG,Khost rebels (anti-reformists),1,-8,-9,-9,4.1
+698,Third Chinese Warlord,6,-8,Feng Yu-Lxiang army,-8,Chang Tso-lin army,0,10,15,1925,4,20,1926,-8,-8,-8,-8,-8,-8,-8,7,CHN,Chang Tso-lin army,2,-8,-9,-9,4.1
+700,Chinese Northern Expedition,4,710,War Lord Gov't.,-8,Guomindang,1,7,1,1926,6,30,1928,-8,-8,-8,-8,-8,-8,-8,7,CHN,Guomindang,2,-8,78000,48000,4.1
+700,Chinese Northern Expedition,4,-8,-8,740,Japan,1,6,1,1927,6,1,1928,-8,-8,-8,-8,-8,-8,-8,7,JPN,Guomindang,2,-8,-8,500,4.1
+701,Cristeros Revolt,4,70,Mexico,-8,Cristeros,0,8,31,1926,6,21,1929,-8,-8,-8,-8,-8,-8,-8,1,MEX,Cristeros,3,-8,6000,4000,4.1
+702,Ethiopian Northern Resistance,5,530,Ethiopia,-8,Northern Resistance,0,8,-9,1928,4,-9,1930,-8,-8,-8,-8,-8,-8,-8,6,ETH,Northern Resistance,1,-8,-9,-9,4.1
+703,Second Gansu Muslim,5,710,China,-8,Gansu Muslims,0,-9,-9,1928,-9,-9,1930,-8,-8,-8,-8,-8,-8,-8,7,CHN,Muslims,1,-8,-9,-9,4.1
+705,Second Afghan Anti-Reform,4,700,Afghanistan,-8,Habibullah (anti-reformists),0,11,10,1928,10,15,1929,-8,-8,-8,-8,-8,-8,-8,7,AFG,Habibullah (anti-reformists),1,-8,7500,7500,4.1
+706,Intra-Guomindang,4,710,China,-8,War Lords,0,3,1,1929,11,4,1930,-8,-8,-8,-8,-8,-8,-8,7,CHN,War Lords,1,-8,-9,-9,4.1
+707,Escobar Rebellion,4,70,Mexico,-8,Escobar Led Rebels,0,3,3,1929,5,4,1929,-8,-8,-8,-8,-8,-8,-8,1,MEX,Escoban Led Rebels,1,-8,400,1600,4.1
+708,Ikhwan Revolt,4,670,Saudi Arabia,-8,Ikhwan,0,3,30,1929,1,10,1930,-8,-8,-8,-8,-8,-8,-8,6,SAU,Ikhwan,1,-8,500,5000,4.1
+710,"Chinese Civil War, Phase 1",4,710,China,-8,Communists,0,11,15,1930,12,31,1936,-8,-8,-8,-8,-8,-8,-8,7,CHN,Communists,6,-8,200000,300000,4.1
+711,Xinjiang Muslim Revolt,5,365,USSR,-8,-8,1,1,-9,1934,8,-9,1934,-8,-8,-8,-8,-8,-8,-8,7,RUS,Central 7n Rebels,1,-8,1000,-8,4.1
+711,Xinjiang Muslim Revolt,5,710,China,-8,Central Asian Rebels,1,2,-9,1931,7,7,1934,-8,-8,-8,-8,-8,-8,-8,7,CHN,Central Asian Rebels,1,-8,10000,10000,4.1
+712,Matanza,4,92,El Salvador,-8,Leftists,0,1,20,1932,1,29,1932,-8,-8,-8,-8,-8,-8,-8,1,SLV,Leftists,1,-8,100,2500,4.1
+713,Aprista Revolt,4,135,Peru,-8,Aprista Rebels,0,5,7,1932,7,17,1932,-8,-8,-8,-8,-8,-8,-8,1,PER,Aprista Rebels,1,-8,100,1000,4.1
+715,Paulista Rebellion,4,140,Brazil,-8,Paolistas,0,6,9,1932,8,31,1932,-8,-8,-8,-8,-8,-8,-8,1,BRA,Paolistas,1,-8,-9,-9,4.1
+716,Fukien Revolt,4,710,China,-8,19th Route Army,0,1,5,1934,1,15,1934,-8,-8,-8,-8,-8,-8,-8,7,CHN,19th Route Army,1,-8,-9,-9,4.1
+717,Spanish Miners,5,230,Spain,-8,Asturian Miners,0,10,4,1934,10,8,1934,-8,-8,-8,-8,-8,-8,-8,2,ESP,Asturian Miners,1,-8,284,1051,4.1
+718,Spanish Civil War,4,230,Spain,-8,Falange,1,7,18,1936,3,29,1939,-8,-8,-8,-8,-8,-8,-8,2,ESP,Fascists,2,-8,286000,174000,4.1
+718,Spanish Civil War,4,-8,-8,235,Portugal,1,8,1,1936,3,29,1939,-8,-8,-8,-8,-8,-8,-8,2,PRT,Fascists,2,-8,-8,2000,4.1
+718,Spanish Civil War,4,-8,-8,255,Germany,1,8,27,1936,3,29,1939,-8,-8,-8,-8,-8,-8,-8,2,GER,Fascists,2,-8,-8,300,4.1
+718,Spanish Civil War,4,-8,-8,325,Italy,1,7,30,1936,3,29,1939,-8,-8,-8,-8,-8,-8,-8,2,ITA,Fascists,2,-8,-8,4000,4.1
+720,Greek Civil War,4,200,United Kingdom,-8,-8,1,12,5,1944,1,11,1945,-8,-8,-8,-8,-8,-8,-8,2,GBR,Communists,1,-8,237,-8,4.1
+720,Greek Civil War,4,350,Greece,-8,Communists,1,12,3,1944,2,12,1945,2,12,1946,10,16,1949,-8,2,GRC,Communists,1,-8,17970,50000,4.1
+721,Polish Ukrainians,5,290,Poland,-8,UPA,1,5,8,1945,11,18,1947,-8,-8,-8,-8,-8,-8,-8,2,POL,UPA,1,-8,11000,8700,4.1
+721,Polish Ukrainians,5,365,USSR,-8,-8,1,5,8,1945,11,18,1947,-8,-8,-8,-8,-8,-8,-8,2,RUS,UPA,1,-8,5000,-8,4.1
+722,Ukrainian Partisans,5,365,USSR,-8,UPA,0,5,8,1945,12,31,1947,-8,-8,-8,-8,-8,-8,-8,2,RUS,UPA,1,-8,35000,-9,4.1
+723,Forest Brethren,5,365,USSR,-8,Baltic Guerillas,0,5,8,1945,12,31,1951,-8,-8,-8,-8,-8,-8,-8,2,RUS,Baltic Guerillas,1,-8,14700,17700,4.1
+725,"Chinese Civil War, Phase 2",4,710,China,-8,Communists,0,3,15,1946,4,21,1950,-8,-8,-8,-8,-8,-8,-8,7,CHN,Communists,2,-8,327600,872400,4.1
+726,Taiwan Revolt,5,710,China,-8,Taiwanese,0,2,28,1947,3,21,1947,-8,-8,-8,-8,-8,-8,-8,7,CHN,Taiwanese,1,-8,250,1000,4.1
+727,Paraguay,4,150,Paraguay,-8,Leftists,0,3,7,1947,8,20,1947,-8,-8,-8,-8,-8,-8,-8,1,PRY,Leftists,1,-8,-9,-9,4.1
+728,Yemeni Imamate,4,678,Yemen,-8,Anti-Imam Coalition,0,2,17,1948,3,20,1948,-8,-8,-8,-8,-8,-8,-8,6,YEM,Anti-Imam Coalition,1,-8,-9,-9,4.1
+730,Costa Rica,4,94,Costa Rica,-8,National Union Party,0,3,12,1948,4,17,1948,-8,-8,-8,-8,-8,-8,-8,1,CRI,National Union Party,2,-8,1500,500,4.1
+731,"Seventh Colombian ""La Violencia""",4,100,Colombia,-8,Liberals,0,4,9,1948,8,7,1958,-8,-8,-8,-8,-8,-8,-8,1,COL,Liberals,1,-8,9800,20000,4.1
+732,First Burmese,5,775,Burma,-8,Karens & Communists,0,8,15,1948,7,31,1951,-8,-8,-8,-8,-8,-8,-8,7,BUR,Karens & Communists,1,-8,-9,-9,4.1
+733,South Moluccas,5,850,Indonesia,-8,Moluccans,0,5,31,1950,11,3,1950,-8,-8,-8,-8,-8,-8,-8,7,IDN,Moluccans,1,-8,-9,-9,4.1
+735,Hukbalahap Rebellion,4,840,Philippines,-8,Huks,0,9,1,1950,5,-9,1954,-8,-8,-8,-8,-8,-8,-8,7,PHL,Huks,1,-8,1600,9700,4.1
+737,Bolivia,4,145,Bolivia,-8,Leftists,0,4,8,1952,4,11,1952,-8,-8,-8,-8,-8,-8,-8,1,BOL,Leftists,2,-8,-9,-9,4.1
+738,Indonesia Darul Islam,4,850,Indonesia,-8,Darul Islam,0,9,20,1953,11,23,1953,-8,-8,-8,-8,-8,-8,-8,7,IDN,Darul Islam,1,-8,1700,1000,4.1
+740,Argentine Military,4,160,Argentina,-8,Military,0,6,15,1955,9,19,1955,-8,-8,-8,-8,-8,-8,-8,1,ARG,Army,2,-8,-9,-9,4.1
+741,Tibetan Khamba Rebellion,5,710,China,-8,Khamba Tibetans,0,3,1,1956,4,14,1959,-8,-8,-8,-8,-8,-8,-8,7,CHN,Khamba Tibetans,1,-8,4000,12000,4.1
+742,Indonesian Leftists,4,850,Indonesia,-8,Leftists,0,12,15,1956,6,4,1962,-8,-8,-8,-8,-8,-8,-8,7,IDN,Leftists,1,-8,3700,23500,4.1
+743,First Lebanese,4,2,United States of America,-8,-8,1,7,16,1958,9,15,1958,-8,-8,-8,-8,-8,-8,-8,6,USA,Leftists,1,-8,1,-8,4.1
+743,First Lebanese,4,660,Lebanon,-8,National Front,1,5,9,1958,9,15,1958,-8,-8,-8,-8,-8,-8,-8,6,LBN,Leftists,1,-8,-9,-9,4.1
+745,Cuban Revolution,4,40,Cuba,-8,Castroites,0,5,24,1958,1,2,1959,-8,-8,-8,-8,-8,-8,-8,1,CUB,Castroites,2,-8,2000,1000,4.1
+746,Second Burmese,4,775,Burma,-8,Karens & Communists,0,11,-9,1958,4,-9,1960,-8,-8,-8,-8,-8,-8,-8,7,BUR,Karens & Communists,7,-8,850,2300,4.1
+747,Iraq-Shammar,4,645,Iraq,-8,Shammar Tribe & Pro-WesternOfficers,0,3,6,1959,3,10,1959,-8,-8,-8,-8,-8,-8,-8,6,IRQ,Shammar Tribe & Pro-WesternOfficers,1,-8,-9,-9,4.1
+748,Vietnam Phase 1,4,2,United States of America,-8,-8,1,1,1,1961,2,6,1965,-8,-8,-8,-8,-8,-8,-8,7,USA,NLF,4,163,506,-8,4.1
+748,Vietnam Phase 1,4,817,"Vietnam, Republic of",-8,NLF,1,1,1,1960,2,6,1965,-8,-8,-8,-8,-8,-8,-8,7,VNM,NLF,4,163,23300,76900,4.1
+750,First DRC (Zaire),5,-8,-8,211,Belgium,1,7,11,1960,9,14,1960,-8,-8,-8,-8,-8,-8,-8,4,BEL,Katanga & Leftists,1,-8,-8,50,4.1
+750,First DRC (Zaire),5,490,Zaire,-8,Katanga & Leftists,1,7,4,1960,1,14,1963,-8,-8,-8,-8,-8,-8,-8,4,COG,Katanga & Leftists,1,-8,-9,-9,4.1
+751,First Laotian,4,-8,-8,816,"Vietnam, Democratic Rep.",1,5,1,1961,6,15,1962,-8,-8,-8,-8,-8,-8,-8,7,VNM,Pathet Lao,3,-8,-8,-9,4.1
+751,First Laotian,4,812,Laos,-8,Pathet Lao,1,10,15,1960,7,15,1962,-8,-8,-8,-8,-8,-8,-8,7,LAO,Pathet Lao,3,-8,4000,1000,4.1
+752,First Iraqi Kurd,5,645,Iraq,-8,Kurds,0,9,11,1961,11,22,1963,-8,-8,-8,-8,-8,-8,-8,6,IRQ,Kurds,6,-8,500,2000,4.1
+753,Algerian Revolutionaries,4,615,Algeria,-8,ALN,0,7,28,1962,1,15,1963,-8,-8,-8,-8,-8,-8,-8,6,ALG,ALN,2,-8,800,700,4.1
+755,North Yemen,4,651,Egypt/United Arab Republic,-8,-8,1,12,15,1962,10,16,1967,-8,-8,-8,-8,-8,-8,-8,6,EGY,Royalists,1,-8,10000,-8,4.1
+755,North Yemen,4,678,Yemen Arab Republic,-8,Royalists,1,11,15,1962,9,3,1969,-8,-8,-8,-8,-8,-8,-8,6,YEM,Royalists,1,-8,-9,-9,4.1
+756,Second Laotian Phase 1,4,2,United States of America,-8,-8,1,5,19,1964,1,12,1968,-8,-8,-8,-8,-8,-8,-8,7,USA,Pathet Lao,4,170,200,-8,4.1
+756,Second Laotian Phase 1,4,812,Laos,-8,Pathet Lao,1,3,19,1963,1,12,1968,-8,-8,-8,-8,-8,-8,-8,7,LAO,Pathet Lao,4,170,11250,7250,4.1
+756,Second Laotian Phase 1,4,-8,-8,816,"Vietnam, Democratic Rep.",1,3,19,1963,1,12,1968,-8,-8,-8,-8,-8,-8,-8,7,VNM,Pathet Lao,4,170,-8,2250,4.1
+757,First Ogaden,5,-8,-8,520,Somalia,1,11,-9,1963,3,30,1964,-8,-8,-8,-8,-8,-8,-8,4,SOM,Ogaden,1,-8,-8,-9,4.1
+757,First Ogaden,5,530,Ethiopia,-8,Ogaden,1,6,-9,1963,3,30,1964,-8,-8,-8,-8,-8,-8,-8,4,ETH,Ogaden,1,-8,-9,-9,4.1
+758,First South Sudan,5,625,Sudan,-8,Anya Nya,0,10,1,1963,2,28,1972,-8,-8,-8,-8,-8,-8,-8,6,SSD,Anya Nya,3,-8,-9,-9,4.1
+760,Second DRC (Jeunesse),5,490,Congo,-8,Juenesse warriors,0,10,-9,1963,1,1,1965,-8,-8,-8,-8,-8,-8,-8,4,COG,Juenesse warriors,1,-8,-9,-9,4.1
+761,First Rwanda,4,517,Rwanda,-8,Watusi,0,11,15,1963,2,6,1964,-8,-8,-8,-8,-8,-8,-8,4,RWA,Watusi,1,-8,100,900,4.1
+762,Third DRC (Simba) Rebellion,4,211,Belgium,-8,-8,1,11,24,1964,9,14,1965,-8,-8,-8,-8,-8,-8,-8,4,BEL,Gbenye followers,1,-8,4,-8,4.1
+762,Third DRC (Simba) Rebellion,4,490,Congo,-8,Gbenye followers,1,1,1,1964,9,14,1965,-8,-8,-8,-8,-8,-8,-8,4,COG,Gbenye followers,1,-8,250,4000,4.1
+763,Zanzibar Arab-African,4,511,Zanzibar,-8,Africans,0,1,12,1964,1,15,1964,-8,-8,-8,-8,-8,-8,-8,4,TZA,Africans,2,-8,-9,-9,4.1
+765,Second Iraqi Kurds,5,645,Iraq,-8,Kurds,0,4,3,1965,6,21,1966,-8,-8,-8,-8,-8,-8,-8,6,IRQ,Iraq,3,-8,500,2500,4.1
+766,Dominican Republic,4,2,United States of America,-8,-8,1,4,29,1965,9,6,1965,-8,-8,-8,-8,-8,-8,-8,1,USA,Leftists,7,-8,27,-8,4.1
+766,Dominican Republic,4,42,Dominican Republic,-8,Leftists,1,4,25,1965,9,6,1965,-8,-8,-8,-8,-8,-8,-8,1,CUB,Leftists,7,-8,2500,-9,4.1
+767,First West Papua,5,850,Indonesia,-8,"OPM, West Papua",0,7,26,1965,7,17,1969,-8,-8,-8,-8,-8,-8,-8,7,IDN,"OPM, West Papua",6,-8,-9,-9,4.1
+768,First Uganda,5,500,Uganda,-8,Buganda Tribe,0,5,23,1966,6,1,1966,-8,-8,-8,-8,-8,-8,-8,4,UGA,Buganda Tribe,1,-8,-9,-9,4.1
+770,First Guatemala,4,2,United States,-8,-8,1,10,-9,1966,8,-9,1968,-8,-8,-8,-8,-8,-8,-8,1,USA,Leftists,1,-8,28,-8,4.1
+770,First Guatemala,4,90,Guatemala,-8,Leftists,1,10,-9,1966,8,-9,1968,-8,-8,-8,-8,-8,-8,-8,1,GTM,Leftists,1,-8,200,800,4.1
+771,First Chad (FROLINAT) Rebellion,5,220,France,-8,-8,1,8,-9,1968,6,16,1971,-8,-8,-8,-8,-8,-8,-8,4,FRA,Frolinat Rebels,1,-8,50,-8,4.1
+771,First Chad (FROLINAT) Rebellion,5,483,Chad,-8,Frolinat Rebels,1,11,-9,1966,6,16,1971,-8,-8,-8,-8,-8,-8,-8,4,TCD,Frolinat Rebels,1,-8,500,3000,4.1
+772,Cultural Revolution Phase 1,6,-8,Red Guard,-8,Regional military,0,1,9,1967,9,4,1967,-8,-8,-8,-8,-8,-8,-8,7,CHN,Regional military,4,776,-9,-9,4.1
+773,Third Burmese,5,775,Burma,-8,Karens & Communists,0,6,-9,1967,10,22,1980,-8,-8,-8,-8,-8,-8,-8,7,BUR,Karens,7,-8,6800,22400,4.1
+775,Biafra,5,475,Nigeria,-8,Biafrans,0,7,6,1967,1,12,1970,-8,-8,-8,-8,-8,-8,-8,4,NGA,Nigeria,1,-8,-9,-9,4.1
+776,Cultural Revolution Phase 2,4,710,China,-8,Red Guard,0,9,5,1967,9,1,1968,-8,-8,-8,-8,-8,-8,772,7,CHN,Red Guard,1,-8,-9,-9,4.1
+777,Third Iraqi Kurds,5,645,Iraq,-8,Kurds,0,1,3,1969,3,11,1970,-8,-8,-8,-8,-8,-8,-8,6,IRQ,Iraq,3,-8,800,3200,4.1
+778,Naxalite Rebellion,5,750,India,-8,Naxalite Marxists,0,2,-9,1970,11,-9,1971,-8,-8,-8,-8,-8,-8,-8,7,IND,Naxalite Marxists,1,-8,100,2000,4.1
+780,Black September,4,-8,-8,652,Syria,1,9,20,1970,9,23,1970,-8,-8,-8,-8,-8,-8,-8,6,SYR,Jordan,1,-8,-8,100,4.1
+780,Black September,4,663,Jordan,-8,Palestinians,1,9,13,1970,9,24,1970,-8,-8,-8,-8,-8,-8,-8,6,JOR,Jordan,1,-8,750,2690,4.1
+781,Second Guatemala,4,90,Guatemala,-8,Leftists,0,11,15,1970,9,15,1971,-8,-8,-8,-8,-8,-8,-8,1,GTM,Guatemala,1,-8,50,950,4.1
