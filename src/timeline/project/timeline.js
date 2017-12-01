@@ -277,6 +277,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 .attr("width", function (d) {
                     return band.xScale(d.end) - band.xScale(d.start); });
             band.parts.forEach(function(part) { part.redraw(); })
+
+            scrubberValue(band.parts[1], items);
         };
 
         bands[bandName] = band;
@@ -287,6 +289,101 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         return timeline;
     };
+
+    //----------------------------------------------------------------------
+    //
+    // infoFlow
+    //
+
+    function scrubberValue(scrubberPart) {
+        var scrubberWindow = [];
+        var infoFlowValues = [];
+        var dataInFile = data.items;
+        dataInFile.forEach(function (value) {
+            var arrayObject = new Object();
+            arrayObject.start = value.start;
+            arrayObject.end = value.end;
+            arrayObject.label = value.label;
+            infoFlowValues.push(arrayObject);
+        });
+        scrubberPart.forEach(function (part) {
+            scrubberWindow.push(part);
+        });
+        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
+        var centreValue = parseInt(scrubberWindow[0][1].innerHTML);
+        generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue);
+    }
+
+    function generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue) {
+        var start = centreValue - (scrubberWindowRange / 2);
+        var end = centreValue + (scrubberWindowRange / 2);
+        var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
+        var valuesOnTheInfoFlow = [];
+        var result = [];
+        infoFlowValues.forEach(function (value) {
+            var startDateOfFile = value.start.getUTCFullYear();
+            var endDateOfFile = value.end.getUTCFullYear();
+            if ((startDateOfFile >= start && endDateOfFile <= end) || (startDateOfFile < start && (endDateOfFile > start && endDateOfFile <= end)) || ((startDateOfFile >= start && startDateOfFile < end) && endDateOfFile > end)) {
+                valuesOnTheInfoFlow.push(value);
+                var centreCF = centreValue - startDateOfFile;
+                if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
+                    centreDisplayDateCF = startDateOfFile;
+                    //result = [];
+                    result.push(value);
+                }
+            }
+        });
+        if(result.length==0){
+            result[0] = "";
+        }
+        var centre = displayInfoFlow(valuesOnTheInfoFlow, result[0]);
+    }
+
+
+    function displayInfoFlow(valuesOnTheInfoFlow, centreDisplayValue) {
+        d3.select("#svgInfoFlow").remove();
+
+        var svg = d3.select(".infoFlow").append("svg")
+            .attr("class", "svg")
+            .attr("id", "svgInfoFlow")
+            .attr("width", 960)
+            .attr("height", 200)
+            .append("g")
+            .attr("transform", "translate(" + 20 + "," + 20 + ")");
+
+//var svgInfoFlow = d3.selectAll(domInfoFlow)
+        var svgInfoFlow = d3.select("#svgInfoFlow");
+        var texts = svgInfoFlow.selectAll("text")
+            .data(" ")
+            .enter();
+
+        texts.append("text")
+            .text(centreDisplayValue.label)
+            .attr("x", 460)
+            .attr("y", 80)
+            .attr("font-size", 100)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Helvetica")
+            .attr("font-weight", "Bold");
+
+        texts.append("text")
+            .text(centreDisplayValue.start)
+            .attr("x", 440)
+            .attr("y", 100)
+            .attr("font-size", 40)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Helvetica")
+            .attr("font-weight", "Bold");
+
+        texts.append("text")
+            .text(centreDisplayValue.end)
+            .attr("x", 440)
+            .attr("y", 120)
+            .attr("font-size", 40)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Helvetica")
+            .attr("font-weight", "Bold");
+    }
 
     //----------------------------------------------------------------------
     //
