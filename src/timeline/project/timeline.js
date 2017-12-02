@@ -304,6 +304,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             arrayObject.start = value.start;
             arrayObject.end = value.end;
             arrayObject.label = value.label;
+            arrayObject.loc = value.loc;
             infoFlowValues.push(arrayObject);
         });
         scrubberPart.forEach(function (part) {
@@ -320,7 +321,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var start = centreValue - (scrubberWindowRange / 2);
         var end = centreValue + (scrubberWindowRange / 2);
         var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
-        var valuesOnTheInfoFlow = [];
+        var eventsWithinScruber = [];
         var referenceEvent = [];
         infoFlowValues.forEach(function (value) {
             var startDateOfFile = value.start.getUTCFullYear() + (value.start.getUTCMonth()/12);
@@ -328,13 +329,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             if ((startDateOfFile >= start && endDateOfFile <= end) ||
                (startDateOfFile < start && (endDateOfFile > start)) ||
                (startDateOfFile >= start && startDateOfFile < end)) {
-                valuesOnTheInfoFlow.push(value);
-                console.log(valuesOnTheInfoFlow);
+                eventsWithinScruber.push(value);
+                console.log(eventsWithinScruber);
                 var centreCF = centreValue - startDateOfFile;
     //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
                     centreDisplayDateCF = startDateOfFile;
-                    //referenceEvent = [];
                     referenceEvent.push(value);
                 }
             }
@@ -342,11 +342,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         if(referenceEvent.length==0){
             referenceEvent[0] = "";
         }
-        var centre = displayInfoFlow(valuesOnTheInfoFlow, referenceEvent[0]);
+        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
     }
 
 
-    function displayInfoFlow(valuesOnTheInfoFlow, centreDisplayValue) {
+    function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
         //d3.select("#svgInfoFlow").remove();
 
         //var svg = d3.select(".infoFlow").append("svg")
@@ -378,11 +378,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("transform", "translate(2, 30)")
             .text(centreDisplayValue.end);
 
-//          .text(centreDisplayValue.label + " " +
-//                centreDisplayValue.start + "-" +
-//                centreDisplayValue.end);
-//          .select("p").p("hello")
-
+        var infoFlowTextBegin = d3.selectAll(domInfoFlow)
+            .select(".band")
+            .selectAll("g")
+            .select("#loc")
+            .attr("transform", "translate(2, 40)")
+            .text(centreDisplayValue.loc);
     //      infoFlowText()
     //      .data("Info-Flow")
     //      .enter();

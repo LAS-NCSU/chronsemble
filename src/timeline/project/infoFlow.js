@@ -52,9 +52,14 @@ function infoFlow(domElement) {
         .attr("id", "begin");
 
     var textEnd = svg.select(".band")
-          .selectAll("g")
-          .append("text")
-          .attr("id", "end");
+        .selectAll("g")
+        .append("text")
+        .attr("id", "end");
+
+    var textEnd = svg.select(".band")
+        .selectAll("g")
+        .append("text")
+        .attr("id", "loc");
 
 //      .data(" ")
 //      .enter();
