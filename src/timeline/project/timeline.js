@@ -277,7 +277,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 .attr("width", function (d) {
                     return band.xScale(d.end) - band.xScale(d.start); });
             band.parts.forEach(function(part) { part.redraw(); })
-
+//console.log("band.parts[1]:", band.parts[1]);
             scrubberValue(band.parts[1], items);
         };
 
@@ -309,8 +309,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         scrubberPart.forEach(function (part) {
             scrubberWindow.push(part);
         });
-        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
-        var centreValue = parseInt(scrubberWindow[0][1].innerHTML);
+//        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
+//        var centreValue = parseInt(scrubberWindow[0][1].innerHTML);
+        var scrubberWindowRange = parseFloat(scrubberWindow[0][0].innerHTML);
+        var centreValue = parseFloat(scrubberWindow[0][1].innerHTML);
         generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue);
     }
 
@@ -319,27 +321,28 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var end = centreValue + (scrubberWindowRange / 2);
         var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
         var valuesOnTheInfoFlow = [];
-        var result = [];
+        var referenceEvent = [];
         infoFlowValues.forEach(function (value) {
-            var startDateOfFile = value.start.getUTCFullYear();
-            var endDateOfFile = value.end.getUTCFullYear();
+            var startDateOfFile = value.start.getUTCFullYear() + (value.start.getUTCMonth()/12);
+            var endDateOfFile = value.end.getUTCFullYear() + (value.end.getUTCMonth()/12);
             if ((startDateOfFile >= start && endDateOfFile <= end) ||
-               (startDateOfFile < start && (endDateOfFile > start && endDateOfFile <= end)) ||
-               ((startDateOfFile >= start && startDateOfFile < end) && endDateOfFile > end)) {
+               (startDateOfFile < start && (endDateOfFile > start)) ||
+               (startDateOfFile >= start && startDateOfFile < end)) {
                 valuesOnTheInfoFlow.push(value);
+                console.log(valuesOnTheInfoFlow);
                 var centreCF = centreValue - startDateOfFile;
-                console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
+    //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
                     centreDisplayDateCF = startDateOfFile;
-                    //result = [];
-                    result.push(value);
+                    //referenceEvent = [];
+                    referenceEvent.push(value);
                 }
             }
         });
-        if(result.length==0){
-            result[0] = "";
+        if(referenceEvent.length==0){
+            referenceEvent[0] = "";
         }
-        var centre = displayInfoFlow(valuesOnTheInfoFlow, result[0]);
+        var centre = displayInfoFlow(valuesOnTheInfoFlow, referenceEvent[0]);
     }
 
 
@@ -612,7 +615,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 targetNames.forEach(function(d) {
                     bands[d].xScale.domain(domain);
                     bands[d].redraw();
-                    console.log("moving: d",d,domain);
+    //                console.log("moving: d",d,domain);
                 });
             });
 
