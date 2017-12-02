@@ -30,6 +30,33 @@ function infoFlow(domElement) {
       .attr("height", height);
 
   var flow = svg.append("g")
-      .attr("class", "flow")
-      .attr("clip-path", "url(#flow-area)" );
+      .attr("class", "band")
+      .attr("clip-path", "url(#flow-area)" )
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+//      .append("text","Info-Flow");
+
+  var textLabel = svg.select(".band")
+      .append("svg")
+      .append("g")
+//    .append("div")
+//    .attr("class", "infoFlowCard")
+//    .attr("transform", "translate(40, 40)")
+    .append("text")
+    .attr("id", "label");
+
+    var textBegin = svg.select(".band")
+        .selectAll("g")
+        .append("text")
+        .attr("id", "begin");
+
+    var textEnd = svg.select(".band")
+          .selectAll("g")
+          .append("text")
+          .attr("id", "end");
+
+//      .data(" ")
+//      .enter();
+
 }

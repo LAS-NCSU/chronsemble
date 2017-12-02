@@ -323,9 +323,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         infoFlowValues.forEach(function (value) {
             var startDateOfFile = value.start.getUTCFullYear();
             var endDateOfFile = value.end.getUTCFullYear();
-            if ((startDateOfFile >= start && endDateOfFile <= end) || (startDateOfFile < start && (endDateOfFile > start && endDateOfFile <= end)) || ((startDateOfFile >= start && startDateOfFile < end) && endDateOfFile > end)) {
+            if ((startDateOfFile >= start && endDateOfFile <= end) ||
+               (startDateOfFile < start && (endDateOfFile > start && endDateOfFile <= end)) ||
+               ((startDateOfFile >= start && startDateOfFile < end) && endDateOfFile > end)) {
                 valuesOnTheInfoFlow.push(value);
                 var centreCF = centreValue - startDateOfFile;
+                console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
                     centreDisplayDateCF = startDateOfFile;
                     //result = [];
@@ -341,22 +344,52 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
 
     function displayInfoFlow(valuesOnTheInfoFlow, centreDisplayValue) {
-        d3.select("#svgInfoFlow").remove();
+        //d3.select("#svgInfoFlow").remove();
 
-        var svg = d3.select(".infoFlow").append("svg")
-            .attr("class", "svg")
-            .attr("id", "svgInfoFlow")
-            .attr("width", 960)
-            .attr("height", 200)
-            .append("g")
-            .attr("transform", "translate(" + 20 + "," + 20 + ")");
+        //var svg = d3.select(".infoFlow").append("svg")
+        //    .attr("class", "svg")
+        //    .attr("id", "svgInfoFlow")
+        //    .attr("width", 960)
+        //    .attr("height", 200)
+        //    .append("g")
+        //    .attr("transform", "translate(" + 20 + "," + 20 + ")");
 
-//var svgInfoFlow = d3.selectAll(domInfoFlow)
-        var svgInfoFlow = d3.select("#svgInfoFlow");
-        var texts = svgInfoFlow.selectAll("text")
-            .data(" ")
-            .enter();
+        var infoFlowTextLabel = d3.selectAll(domInfoFlow)
+          .select(".band")
+          .selectAll("g")
+          .select("#label")
+          .attr("transform", "translate(2, 10)")
+          .text(centreDisplayValue.label);
 
+        var infoFlowTextBegin = d3.selectAll(domInfoFlow)
+            .select(".band")
+            .selectAll("g")
+            .select("#begin")
+            .attr("transform", "translate(2, 20)")
+            .text(centreDisplayValue.start);
+
+        var infoFlowTextBegin = d3.selectAll(domInfoFlow)
+            .select(".band")
+            .selectAll("g")
+            .select("#end")
+            .attr("transform", "translate(2, 30)")
+            .text(centreDisplayValue.end);
+
+//          .text(centreDisplayValue.label + " " +
+//                centreDisplayValue.start + "-" +
+//                centreDisplayValue.end);
+//          .select("p").p("hello")
+
+    //      infoFlowText()
+    //      .data("Info-Flow")
+    //      .enter();
+
+        //var infoFlowText = d3.select("#svgInfoFlow");
+//        var texts = infoFlowText.attr("transform", "translate(40, 40)");
+//            .text(Info-Flow2);
+//            .data(" ")
+  //          .enter();
+/*
         texts.append("text")
             .text(centreDisplayValue.label)
             .attr("x", 460)
@@ -383,6 +416,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("text-anchor", "middle")
             .attr("font-family", "Helvetica")
             .attr("font-weight", "Bold");
+*/
     }
 
     //----------------------------------------------------------------------
