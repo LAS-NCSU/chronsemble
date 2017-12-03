@@ -37,16 +37,4 @@ function spatioFlow(domElement) {
       .attr("width", width)
       .attr("height", height);
 
-  //var map = d3.geomap.choropleth()
-  var map = d3.geomap()
-      .geofile('/d3-geomap/topojson/world/countries.json');
-    //  .colors(['green','red'])
-    //  .column('hit')
-    //  .domain([0, 1])
-    //  .legend(false)
-    //  .unitId('Country');
-
-  d3.select('#map')
-      .call(map.draw, map);
-
 }

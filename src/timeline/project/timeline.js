@@ -305,6 +305,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             arrayObject.end = value.end;
             arrayObject.label = value.label;
             arrayObject.loc = value.loc;
+            arrayObject.proximity = "0";
             infoFlowValues.push(arrayObject);
         });
         scrubberPart.forEach(function (part) {
@@ -330,7 +331,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                (startDateOfFile < start && (endDateOfFile > start)) ||
                (startDateOfFile >= start && startDateOfFile < end)) {
                 eventsWithinScruber.push(value);
-                console.log(eventsWithinScruber);
+            //    console.log(eventsWithinScruber);
                 var centreCF = centreValue - startDateOfFile;
     //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
@@ -343,8 +344,57 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             referenceEvent[0] = "";
         }
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
+        var locations = updateLocations(referenceEvent);
     }
 
+    function updateLocations(eventLocation) {
+
+      var map = d3.geomap.choropleth()
+                  .geofile('/d3-geomap/topojson/world/countries.json')
+                  .colors(['red','green'])
+                  .domain([0, 1])
+                  .column('proximity')
+                  .legend(false)
+                  .postUpdate(function() {
+                      d3.selectAll(domSpatioFlow).select('#base').remove();
+                      var spatioFlowTagBase = d3.selectAll(domSpatioFlow)
+                              .select('#map')
+                              .select('svg')
+                              .attr("id", "base");})
+                  .unitId('loc');
+/*
+
+                  var map = d3.geomap()
+                      .geofile('/d3-geomap/topojson/world/countries.json');
+                    //  .colors(['green','red'])
+                    //  .column('hit')
+                    //  .domain([0, 1])
+                    //  .legend(false)
+                    //  .unitId('Country');
+*/
+//console.log(eventLocation);
+
+
+var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
+        .select('#map')
+        .datum(eventLocation)
+        .call(map.draw, map);
+/*
+var spatioFlowRemoveBase = d3.selectAll(domSpatioFlow)
+//        .select('#map')
+        .select('#base').remove();
+*/
+/*
+var spatioFlowTagBase = d3.selectAll(domSpatioFlow)
+        .select('#map')
+        .select('svg')
+        .attr("id", "base");
+
+     /*
+          d3.select('#map')
+              .call(map.draw, map);
+*/
+    }
 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
         //d3.select("#svgInfoFlow").remove();
