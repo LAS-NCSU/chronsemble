@@ -344,10 +344,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             referenceEvent[0] = "";
         }
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
-        var locations = updateLocations(referenceEvent);
+        var locations = updateSpatioFlow(referenceEvent);
     }
 
-    function updateLocations(eventLocation) {
+    function updateSpatioFlow(eventLocation) {
 
       var map = d3.geomap.choropleth()
                   .geofile('/d3-geomap/topojson/world/countries.json')
@@ -355,45 +355,31 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                   .domain([0, 1])
                   .column('proximity')
                   .legend(false)
+                  .unitId('loc')
                   .postUpdate(function() {
-                      d3.selectAll(domSpatioFlow).select('#base').remove();
-                      var spatioFlowTagBase = d3.selectAll(domSpatioFlow)
-                              .select('#map')
-                              .select('svg')
-                              .attr("id", "base");})
-                  .unitId('loc');
-/*
 
-                  var map = d3.geomap()
-                      .geofile('/d3-geomap/topojson/world/countries.json');
-                    //  .colors(['green','red'])
-                    //  .column('hit')
-                    //  .domain([0, 1])
-                    //  .legend(false)
-                    //  .unitId('Country');
-*/
-//console.log(eventLocation);
+                  // Remove old maps tagged with the "base" id.
 
+                      d3.selectAll(domSpatioFlow)
+                        .select('#base').remove();
 
-var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
-        .select('#map')
-        .datum(eventLocation)
-        .call(map.draw, map);
-/*
-var spatioFlowRemoveBase = d3.selectAll(domSpatioFlow)
-//        .select('#map')
-        .select('#base').remove();
-*/
-/*
-var spatioFlowTagBase = d3.selectAll(domSpatioFlow)
-        .select('#map')
-        .select('svg')
-        .attr("id", "base");
+// Attach the "base" id to the newly created map - this will be removed AFTER
+// the next map is draw. Delaying the removal of the prior map provides
+// smooth animatation of the region shading.
 
-     /*
-          d3.select('#map')
-              .call(map.draw, map);
-*/
+                      var spatioFlowTagSvg = d3.selectAll(domSpatioFlow)
+                                                .select('#map')
+                                                .select('svg')
+                                                .attr('id', 'base');});
+
+      //console.log(eventLocation);
+      // Map new locations - this will append a new svg section for the map.
+      // Old maps are removed in the postUpdate function -
+      var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
+                               .select('#map')
+                               .datum(eventLocation)
+                               .call(map.draw, map);
+
     }
 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
