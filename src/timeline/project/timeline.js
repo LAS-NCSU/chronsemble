@@ -325,8 +325,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var eventsWithinScruber = [];
         var referenceEvent = [];
         infoFlowValues.forEach(function (value) {
-            var startDateOfFile = value.start.getUTCFullYear() + (value.start.getUTCMonth()/12);
-            var endDateOfFile = value.end.getUTCFullYear() + (value.end.getUTCMonth()/12);
+            var startDateOfFile = value.start.getUTCFullYear() +
+                ((value.start.getUTCMonth() + value.start.getUTCDate()/32)/12);
+            var endDateOfFile = value.end.getUTCFullYear() +
+                ((value.end.getUTCMonth() + value.end.getUTCDate()/32)/12);
             if ((startDateOfFile >= start && endDateOfFile <= end) ||
                (startDateOfFile < start && (endDateOfFile > start)) ||
                (startDateOfFile >= start && startDateOfFile < end)) {
@@ -366,7 +368,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                   .domain([0, scrubberWindowRange])
 //                  .legend(true)
                   .column('proximity')
-                  .legend(false)
+//                  .legend(false)
                   .unitId('loc')
                   .postUpdate(function() {
 
@@ -395,15 +397,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     }
 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
-        //d3.select("#svgInfoFlow").remove();
-
-        //var svg = d3.select(".infoFlow").append("svg")
-        //    .attr("class", "svg")
-        //    .attr("id", "svgInfoFlow")
-        //    .attr("width", 960)
-        //    .attr("height", 200)
-        //    .append("g")
-        //    .attr("transform", "translate(" + 20 + "," + 20 + ")");
 
         var infoFlowTextLabel = d3.selectAll(domInfoFlow)
           .select(".band")
@@ -432,43 +425,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .select("#loc")
             .attr("transform", "translate(2, 40)")
             .text(centreDisplayValue.loc);
-    //      infoFlowText()
-    //      .data("Info-Flow")
-    //      .enter();
 
-        //var infoFlowText = d3.select("#svgInfoFlow");
-//        var texts = infoFlowText.attr("transform", "translate(40, 40)");
-//            .text(Info-Flow2);
-//            .data(" ")
-  //          .enter();
-/*
-        texts.append("text")
-            .text(centreDisplayValue.label)
-            .attr("x", 460)
-            .attr("y", 80)
-            .attr("font-size", 100)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "Helvetica")
-            .attr("font-weight", "Bold");
-
-        texts.append("text")
-            .text(centreDisplayValue.start)
-            .attr("x", 440)
-            .attr("y", 100)
-            .attr("font-size", 40)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "Helvetica")
-            .attr("font-weight", "Bold");
-
-        texts.append("text")
-            .text(centreDisplayValue.end)
-            .attr("x", 440)
-            .attr("y", 120)
-            .attr("font-size", 40)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "Helvetica")
-            .attr("font-weight", "Bold");
-*/
     }
 
     //----------------------------------------------------------------------
@@ -484,6 +441,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             labelTop = band.y + band.h - 10,
             y = band.y + band.h + 1,
             yText = 15;
+console.log(labelTop, band.y, band.h);
 
   // Condition on bandName used to resrict labeling the main band with only the
   // middle label - this is purely for aesthetics as the start and end labels
@@ -496,23 +454,25 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
   //           <tooltip y offset>]
 
         var labelDefs = (bandName === "naviBand") ? [
-                ["start", "bandBoundLabel", 0, labelWidth / 4,
-                    function(min, max) { return toYear(min); },
-                    "Start of the data window", band.x + 30, labelTop],
-                ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
-                    function(min, max) { return toYear(max); },
-                    "End of the data window", band.x + band.w - 152, labelTop],
-                ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
-                    function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                    "Range of data window", band.x + band.w / 2 - 75, labelTop]] :
-      // if bandName = mainBand then only set the middle label
-                [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
-                    function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                    "Range of scrubber window", band.x + band.w / 2 - 75, labelTop],
-                  ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
-                     band.w / 2 - labelWidth / 3,
-                     function(min, max) {return ((max.getUTCFullYear() + max.getUTCMonth()/12) - (min.getUTCFullYear() + min.getUTCMonth()/12))/2 + min.getUTCFullYear() + min.getUTCMonth()/12;},
-                     "Reference Instant", 0, 0]
+            ["start", "bandBoundLabel", 0, labelWidth / 4,
+                function(min, max) { return toYear(min); },
+                "Start of the data window", band.x + 80, outerHeight + 180],
+            ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
+                function(min, max) { return toYear(max); },
+                "End of the data window", band.x + band.w - 200, outerHeight + 180],
+            ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
+                function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
+                "Range of data window", band.x + band.w / 2 + 75, outerHeight + 180]] :
+            // if bandName = mainBand then only set the middle label
+            [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
+                function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
+                "Range of scrubber window", margin.left + labelWidth + 20, 200],
+              ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
+                 band.w / 2 - labelWidth / 3,
+                 function(min, max) {return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
+                                            (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
+                                             min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
+                 "Reference Instant", outerWidth/2 + labelWidth, 200]
             ];
 
         var bandLabels = chart.append("g")
