@@ -336,7 +336,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 // choropleth map, subtract the proximity to center from the
                 // total range of the scrubber window. In essence, this assigns
                 // larger values to events closest to the reference line.
-                value.proximity = (scrubberWindowRange - Math.abs(centreCF)).toString();
+                value.proximity = Math.max(0, (scrubberWindowRange - Math.abs(centreCF))).toString();
                 eventsWithinScruber.push(value);
                 //    console.log(eventsWithinScruber);
     //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
@@ -350,15 +350,20 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             referenceEvent[0] = "";
         }
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
-        var locations = updateSpatioFlow(eventsWithinScruber);
+        var locations = updateSpatioFlow(eventsWithinScruber, scrubberWindowRange);
     }
 
-    function updateSpatioFlow(eventLocation) {
+    function updateSpatioFlow(eventLocations, scrubberWindowRange) {
 
       var map = d3.geomap.choropleth()
                   .geofile('/d3-geomap/topojson/world/countries.json')
 //                  .colors(['red','green'])
-//                  .domain([0, 1])
+//                  .colors(['rgb(247,251,255)','rgb(222,235,247)','rgb(198,219,239)','rgb(158,202,225)','rgb(107,174,214)','rgb(66,146,198)','rgb(33,113,181)','rgb(8,81,156)','rgb(8,48,107)'])
+//                  .colors(['rgb(255,255,255)','rgb(253,229,230)','rgb(251,204,206)',
+//                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
+//                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
+//                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
+                  .domain([0, scrubberWindowRange])
 //                  .legend(true)
                   .column('proximity')
                   .legend(false)
@@ -384,7 +389,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
       // Old maps are removed in the postUpdate function -
       var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
                                .select('#map')
-                               .datum(eventLocation)
+                               .datum(eventLocations)
                                .call(map.draw, map);
 
     }
