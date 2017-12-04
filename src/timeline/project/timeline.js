@@ -330,9 +330,15 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             if ((startDateOfFile >= start && endDateOfFile <= end) ||
                (startDateOfFile < start && (endDateOfFile > start)) ||
                (startDateOfFile >= start && startDateOfFile < end)) {
-                eventsWithinScruber.push(value);
-            //    console.log(eventsWithinScruber);
                 var centreCF = centreValue - startDateOfFile;
+                // proximity measures distance of event from the reference line;
+                // in order to have the closer proximities look darker on the
+                // choropleth map, subtract the proximity to center from the
+                // total range of the scrubber window. In essence, this assigns
+                // larger values to events closest to the reference line.
+                value.proximity = (scrubberWindowRange - Math.abs(centreCF)).toString();
+                eventsWithinScruber.push(value);
+                //    console.log(eventsWithinScruber);
     //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
                     centreDisplayDateCF = startDateOfFile;
@@ -344,15 +350,16 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             referenceEvent[0] = "";
         }
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
-        var locations = updateSpatioFlow(referenceEvent);
+        var locations = updateSpatioFlow(eventsWithinScruber);
     }
 
     function updateSpatioFlow(eventLocation) {
 
       var map = d3.geomap.choropleth()
                   .geofile('/d3-geomap/topojson/world/countries.json')
-                  .colors(['red','green'])
-                  .domain([0, 1])
+//                  .colors(['red','green'])
+//                  .domain([0, 1])
+//                  .legend(true)
                   .column('proximity')
                   .legend(false)
                   .unitId('loc')
