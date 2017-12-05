@@ -324,26 +324,50 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
         var eventsWithinScruber = [];
         var referenceEvent = [];
+
         infoFlowValues.forEach(function (value) {
-            var startDateOfFile = value.start.getUTCFullYear() +
+            var startDateOfEvent = value.start.getUTCFullYear() +
                 ((value.start.getUTCMonth() + value.start.getUTCDate()/32)/12);
-            var endDateOfFile = value.end.getUTCFullYear() +
+            var endDateOfEvent = value.end.getUTCFullYear() +
                 ((value.end.getUTCMonth() + value.end.getUTCDate()/32)/12);
-            if ((startDateOfFile >= start && endDateOfFile <= end) ||
-               (startDateOfFile < start && (endDateOfFile > start)) ||
-               (startDateOfFile >= start && startDateOfFile < end)) {
-                var centreCF = centreValue - startDateOfFile;
+            if ((startDateOfEvent >= start && endDateOfEvent <= end) ||
+               (startDateOfEvent < start && (endDateOfEvent > start)) ||
+               (startDateOfEvent >= start && startDateOfEvent < end)) {
+                var centreCF = centreValue - startDateOfEvent;
                 // proximity measures distance of event from the reference line;
                 // in order to have the closer proximities look darker on the
                 // choropleth map, subtract the proximity to center from the
                 // total range of the scrubber window. In essence, this assigns
                 // larger values to events closest to the reference line.
-                value.proximity = Math.max(0, (scrubberWindowRange - Math.abs(centreCF))).toString();
+                if (startDateOfEvent <= centreValue && centreValue <= endDateOfEvent) {
+                  value.proximity = (scrubberWindowRange + 2);
+        //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
+                } else {
+                  value.proximity = Math.max(Math.max(0, (scrubberWindowRange - Math.abs(centreCF))),
+                  (scrubberWindowRange - Math.abs(centreValue - endDateOfEvent)));
+//                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
+//                    Math.abs(centreValue - endDateOfEvent))).toString();
+                }
+                // Is location unique? If not, do max hold on proximity.
+                eventsWithinScruber.forEach(function(eventItem) {
+                  if (value.loc === eventItem.loc) {
+                    var eventProximity = parseFloat(eventItem.proximity);
+                    if (value.proximity > eventProximity) {
+        //              console.log("\nswapping eventItem:", eventItem.proximity, " for value:", value.proximity);
+                      eventItem.proximity = value.proximity.toString();
+                    } else {
+        //              console.log("\nretaining eventItem:", eventItem.proximity, " over value:", value.proximity);
+                      value.proximity = eventProximity;
+                    }
+                  }
+                })
+                value.proximity = value.proximity.toString();
+        //        console.log(value);
                 eventsWithinScruber.push(value);
                 //    console.log(eventsWithinScruber);
     //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
                 if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
-                    centreDisplayDateCF = startDateOfFile;
+                    centreDisplayDateCF = startDateOfEvent;
                     referenceEvent.push(value);
                 }
             }
@@ -365,10 +389,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
 //                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
 //                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
-                  .domain([0, scrubberWindowRange])
+                  .domain([0, scrubberWindowRange + 2])
 //                  .legend(true)
                   .column('proximity')
-//                  .legend(false)
                   .unitId('loc')
                   .postUpdate(function() {
 
@@ -441,7 +464,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             labelTop = band.y + band.h - 10,
             y = band.y + band.h + 1,
             yText = 15;
-console.log(labelTop, band.y, band.h);
+//console.log(labelTop, band.y, band.h);
 
   // Condition on bandName used to resrict labeling the main band with only the
   // middle label - this is purely for aesthetics as the start and end labels
