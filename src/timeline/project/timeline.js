@@ -319,8 +319,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     }
 
     function generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue) {
-        var start = centreValue - (scrubberWindowRange / 2);
-        var end = centreValue + (scrubberWindowRange / 2);
+        var maxProximity = scrubberWindowRange / 2;
+        var start = centreValue - maxProximity;
+        var end = centreValue + maxProximity;
         var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
         var eventsWithinScruber = [];
         var referenceEvent = [];
@@ -340,11 +341,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 // total range of the scrubber window. In essence, this assigns
                 // larger values to events closest to the reference line.
                 if (startDateOfEvent <= centreValue && centreValue <= endDateOfEvent) {
-                  value.proximity = (scrubberWindowRange + 2);
+                  value.proximity = (maxProximity + 2);
         //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
                 } else {
-                  value.proximity = Math.max(Math.max(0, (scrubberWindowRange - Math.abs(centreCF))),
-                  (scrubberWindowRange - Math.abs(centreValue - endDateOfEvent)));
+                  value.proximity = Math.max(Math.max(0, (maxProximity - Math.abs(centreCF))),
+                  (maxProximity - Math.abs(centreValue - endDateOfEvent)));
 //                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
 //                    Math.abs(centreValue - endDateOfEvent))).toString();
                 }
@@ -376,10 +377,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             referenceEvent[0] = "";
         }
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
-        var locations = updateSpatioFlow(eventsWithinScruber, scrubberWindowRange);
+        var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
     }
 
-    function updateSpatioFlow(eventLocations, scrubberWindowRange) {
+    function updateSpatioFlow(eventLocations, maxProximity) {
 
       var map = d3.geomap.choropleth()
                   .geofile('/d3-geomap/topojson/world/countries.json')
@@ -389,7 +390,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
 //                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
 //                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
-                  .domain([0, scrubberWindowRange + 2])
+                  .domain([0, maxProximity + 2])
 //                  .legend(true)
                   .column('proximity')
                   .unitId('loc')
