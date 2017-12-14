@@ -9,11 +9,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     //
 
     // chart geometry
-    var margin = {top: 20, right: 20, bottom: 20, left: 20},
-        outerWidth = 960,
-        outerHeight = 400,
-        width = outerWidth - margin.left - margin.right,
-        height = outerHeight - margin.top - margin.bottom;
+//    var margin = {top: 20, right: 20, bottom: 20, left: 20},
+//        outerWidth = 960,
+//        outerHeight = 400,
+//        width = outerWidth - margin.left - margin.right,
+//        height = outerHeight - margin.top - margin.bottom;
 
     // global timeline variables
     var timeline = {},   // The timeline
@@ -75,7 +75,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 count++;
                 if (count > n) return;
                 //console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
-                console.log(d.start + " - " + d.end + ": " + d.label);
+                console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
             })
         }
 
@@ -97,39 +97,47 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 // showItems(100);
 
         function compareAscending(item1, item2) {
+            //compareAscending sorts events according to the following:
+            // youngest sorts first; longest duration sorts first in event of tie.
+
             // Every item must have two fields: 'start' and 'end'.
             var result = item1.start - item2.start;
-            // earlier first
-            if (result < 0) { return -1; }
-            if (result > 0) { return 1; }
-            // longer first
+            if (result < 0) { return -1; }  // item1 starts prior to item2 and sorts earlier
+            if (result > 0) { return 1; }   // item2 starts prior to item1 and sorts earlier
+            // Start times are equal
+            // sort longer events earlier
             result = item2.end - item1.end;
-            if (result < 0) { return -1; }
-            if (result > 0) { return 1; }
+            if (result < 0) { return -1; } // item1 ends after item2 and sorts earlier
+            if (result > 0) { return 1; }  // item2 ends after item1 and sorts earlier
+            // identical start and end times
             return 0;
         }
 
         function compareDescending(item1, item2) {
+            //compareDescending sorts events according to the following:
+            // oldest sorts first; shortest duration sorts first in event of tie.
+
             // Every item must have two fields: 'start' and 'end'.
             var result = item1.start - item2.start;
             // later first
-            if (result < 0) { return 1; }
-            if (result > 0) { return -1; }
+            if (result < 0) { return 1; }  // item1 starts prior to item2 and sorts later
+            if (result > 0) { return -1; } // item2 starts prior to item1 and sorts later
             // shorter first
             result = item2.end - item1.end;
-            if (result < 0) { return 1; }
-            if (result > 0) { return -1; }
+            if (result < 0) { return 1; }  // item1 ends after item2 and sorts later
+            if (result > 0) { return -1; } // item2 ends after item1 and sorts later
+            // identical start and end times
             return 0;
         }
 
         function calculateTracks(items, sortOrder, timeOrder) {
             var i, track;
 
-            sortOrder = sortOrder || "descending"; // "ascending", "descending"
-            timeOrder = timeOrder || "backward";   // "forward", "backward"
+            sortOrder = sortOrder || "descending"; // "ascending" or default to "descending"
+            timeOrder = timeOrder || "backward";   // "forward" or default to "backward"
 
             function sortBackward() {
-                // older items end deeper
+                // older items assigned to early tracks
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.end < tracks[i]) { break; }
@@ -139,7 +147,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 });
             }
             function sortForward() {
-                // younger items end deeper
+                // younger items assigned to early tracks
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.start > tracks[i]) { break; }
@@ -153,6 +161,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 data.items.sort(compareAscending);
             else
                 data.items.sort(compareDescending);
+
+            showItems(256);
 
             if (timeOrder === "forward")
                 sortForward();
@@ -185,8 +195,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         //calculateTracks(data.items, "ascending", "backward");
         //calculateTracks(data.items, "descending", "forward");
         // Show real data
-        calculateTracks(data.items, "descending", "backward");
-        //calculateTracks(data.items, "ascending", "forward");
+        //calculateTracks(data.items, "descending", "backward");
+        calculateTracks(data.items, "ascending", "forward");
         data.nTracks = tracks.length;
         data.minDate = d3.min(data.items, function (d) { return d.start; });
         data.maxDate = d3.max(data.items, function (d) { return d.end; });
@@ -207,6 +217,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         band.y = bandY;
         band.w = width;
         band.h = height * (sizeFactor || 1);
+        // trackOffset controls distance of first track from band edge
         band.trackOffset = 4;
         // Prevent tracks from getting too high
         band.trackHeight = Math.min((band.h - band.trackOffset) / data.nTracks, 20);
@@ -312,21 +323,25 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             scrubberWindow.push(part);
         });
 //        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
-//        var centreValue = parseInt(scrubberWindow[0][1].innerHTML);
+//        var referenceValue = parseInt(scrubberWindow[0][1].innerHTML);
         var scrubberWindowRange = parseFloat(scrubberWindow[0][0].innerHTML);
-        var centreValue = parseFloat(scrubberWindow[0][1].innerHTML);
-        generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue);
+        var referenceValue = parseFloat(scrubberWindow[0][1].innerHTML);
+        generateInfoFlow(infoFlowValues, scrubberWindowRange, referenceValue);
     }
 
-    function generateInfoFlow(infoFlowValues, scrubberWindowRange, centreValue) {
+    function generateInfoFlow(infoFlowValues, scrubberWindowRange, referenceValue) {
         var maxProximity = scrubberWindowRange / 2;
-        var start = centreValue - maxProximity;
-        var end = centreValue + maxProximity;
-        var centreDisplayDateCF = Number.MAX_SAFE_INTEGER;
+        var start = referenceValue - maxProximity;
+        var end = referenceValue + maxProximity;
+        var currentReferenceEventGap = Number.MAX_SAFE_INTEGER;
         var eventsWithinScruber = [];
         var referenceEvent = [];
+        var numValue = 1;
+        var referenceBoundedByEvent = false;
 
         infoFlowValues.forEach(function (value) {
+//          console.log(numValue, value);
+          numValue = numValue + 1;
             var startDateOfEvent = value.start.getUTCFullYear() +
                 ((value.start.getUTCMonth() + value.start.getUTCDate()/32)/12);
             var endDateOfEvent = value.end.getUTCFullYear() +
@@ -334,49 +349,69 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             if ((startDateOfEvent >= start && endDateOfEvent <= end) ||
                (startDateOfEvent < start && (endDateOfEvent > start)) ||
                (startDateOfEvent >= start && startDateOfEvent < end)) {
-                var centreCF = centreValue - startDateOfEvent;
+                 var eventStartToReferenceGap = referenceValue - startDateOfEvent;
+                 var eventStopToReferenceGap = endDateOfEvent - referenceValue;
                 // proximity measures distance of event from the reference line;
                 // in order to have the closer proximities look darker on the
                 // choropleth map, subtract the proximity to center from the
                 // total range of the scrubber window. In essence, this assigns
                 // larger values to events closest to the reference line.
-                if (startDateOfEvent <= centreValue && centreValue <= endDateOfEvent) {
+                if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
                   value.proximity = (maxProximity + 2);
         //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
                 } else {
-                  value.proximity = Math.max(Math.max(0, (maxProximity - Math.abs(centreCF))),
-                  (maxProximity - Math.abs(centreValue - endDateOfEvent)));
+                  value.proximity = Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
+                  (maxProximity - Math.abs(referenceValue - endDateOfEvent)));
 //                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
-//                    Math.abs(centreValue - endDateOfEvent))).toString();
+//                    Math.abs(referenceValue - endDateOfEvent))).toString();
                 }
                 // Is location unique? If not, do max hold on proximity.
                 eventsWithinScruber.forEach(function(eventItem) {
                   if (value.loc === eventItem.loc) {
                     var eventProximity = parseFloat(eventItem.proximity);
                     if (value.proximity > eventProximity) {
-        //              console.log("\nswapping eventItem:", eventItem.proximity, " for value:", value.proximity);
+        // console.log("\nswapping eventItem:", eventItem.proximity, " for value:", value.proximity);
                       eventItem.proximity = value.proximity.toString();
                     } else {
-        //              console.log("\nretaining eventItem:", eventItem.proximity, " over value:", value.proximity);
+        // console.log("\nretaining eventItem:", eventItem.proximity, " over value:", value.proximity);
                       value.proximity = eventProximity;
                     }
                   }
                 })
                 value.proximity = value.proximity.toString();
-        //        console.log(value);
                 eventsWithinScruber.push(value);
-                //    console.log(eventsWithinScruber);
-    //            console.log("\nvalue:", value, "cntreCF:", centreCF, " ", centreDisplayDateCF);
-                if (centreCF > 0 && centreCF <= centreDisplayDateCF) {
-                    centreDisplayDateCF = startDateOfEvent;
+
+// Find the tighest event bounding the reference or, if no bounding event, then
+// the event closest to the reference.
+
+                if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
+                  if (!referenceBoundedByEvent) {
+                    referenceBoundedByEvent = true;
+                    currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
                     referenceEvent.push(value);
+                  } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
+                    currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+                    referenceEvent.push(value);
+                  }
+                } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
+                    // reference is in past relative to event
+                    if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
+                      currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
+                      referenceEvent.push(value);
+                    }
+                } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
+                    // refence is in the future relative to event
+                    if (Math.abs(eventStopToReferenceGap) < currentReferenceEventGap) {
+                      currentReferenceEventGap = Math.abs(eventStopToReferenceGap);
+                      referenceEvent.push(value);
+                    }
                 }
             }
         });
         if(referenceEvent.length==0){
             referenceEvent[0] = "";
         }
-        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[0]);
+        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
         var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
     }
 

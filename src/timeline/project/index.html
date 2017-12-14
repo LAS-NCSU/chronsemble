@@ -15,6 +15,7 @@
     <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
 
     <!-- Store these two files in your application directory or on your path. -->
+    <script src="globals.js"></script>
     <script src="timeline.js"></script>
     <script src="infoFlow.js"></script>
     <script src="spatioFlow.js"></script>
@@ -53,6 +54,7 @@
         timeline(domTimeline, domSpatioFlow, domInfoFlow)
             .data(dataset)
             .band("mainBand", 0.82)
+//            .band("mainBand", 1)
             .band("naviBand", 0.05)
           /*  .band("dummyBand", 0.08) */
             .xAxis("mainBand")
