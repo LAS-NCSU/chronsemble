@@ -6,11 +6,14 @@ function infoFlow(domElement) {
   //
 
   // chart geometry
-  var margin = {top: 20, right: 20, bottom: 20, left: 20},
-      outerWidth = 960,
-      outerHeight = 200,
-      width = outerWidth - margin.left - margin.right,
-      height = outerHeight - margin.top - margin.bottom;
+  //var margin = {top: 20, right: 20, bottom: 20, left: 20},
+  //    outerWidth = 960,
+  //    outerHeight = 200,
+  //    width = outerWidth - margin.left - margin.right,
+  //    height = outerHeight - margin.top - margin.bottom;
+
+  var infoFlowHeight = 200,
+      height = infoFlowHeight - margin.top - margin.bottom;
 
   // global timeline variables
 
@@ -19,7 +22,7 @@ function infoFlow(domElement) {
       .attr("class", "svg")
       .attr("id", "svgInfoFlow")
       .attr("width", outerWidth)
-      .attr("height", outerHeight)
+      .attr("height", infoFlowHeight)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top +  ")");
 

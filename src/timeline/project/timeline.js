@@ -138,6 +138,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
             function sortBackward() {
                 // older items assigned to early tracks
+                tracks[0] = Number.MAX_SAFE_INTEGER;
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.end < tracks[i]) { break; }
@@ -148,6 +149,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             }
             function sortForward() {
                 // younger items assigned to early tracks
+                tracks[0] = Number.MIN_SAFE_INTEGER;
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.start > tracks[i]) { break; }
@@ -162,7 +164,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             else
                 data.items.sort(compareDescending);
 
-            showItems(256);
+  //          showItems(256);
 
             if (timeOrder === "forward")
                 sortForward();
@@ -210,18 +212,27 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     //
 
     timeline.band = function (bandName, sizeFactor) {
-
+      console.log("Building band:" + bandName);
         var band = {};
         band.id = "band" + bandNum;
         band.x = 0;
         band.y = bandY;
         band.w = width;
         band.h = height * (sizeFactor || 1);
-        // trackOffset controls distance of first track from band edge
-        band.trackOffset = 4;
-        // Prevent tracks from getting too high
-        band.trackHeight = Math.min((band.h - band.trackOffset) / data.nTracks, 20);
-        band.itemHeight = band.trackHeight * 0.8,
+        // trackOffset controls distance of first track from band edge and other tracks
+        if (bandName === "mainBand") {
+          band.trackOffset = 3;
+//          band.trackHeight = Math.max(Math.min((band.h - band.trackOffset) / data.nTracks, 17), 1);
+          band.trackHeight = 17;
+//          band.itemHeight = band.trackHeight * 0.8;
+          band.itemHeight = 14;
+        } else {
+          // naviBand tracks are 1 pixel high
+          band.trackOffset = 0;
+          band.trackHeight = 1;
+          band.itemHeight = 1;
+        }
+
         band.parts = [],
         band.instantWidth = 100; // arbitray value
 
@@ -230,7 +241,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .range([0, band.w]);
 
         band.yScale = function (track) {
-            return band.trackOffset + track * band.trackHeight;
+            return  band.trackOffset + track * band.trackHeight;
         };
   // Translating y coordinate by + margin.top here because the margin.top
   // translation was removed from the chart clip area translation to enable
@@ -255,25 +266,41 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("class", function (d) { return d.instant ? "part instant" : "part interval";});
 
         var intervals = d3.select("#band" + bandNum).selectAll(".interval");
-        intervals.append("rect")
+
+        if (bandName === "mainBand") {
+          intervals.append("rect")
+            .attr("fill", "#AAFFFF")
             .attr("width", "100%")
             .attr("height", "100%");
-        intervals.append("text")
+
+          // Apply event labels to mainBand (not visible on naviBand)
+          intervals.append("text")
             .attr("class", "intervalLabel")
             .attr("x", 1)
             .attr("y", 10)
             .text(function (d) { return d.label; });
+        } else {
+          // Draw bird's eye view tracks
+          intervals.append("rect")
+            .attr("fill", "#808080")
+            .attr("width", "100%")
+            .attr("height", "100%");
+        }
 
         var instants = d3.select("#band" + bandNum).selectAll(".instant");
         instants.append("circle")
             .attr("cx", band.itemHeight / 2)
             .attr("cy", band.itemHeight / 2)
             .attr("r", 5);
-        instants.append("text")
-            .attr("class", "instantLabel")
-            .attr("x", 15)
-            .attr("y", 10)
-            .text(function (d) { return d.label; });
+
+        if (bandName === "mainBand") {
+          // Apply event labels to mainBand (not visible on naviBand)
+          instants.append("text")
+              .attr("class", "instantLabel")
+              .attr("x", 15)
+              .attr("y", 10)
+              .text(function (d) { return d.label; });
+        };
 
         band.addActions = function(actions) {
             // actions - array: [[trigger, function], ...]
@@ -309,8 +336,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     function scrubberValue(scrubberPart) {
         var scrubberWindow = [];
         var infoFlowValues = [];
-        var dataInFile = data.items;
-        dataInFile.forEach(function (value) {
+        data.items.forEach(function (value) {
             var arrayObject = new Object();
             arrayObject.start = value.start;
             arrayObject.end = value.end;
@@ -493,7 +519,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     //
 
     timeline.labels = function (bandName) {
-
+console.log("Labeling band:" + bandName);
         var band = bands[bandName],
             labelWidth = 46,
             labelHeight = 20,
@@ -515,10 +541,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var labelDefs = (bandName === "naviBand") ? [
             ["start", "bandBoundLabel", 0, labelWidth / 4,
                 function(min, max) { return toYear(min); },
-                "Start of the data window", band.x + 80, outerHeight + 180],
+                "Beginning of time window", band.x + 80, outerHeight + 180],
             ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
                 function(min, max) { return toYear(max); },
-                "End of the data window", band.x + band.w - 200, outerHeight + 180],
+                "Ending of time window", band.x + band.w - 200, outerHeight + 180],
             ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
                 "Range of data window", band.x + band.w / 2 + 75, outerHeight + 180]] :
@@ -692,8 +718,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .call(brush);
 
         xBrush.selectAll("rect")
-            .attr("y", 4)
-            .attr("height", band.h - 4);
+            .attr("y", band.trackOffset)
+            .attr("height", band.h - band.trackOffset);
 
         return timeline;
     };

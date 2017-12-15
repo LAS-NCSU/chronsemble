@@ -63,7 +63,7 @@
 }
 
 .interval {
-  fill: #AAFFFF;
+  //fill: #AAFFFF;
   //fill: #ff9999;
     stroke-width: 6;
     cursor : default;
@@ -117,6 +117,13 @@
 /* Info-flow */
 .infoFlow {
   font: 10px sans-serif;
+}
+
+.infoRow {
+  fill: blue;
+  stroke: gray;
+  stroke-width: 1;
+  fill-opacity: .1;
 }
 
 .infoFlowCard {
