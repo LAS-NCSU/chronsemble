@@ -228,7 +228,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           band.itemHeight = 14;
         } else {
           // naviBand tracks are 1 pixel high
-          band.trackOffset = 0;
+          band.trackOffset = 1;
           band.trackHeight = 1;
           band.itemHeight = 1;
         }
@@ -256,6 +256,17 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("class", "band")
             .attr("width", band.w)
             .attr("height", band.h);
+
+        if (bandName === "mainBand") {
+          band.g.append("svg")
+           .attr("y", "2")
+           .attr("height", band.itemHeight + 2)
+           .attr("class", "infoRow")
+           .attr("id", "infoRow")
+           .append("rect")
+           .attr("width", band.w)
+           .attr("height", band.itemHeight + 2);
+        }
 
         // Items
         var items = band.g.selectAll("g")
@@ -316,7 +327,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     return band.xScale(d.end) - band.xScale(d.start); });
             band.parts.forEach(function(part) { part.redraw(); })
 //console.log("band.parts[1]:", band.parts[1]);
-            scrubberValue(band.parts[1], items);
+//scrubberValue(band.parts[1], items);
+            scrubberValue(band);
         };
 
         bands[bandName] = band;
@@ -333,7 +345,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     // infoFlow
     //
 
-    function scrubberValue(scrubberPart) {
+    function scrubberValue(bandRef) {
         var scrubberWindow = [];
         var infoFlowValues = [];
         data.items.forEach(function (value) {
@@ -343,19 +355,20 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             arrayObject.label = value.label;
             arrayObject.loc = value.loc;
             arrayObject.proximity = "0";
+            arrayObject.track = value.track;
             infoFlowValues.push(arrayObject);
         });
-        scrubberPart.forEach(function (part) {
+        bandRef.parts[1].forEach(function (part) {
             scrubberWindow.push(part);
         });
 //        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
 //        var referenceValue = parseInt(scrubberWindow[0][1].innerHTML);
         var scrubberWindowRange = parseFloat(scrubberWindow[0][0].innerHTML);
         var referenceValue = parseFloat(scrubberWindow[0][1].innerHTML);
-        generateInfoFlow(infoFlowValues, scrubberWindowRange, referenceValue);
+        generateInfoFlow(bandRef, infoFlowValues, scrubberWindowRange, referenceValue);
     }
 
-    function generateInfoFlow(infoFlowValues, scrubberWindowRange, referenceValue) {
+    function generateInfoFlow(band, infoFlowValues, scrubberWindowRange, referenceValue) {
         var maxProximity = scrubberWindowRange / 2;
         var start = referenceValue - maxProximity;
         var end = referenceValue + maxProximity;
@@ -434,9 +447,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 }
             }
         });
+
         if(referenceEvent.length==0){
             referenceEvent[0] = "";
+        } else if (band.id === "band0") { // I don't like using the id here ... FIXME
+          d3.select(".infoRow")
+              .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
         }
+
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
         var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
     }
@@ -718,8 +736,8 @@ console.log("Labeling band:" + bandName);
             .call(brush);
 
         xBrush.selectAll("rect")
-            .attr("y", band.trackOffset)
-            .attr("height", band.h - band.trackOffset);
+            .attr("y", 0)
+            .attr("height", band.h);
 
         return timeline;
     };

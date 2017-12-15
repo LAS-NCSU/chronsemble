@@ -120,7 +120,7 @@
 }
 
 .infoRow {
-  fill: blue;
+  fill: grey;
   stroke: gray;
   stroke-width: 1;
   fill-opacity: .1;
