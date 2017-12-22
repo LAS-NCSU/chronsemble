@@ -15,6 +15,10 @@ function infoFlow(domElement) {
   var infoFlowHeight = 200,
       height = infoFlowHeight - margin.top - margin.bottom;
 
+//  var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
+//                         "loc", "Initiator", "Outcome", "SideADeaths",
+//                         "SideBDeaths"]);
+
   // global timeline variables
 
   // Create svg element
@@ -42,10 +46,31 @@ function infoFlow(domElement) {
 
   var textLabel = svg.select(".band")
       .append("svg")
-      .append("g")
+      .append("g");
 //    .append("div")
 //    .attr("class", "infoFlowCard")
 //    .attr("transform", "translate(40, 40)")
+
+var infoFlowFieldTemplate = svg.select(".band")
+    .selectAll("g")
+    .append("table")
+    .attr("id", "table")
+    .attr("class", "infoFlowCard")
+    .attr("transform", "translate(2, 10)")
+    .append("script")
+    .attr("id", "template-table-item")
+    .attr("type", "text/template")
+    .append("tr")
+    .append("td")
+    .text("{{field}}");
+
+var infoFlowValueTemplate = svg.select(".band")
+    .selectAll("tr")
+    .append("td")
+    .text("{{value}}");
+
+
+/*
     .append("text")
     .attr("id", "label");
 
@@ -59,11 +84,11 @@ function infoFlow(domElement) {
         .append("text")
         .attr("id", "end");
 
-    var textEnd = svg.select(".band")
+    var textLoc = svg.select(".band")
         .selectAll("g")
         .append("text")
         .attr("id", "loc");
-
+*/
 //      .data(" ")
 //      .enter();
 

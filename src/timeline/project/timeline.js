@@ -75,7 +75,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 count++;
                 if (count > n) return;
                 //console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
-                console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
+                //console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
+                console.log("Item: " + count + ": size: ", d3.keys(d).length, ": keys: ", d3.keys(d), "data: ", d);
             })
         }
 
@@ -94,7 +95,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             */
           };
 
-// showItems(100);
+ //showItems();
 
         function compareAscending(item1, item2) {
             //compareAscending sorts events according to the following:
@@ -451,12 +452,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         if(referenceEvent.length==0){
             referenceEvent[0] = "";
         } else if (band.id === "band0") { // I don't like using the id here ... FIXME
+        // Highlight the timeline row corresponding to the cards in the
+        // info-flow band.
           d3.select(".infoRow")
               .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
+              var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
+              var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
         }
 
-        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-        var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
     }
 
     function updateSpatioFlow(eventLocations, maxProximity) {
@@ -501,6 +504,28 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
 
+    //  console.log(topKeys);
+    // Cache of the template
+    var template = document.getElementById("template-table-item");
+    // Get the contents of the template
+    var templateHtml = template.innerHTML;
+    // Final HTML variable as empty string
+    var tableHtml = "";
+
+    // Loop through dataObject, replace placeholder tags
+    // with actual data, and generate final HTML
+    d3.keys(centreDisplayValue).forEach(function (d) {
+        //console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
+        //console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
+//        console.log("Item: " + count + ": size: ", d3.keys(d).length, ": keys: ", d3.keys(d), "data: ", d);
+        tableHtml += templateHtml.replace(/{{field}}/g, d)
+                                .replace(/{{value}}/g, centreDisplayValue[d]);
+
+    })
+
+    // Replace the HTML of #list with final HTML
+    document.getElementById("table").innerHTML = tableHtml;
+    /*
         var infoFlowTextLabel = d3.selectAll(domInfoFlow)
           .select(".band")
           .selectAll("g")
@@ -528,7 +553,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .select("#loc")
             .attr("transform", "translate(2, 40)")
             .text(centreDisplayValue.loc);
-
+*/
     }
 
     //----------------------------------------------------------------------
