@@ -227,11 +227,15 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           band.trackHeight = 17;
 //          band.itemHeight = band.trackHeight * 0.8;
           band.itemHeight = 14;
-        } else {
+        } else if (bandName === 'naviBand'){
           // naviBand tracks are 1 pixel high
           band.trackOffset = 1;
           band.trackHeight = 1;
           band.itemHeight = 1;
+        } else {
+          band.trackOffset = 0;
+          band.trackHeight = infoFlowCardHeight + margin.top;
+          band.itemHeight = infoFlowCardHeight;
         }
 
         band.parts = [],
@@ -329,7 +333,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             band.parts.forEach(function(part) { part.redraw(); })
 //console.log("band.parts[1]:", band.parts[1]);
 //scrubberValue(band.parts[1], items);
-            scrubberValue(band);
+            if (band.id === "band0") scrubberValue(band);
         };
 
         bands[bandName] = band;
@@ -451,14 +455,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         if(referenceEvent.length==0){
             referenceEvent[0] = "";
-        } else if (band.id === "band0") { // I don't like using the id here ... FIXME
+        }
         // Highlight the timeline row corresponding to the cards in the
         // info-flow band.
-          d3.select(".infoRow")
-              .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
-              var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-              var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
-        }
+        d3.select(".infoRow")
+            .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
+            var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
+            var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
+
 
     }
 
@@ -505,6 +509,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
 
     //  console.log(topKeys);
+    /*
     // Cache of the template
     var template = document.getElementById("template-table-item");
     // Get the contents of the template
@@ -525,7 +530,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     // Replace the HTML of #list with final HTML
     document.getElementById("table").innerHTML = tableHtml;
-    /*
+    */
         var infoFlowTextLabel = d3.selectAll(domInfoFlow)
           .select(".band")
           .selectAll("g")
@@ -553,7 +558,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .select("#loc")
             .attr("transform", "translate(2, 40)")
             .text(centreDisplayValue.loc);
-*/
+
     }
 
     //----------------------------------------------------------------------

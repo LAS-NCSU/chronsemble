@@ -46,11 +46,11 @@ function infoFlow(domElement) {
 
   var textLabel = svg.select(".band")
       .append("svg")
-      .append("g");
+      .append("g")
 //    .append("div")
 //    .attr("class", "infoFlowCard")
 //    .attr("transform", "translate(40, 40)")
-
+/*
 var infoFlowFieldTemplate = svg.select(".band")
     .selectAll("g")
     .append("table")
@@ -68,9 +68,9 @@ var infoFlowValueTemplate = svg.select(".band")
     .selectAll("tr")
     .append("td")
     .text("{{value}}");
+*/
 
 
-/*
     .append("text")
     .attr("id", "label");
 
@@ -88,7 +88,7 @@ var infoFlowValueTemplate = svg.select(".band")
         .selectAll("g")
         .append("text")
         .attr("id", "loc");
-*/
+
 //      .data(" ")
 //      .enter();
 
