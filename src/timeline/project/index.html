@@ -54,18 +54,19 @@
 
         timeline(domTimeline, domSpatioFlow, domInfoFlow)
             .data(dataset)
-            .band("mainBand", 0.82)
-//            .band("mainBand", 1)
-            .band("naviBand", 0.05)
+            .defineTimelineArea( )
+            .band("timeFlow")
+//            .band("timeFlow", 1)
+            .band("birdView")
 //            .band("infoFlowBand")
           /*  .band("dummyBand", 0.08) */
-            .xAxis("mainBand")
-            .tooltips("mainBand")
-            .xAxis("naviBand")
-            .labels("mainBand")
-            .labels("naviBand")
-            .brush("naviBand", ["mainBand"])
-            .mainReference("mainBand")
+            .xAxis("timeFlow")
+            .tooltips("timeFlow")
+            .xAxis("birdView")
+            .labels("timeFlow")
+            .labels("birdView")
+            .brush("birdView", ["timeFlow"])
+            .mainReference("timeFlow")
             .redraw();
 
     });
