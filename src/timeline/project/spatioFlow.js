@@ -5,12 +5,10 @@ function spatioFlow(domElement) {
   // map
   //
 
-  // map geometry
-  var margin = {top: 20, right: 20, bottom: 20, left: 20},
-      outerWidth = 960,
-      outerHeight = 440,
-      width = outerWidth - margin.left - margin.right,
-      height = outerHeight - margin.top - margin.bottom;
+  // map geometry is based on timeline width for aesthetics
+  var spatioFlowAreaHeight = 440,
+      spatioFlowHeight = spatioFlowAreaHeight - timelineGeometry.margin.top -
+        timelineGeometry.margin.bottom;
 
   // global timeline variables
 
@@ -18,23 +16,25 @@ function spatioFlow(domElement) {
   var svg = d3.select(domElement).append("svg")
       .attr("class", "svg")
       .attr("id", "svgSpatioFlow")
-      .attr("width", outerWidth)
-      .attr("height", outerHeight)
+      .attr("width", timelineGeometry.maxWidth)
+      .attr("height", spatioFlowAreaHeight)
       .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top +  ")");
+      .attr("transform", "translate(" + timelineGeometry.margin.left + "," + timelineGeometry.margin.top +  ")");
 
   svg.append("clipPath")
       .attr("id", "map-area")
       .append("rect")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+        timelineGeometry.margin.right)
+      .attr("height", spatioFlowHeight);
 
   var spatioLayout = svg.append("g")
       .attr("class", "band")
       .attr("id", "map")
       .attr("clip-path", "url(#map-area)" )
       .append("rect")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+        timelineGeometry.margin.right)
+      .attr("height", spatioFlowHeight);
 
 }

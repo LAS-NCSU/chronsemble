@@ -8,13 +8,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     // chart
     //
 
-    // chart geometry
-//    var margin = {top: 20, right: 20, bottom: 20, left: 20},
-//        outerWidth = 960,
-//        outerHeight = 400,
-//        width = outerWidth - margin.left - margin.right,
-//        height = outerHeight - margin.top - margin.bottom;
-
     // global timeline variables
     var timeline = {},   // The timeline
         data = {},       // Container for the data
@@ -22,33 +15,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bandGap = 25,    // Arbitray gap between to consecutive bands
         bands = {},      // Registry for all the bands in the timeline
         bandY = 0,       // Y-Position of the next band
-        bandNum = 0;     // Count of bands for ids
+        bandNum = 0,     // Count of bands for ids
+        totalTracks = 0,
+        itemsPerTrack = [];
 
-    // Create svg element
-    var svg = d3.select(domTimelineElement).append("svg")
-        .attr("class", "svg")
-        .attr("id", "svg")
-        .attr("width", outerWidth)
-        .attr("height", outerHeight)
-        .append("g")
-// Translation does not include the margin.top in the Y coordinate to prevent
-// clipping of labels in the top margin.
-//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        .attr("transform", "translate(" + margin.left + ", 0)");
-
-    svg.append("clipPath")
-        .attr("id", "chart-area")
-        .append("rect")
-        .attr("width", width)
-// Size of clip path updated to encompass margin.top and margin.bottom to enable
-//  using the top and bottom margins as a label region.
-      //  .attr("height", height);
-        .attr("height", height + margin.top + margin.bottom);
-
-    var chart = svg.append("g")
-            .attr("class", "chart")
-            .attr("clip-path", "url(#chart-area)" );
-
+    var svg = d3.select(domTimelineElement).append("svg");
+    var chart = svg;
     var tooltip = d3.select("body")
         .append("div")
         .attr("class", "tooltip")
@@ -148,14 +120,21 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     tracks[track] = item.start;
                 });
             }
+
             function sortForward() {
                 // younger items assigned to early tracks
                 tracks[0] = Number.MIN_SAFE_INTEGER;
+                itemsPerTrack[0] = 0;
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
-                        if (item.start > tracks[i]) { break; }
+                        if (item.start > tracks[i]) break;
                     }
                     item.track = track;
+                    if (track > totalTracks - 1) {
+                      totalTracks++;
+                      itemsPerTrack[totalTracks] = 0;
+                    }
+                    itemsPerTrack[track]++;
                     tracks[track] = item.end;
                 });
             }
@@ -203,41 +182,76 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         data.nTracks = tracks.length;
         data.minDate = d3.min(data.items, function (d) { return d.start; });
         data.maxDate = d3.max(data.items, function (d) { return d.end; });
+  //      console.log(timelineGeometry);
 
         return timeline;
     };
 
+
+    timeline.defineTimelineArea = function( ) {
+      // Create svg element
+        svg.attr("class", "svg")
+           .attr("id", "svg")
+           .attr("width", timelineGeometry.maxWidth)
+           .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.top +
+              timelineGeometry.timeFlow.track.margin +
+              (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
+                        Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
+              (timelineGeometry.birdView.track.height + timelineGeometry.birdView.track.margin) *
+                        Math.max(totalTracks, timelineGeometry.birdView.minTracks) +
+              ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
+              timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin)
+           .append("g")
+    // Translation does not include the margin.top in the Y coordinate to prevent
+    // clipping of labels in the top margin.
+             .attr("transform", "translate(" + timelineGeometry.margin.left + ", 0)")
+             .append("clipPath")
+                .attr("id", "chart-area")
+                .append("rect")
+                .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                  timelineGeometry.margin.right)
+    // Size of clip path updated to encompass margin.top and margin.bottom to enable
+    //  using the top and bottom margins as a label region.
+                .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.top +
+                  timelineGeometry.timeFlow.track.margin +
+                  (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
+                            Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
+                  (timelineGeometry.birdView.track.height + timelineGeometry.birdView.track.margin) *
+                            Math.max(totalTracks, timelineGeometry.birdView.minTracks) +
+                  ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
+                  timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin);
+
+        chart = chart.select("g").append("g")
+            .attr("class", "chart")
+            .attr("clip-path", "url(#chart-area)" );
+
+        return timeline;
+    }
     //----------------------------------------------------------------------
     //
     // band
     //
 
-    timeline.band = function (bandName, sizeFactor) {
+    timeline.band = function (bandName) {
+//      console.log("Building band:" + bandName, "Geometry:", timelineGeometry[bandName]);
       console.log("Building band:" + bandName);
+//      console.log(itemsPerTrack);
+
         var band = {};
         band.id = "band" + bandNum;
         band.x = 0;
         band.y = bandY;
-        band.w = width;
-        band.h = height * (sizeFactor || 1);
+        band.w = timelineGeometry.maxWidth - timelineGeometry.margin.left -
+          timelineGeometry.margin.right;
+        band.h = timelineGeometry[bandName].track.margin +
+          (timelineGeometry[bandName].track.height + timelineGeometry[bandName].track.margin) *
+                    Math.max(totalTracks, timelineGeometry[bandName].minTracks);
+        //console.log("band.h", band.h);
         // trackOffset controls distance of first track from band edge and other tracks
-        if (bandName === "mainBand") {
-          band.trackOffset = 3;
-//          band.trackHeight = Math.max(Math.min((band.h - band.trackOffset) / data.nTracks, 17), 1);
-          band.trackHeight = 17;
-//          band.itemHeight = band.trackHeight * 0.8;
-          band.itemHeight = 14;
-        } else if (bandName === 'naviBand'){
-          // naviBand tracks are 1 pixel high
-          band.trackOffset = 1;
-          band.trackHeight = 1;
-          band.itemHeight = 1;
-        } else {
-          band.trackOffset = 0;
-          band.trackHeight = infoFlowCardHeight + margin.top;
-          band.itemHeight = infoFlowCardHeight;
-        }
 
+        band.trackOffset = timelineGeometry[bandName].track.margin;
+        band.itemHeight = timelineGeometry[bandName].track.height;
+        band.trackHeight = band.trackOffset + band.itemHeight;
         band.parts = [],
         band.instantWidth = 100; // arbitray value
 
@@ -246,7 +260,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .range([0, band.w]);
 
         band.yScale = function (track) {
-            return  band.trackOffset + track * band.trackHeight;
+            return band.trackOffset + track * band.trackHeight;
         };
   // Translating y coordinate by + margin.top here because the margin.top
   // translation was removed from the chart clip area translation to enable
@@ -255,14 +269,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         band.g = chart.append("g")
             .attr("id", band.id)
-            .attr("transform", "translate(0," + (band.y + margin.top) + ")");
+            .attr("transform", "translate(0," + (band.y + timelineGeometry.margin.top) + ")");
 
         band.g.append("rect")
             .attr("class", "band")
             .attr("width", band.w)
             .attr("height", band.h);
 
-        if (bandName === "mainBand") {
+        if (bandName === "timeFlow") {
           band.g.append("svg")
            .attr("y", "2")
            .attr("height", band.itemHeight + 2)
@@ -283,13 +297,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         var intervals = d3.select("#band" + bandNum).selectAll(".interval");
 
-        if (bandName === "mainBand") {
+        if (bandName === "timeFlow") {
           intervals.append("rect")
             .attr("fill", "#AAFFFF")
             .attr("width", "100%")
             .attr("height", "100%");
 
-          // Apply event labels to mainBand (not visible on naviBand)
+          // Apply event labels to timeFlow (not visible on birdView)
           intervals.append("text")
             .attr("class", "intervalLabel")
             .attr("x", 1)
@@ -309,8 +323,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("cy", band.itemHeight / 2)
             .attr("r", 5);
 
-        if (bandName === "mainBand") {
-          // Apply event labels to mainBand (not visible on naviBand)
+        if (bandName === "timeFlow") {
+          // Apply event labels to timeFlow (not visible on birdView)
           instants.append("text")
               .attr("class", "instantLabel")
               .attr("x", 15)
@@ -579,44 +593,44 @@ console.log("Labeling band:" + bandName);
   // Condition on bandName used to resrict labeling the main band with only the
   // middle label - this is purely for aesthetics as the start and end labels
   // don't necessarily add much to the main band when the scrubber window is
-  // active. To add the start and end labels back to the mainBand, remove the
+  // active. To add the start and end labels back to the timeFlow, remove the
   // check for bandName along with the false branch.
 
   // labelDefs[<element id>, <element class>, <rect x position>, <text x position>,
   //           <fcn returning text value>, <tooltip text>, <tooltip x offset>,
   //           <tooltip y offset>]
 
-        var labelDefs = (bandName === "naviBand") ? [
+        var labelDefs = (bandName === "birdView") ? [
             ["start", "bandBoundLabel", 0, labelWidth / 4,
                 function(min, max) { return toYear(min); },
-                "Beginning of time window", band.x + 80, outerHeight + 180],
+                "Beginning of time window", band.x + 80, timelineGeometry.maxWidth + 180],
             ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
                 function(min, max) { return toYear(max); },
-                "Ending of time window", band.x + band.w - 200, outerHeight + 180],
+                "Ending of time window", band.x + band.w - 200, timelineGeometry.maxWidth + 180],
             ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                "Range of data window", band.x + band.w / 2 + 75, outerHeight + 180]] :
-            // if bandName = mainBand then only set the middle label
+                "Range of data window", band.x + band.w / 2 + 75, timelineGeometry.maxWidth + 180]] :
+            // if bandName = timeFlow then only set the middle label
             [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                "Range of scrubber window", margin.left + labelWidth + 20, 200],
+                "Range of scrubber window", timelineGeometry.margin.left + labelWidth + 20, 200],
               ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
                  band.w / 2 - labelWidth / 3,
                  function(min, max) {return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
                                             (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
                                              min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
-                 "Reference Instant", outerWidth/2 + labelWidth, 200]
+                 "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth, 200]
             ];
 
         var bandLabels = chart.append("g")
             .attr("id", bandName + "Labels")
 
-    // Check for mainBand and if so, don't translate the y coordinate to place
-    // mainBand labels in the top margin (0 translation) and naviBand labels in
+    // Check for timeFlow and if so, don't translate the y coordinate to place
+    // timeFlow labels in the top margin (0 translation) and birdView labels in
     // the bottom margin.
 
-            .attr("transform", "translate(0," + ((bandName === "mainBand") ? "0" :
-                    (band.y + band.h + 1 + margin.top + margin.bottom)) +  ")")
+            .attr("transform", "translate(0," + ((bandName === "timeFlow") ? "0" :
+                    (band.y + band.h + 1 + timelineGeometry.margin.top + timelineGeometry.margin.bottom)) +  ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
             .enter().append("g")
@@ -727,7 +741,7 @@ console.log("Labeling band:" + bandName);
             .attr("class", "axis")
 
       // Add margin.top to y coordinate translation to account for top margin.
-            .attr("transform", "translate(0," + (band.y + band.h + margin.top) + ")");
+            .attr("transform", "translate(0," + (band.y + band.h + timelineGeometry.margin.top) + ")");
 
         xAxis.redraw = function () {
             xAxis.call(axis);
@@ -782,7 +796,7 @@ console.log("Labeling band:" + bandName);
           .attr("class", "referenceline")
           .append("line")
     // Add margin.top to y coordinate translations to leave gap for top margin.
-          .attr("x1", band.w/2).attr("y1", margin.top).attr("x2", band.w/2).attr("y2", band.h + margin.top);
+          .attr("x1", band.w/2).attr("y1", timelineGeometry.margin.top).attr("x2", band.w/2).attr("y2", band.h + timelineGeometry.margin.top);
         return timeline;
     };
 
