@@ -585,10 +585,16 @@ console.log("Labeling band:" + bandName);
         var band = bands[bandName],
             labelWidth = 46,
             labelHeight = 20,
-            labelTop = band.y + band.h - 10,
+            tooltipTop = timelineGeometry.infoFlowHeight +
+              timelineGeometry.margin.top + timelineGeometry.margin.bottom +
+              timelineGeometry.timeFlow.track.margin + 4 +
+                (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
+                    Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
+                    (timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
+                      timelineGeometry.axis.lineStroke + timelineGeometry.axis.margin) * 2;
             y = band.y + band.h + 1,
             yText = 15;
-//console.log(labelTop, band.y, band.h);
+console.log(band.y, band.h);
 
   // Condition on bandName used to resrict labeling the main band with only the
   // middle label - this is purely for aesthetics as the start and end labels
@@ -603,23 +609,26 @@ console.log("Labeling band:" + bandName);
         var labelDefs = (bandName === "birdView") ? [
             ["start", "bandBoundLabel", 0, labelWidth / 4,
                 function(min, max) { return toYear(min); },
-                "Beginning of time window", band.x + 80, timelineGeometry.maxWidth + 180],
+                "Beginning of timeline", band.x + 90, tooltipTop],
             ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
                 function(min, max) { return toYear(max); },
-                "Ending of time window", band.x + band.w - 200, timelineGeometry.maxWidth + 180],
+                "Ending of timeline", band.x + band.w - 160, tooltipTop],
             ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                "Range of data window", band.x + band.w / 2 + 75, timelineGeometry.maxWidth + 180]] :
-            // if bandName = timeFlow then only set the middle label
+                "Range of timeline", band.x + band.w / 2 + 65, tooltipTop]] :
+            // if bandName = timeFlow then only set the scrubber range and reference
+            // instant label
             [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
-                "Range of scrubber window", timelineGeometry.margin.left + labelWidth + 20, 200],
+                "Range of scrubber window", timelineGeometry.margin.left + labelWidth + 20,
+              timelineGeometry.infoFlowHeight + 5],
               ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
                  band.w / 2 - labelWidth / 3,
                  function(min, max) {return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
                                             (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
                                              min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
-                 "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth, 200]
+                 "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth,
+               timelineGeometry.infoFlowHeight + 5]
             ];
 
         var bandLabels = chart.append("g")
