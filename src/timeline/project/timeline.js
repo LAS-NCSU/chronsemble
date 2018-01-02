@@ -187,18 +187,22 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         return timeline;
     };
 
+    // bandHeight is a value that we need to compute and use several times.
+    
+    timeline.bandHeight = function(bandName) {
+      return timelineGeometry[bandName].track.margin +
+        (timelineGeometry[bandName].track.height + timelineGeometry[bandName].track.margin) *
+          Math.max(Math.min(totalTracks, timelineGeometry[bandName].maxTracks),
+          timelineGeometry[bandName].minTracks);
+    };
 
     timeline.defineTimelineArea = function( ) {
       // Create svg element
         svg.attr("class", "svg")
            .attr("id", "svg")
            .attr("width", timelineGeometry.maxWidth)
-           .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.top +
-              timelineGeometry.timeFlow.track.margin +
-              (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
-                        Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
-              (timelineGeometry.birdView.track.height + timelineGeometry.birdView.track.margin) *
-                        Math.max(totalTracks, timelineGeometry.birdView.minTracks) +
+           .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
+               timeline.bandHeight("timeFlow") + timeline.bandHeight("birdView") +
               ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
               timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin)
            .append("g")
@@ -212,12 +216,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                   timelineGeometry.margin.right)
     // Size of clip path updated to encompass margin.top and margin.bottom to enable
     //  using the top and bottom margins as a label region.
-                .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.top +
-                  timelineGeometry.timeFlow.track.margin +
-                  (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
-                            Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
-                  (timelineGeometry.birdView.track.height + timelineGeometry.birdView.track.margin) *
-                            Math.max(totalTracks, timelineGeometry.birdView.minTracks) +
+                .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
+                timeline.bandHeight("timeFlow") + timeline.bandHeight("birdView") +
                   ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
                   timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin);
 
@@ -243,9 +243,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         band.y = bandY;
         band.w = timelineGeometry.maxWidth - timelineGeometry.margin.left -
           timelineGeometry.margin.right;
-        band.h = timelineGeometry[bandName].track.margin +
-          (timelineGeometry[bandName].track.height + timelineGeometry[bandName].track.margin) *
-                    Math.max(totalTracks, timelineGeometry[bandName].minTracks);
+        band.h = timeline.bandHeight(bandName);
+
         //console.log("band.h", band.h);
         // trackOffset controls distance of first track from band edge and other tracks
 
@@ -589,7 +588,8 @@ console.log("Labeling band:" + bandName);
               timelineGeometry.margin.top + timelineGeometry.margin.bottom +
               timelineGeometry.timeFlow.track.margin + 4 +
                 (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
-                    Math.max(totalTracks, timelineGeometry.timeFlow.minTracks) +
+                    Math.max(Math.min(totalTracks, timelineGeometry.timeFlow.maxTracks),
+                    timelineGeometry.timeFlow.minTracks) +
                     (timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
                       timelineGeometry.axis.lineStroke + timelineGeometry.axis.margin) * 2;
             y = band.y + band.h + 1,
