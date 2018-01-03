@@ -12,11 +12,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     var timeline = {},   // The timeline
         data = {},       // Container for the data
         components = [], // All the components of the timeline for redrawing
-        bandGap = 25,    // Arbitray gap between to consecutive bands
         bands = {},      // Registry for all the bands in the timeline
         bandY = 0,       // Y-Position of the next band
         bandNum = 0,     // Count of bands for ids
-        totalTracks = 0,
         itemsPerTrack = [];
 
     var svg = d3.select(domTimelineElement).append("svg");
@@ -36,6 +34,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var today = new Date(),
             tracks = [],
             yearMillis = 31622400000,
+            totalTracks = 0,
             instantOffset = 100 * yearMillis;
 
         data.items = items;
@@ -183,17 +182,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         data.minDate = d3.min(data.items, function (d) { return d.start; });
         data.maxDate = d3.max(data.items, function (d) { return d.end; });
   //      console.log(timelineGeometry);
-
+        timelineGeometry.totalTracks = totalTracks;
         return timeline;
-    };
-
-    // bandHeight is a value that we need to compute and use several times.
-    
-    timeline.bandHeight = function(bandName) {
-      return timelineGeometry[bandName].track.margin +
-        (timelineGeometry[bandName].track.height + timelineGeometry[bandName].track.margin) *
-          Math.max(Math.min(totalTracks, timelineGeometry[bandName].maxTracks),
-          timelineGeometry[bandName].minTracks);
     };
 
     timeline.defineTimelineArea = function( ) {
@@ -202,9 +192,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
            .attr("id", "svg")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-               timeline.bandHeight("timeFlow") + timeline.bandHeight("birdView") +
-              ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
-              timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin)
+             timelineGeometry.flowHeight("timeFlow") +
+             timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
+             timelineGeometry.flowHeight("birdView") +
+             timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
+             timelineGeometry.axisHeight() * 2)
            .append("g")
     // Translation does not include the margin.top in the Y coordinate to prevent
     // clipping of labels in the top margin.
@@ -217,9 +209,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     // Size of clip path updated to encompass margin.top and margin.bottom to enable
     //  using the top and bottom margins as a label region.
                 .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-                timeline.bandHeight("timeFlow") + timeline.bandHeight("birdView") +
-                  ((timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
-                  timelineGeometry.axis.lineStroke) * 2) + timelineGeometry.axis.margin);
+                  timelineGeometry.flowHeight("timeFlow") +
+                  timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
+                  timelineGeometry.flowHeight("birdView") +
+                  timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
+                  timelineGeometry.axisHeight() * 2);
 
         chart = chart.select("g").append("g")
             .attr("class", "chart")
@@ -243,11 +237,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         band.y = bandY;
         band.w = timelineGeometry.maxWidth - timelineGeometry.margin.left -
           timelineGeometry.margin.right;
-        band.h = timeline.bandHeight(bandName);
+        band.h = timelineGeometry.flowHeight(bandName);
 
         //console.log("band.h", band.h);
         // trackOffset controls distance of first track from band edge and other tracks
 
+        band.marginTop = timelineGeometry[bandName].margin.top;
+        band.marginBottom = timelineGeometry[bandName].margin.Bottom;
         band.trackOffset = timelineGeometry[bandName].track.margin;
         band.itemHeight = timelineGeometry[bandName].track.height;
         band.trackHeight = band.trackOffset + band.itemHeight;
@@ -258,8 +254,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .domain([data.minDate, data.maxDate])
             .range([0, band.w]);
 
-        band.yScale = function (track) {
-            return band.trackOffset + track * band.trackHeight;
+        band.yTrackPos = function (track) {
+            return band.marginTop + band.trackOffset + track * band.trackHeight;
         };
   // Translating y coordinate by + margin.top here because the margin.top
   // translation was removed from the chart clip area translation to enable
@@ -290,7 +286,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var items = band.g.selectAll("g")
             .data(data.items)
             .enter().append("svg")
-            .attr("y", function (d) { return band.yScale(d.track); })
+            .attr("y", function (d) { return band.yTrackPos(d.track); })
             .attr("height", band.itemHeight)
             .attr("class", function (d) { return d.instant ? "part instant" : "part interval";});
 
@@ -352,7 +348,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bands[bandName] = band;
         components.push(band);
         // Adjust values for next band
-        bandY += band.h + bandGap;
+        bandY += band.h + timelineGeometry[bandName].margin.top +
+          timelineGeometry[bandName].margin.bottom + timelineGeometry.axisHeight( );
         bandNum += 1;
 
         return timeline;
@@ -586,12 +583,11 @@ console.log("Labeling band:" + bandName);
             labelHeight = 20,
             tooltipTop = timelineGeometry.infoFlowHeight +
               timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-              timelineGeometry.timeFlow.track.margin + 4 +
-                (timelineGeometry.timeFlow.track.height + timelineGeometry.timeFlow.track.margin) *
-                    Math.max(Math.min(totalTracks, timelineGeometry.timeFlow.maxTracks),
-                    timelineGeometry.timeFlow.minTracks) +
-                    (timelineGeometry.axis.labelHeight + timelineGeometry.axis.tickHeight +
-                      timelineGeometry.axis.lineStroke + timelineGeometry.axis.margin) * 2;
+  //            timelineGeometry.timeFlow.track.margin +
+              timelineGeometry.flowHeight("timeFlow") +
+              timelineGeometry.flowHeight("birdView") +
+  //            timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
+              timelineGeometry.axisHeight( ) * 2 - 10;
             y = band.y + band.h + 1,
             yText = 15;
 console.log(band.y, band.h);
@@ -624,9 +620,10 @@ console.log(band.y, band.h);
               timelineGeometry.infoFlowHeight + 5],
               ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
                  band.w / 2 - labelWidth / 3,
-                 function(min, max) {return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
-                                            (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
-                                             min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
+                 function(min, max) {
+                   return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
+                        (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
+                        min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
                  "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth,
                timelineGeometry.infoFlowHeight + 5]
             ];
@@ -639,7 +636,12 @@ console.log(band.y, band.h);
     // the bottom margin.
 
             .attr("transform", "translate(0," + ((bandName === "timeFlow") ? "0" :
-                    (band.y + band.h + 1 + timelineGeometry.margin.top + timelineGeometry.margin.bottom)) +  ")")
+              timelineGeometry.margin.top +
+              timelineGeometry.flowHeight("timeFlow") +
+              timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
+              timelineGeometry.flowHeight("birdView") +
+              timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
+              timelineGeometry.axisHeight( ) * 2) + ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
             .enter().append("g")
@@ -750,7 +752,15 @@ console.log(band.y, band.h);
             .attr("class", "axis")
 
       // Add margin.top to y coordinate translation to account for top margin.
-            .attr("transform", "translate(0," + (band.y + band.h + timelineGeometry.margin.top) + ")");
+            .attr("transform", "translate(0," + (timelineGeometry.margin.top +
+              timelineGeometry.timeFlow.margin.top +
+              timelineGeometry.flowHeight("timeFlow") +
+              timelineGeometry.timeFlow.margin.bottom +
+              timelineGeometry.axis.margin.top +
+              ((bandName === "timeFlow") ? 0 : timelineGeometry.flowHeight("birdView") +
+               + timelineGeometry.axis.margin.top + timelineGeometry.axis.margin.bottom +
+               timelineGeometry.axisHeight())) + ")");
+console.log("band.y:", band.y, "band.h:", band.h);
 
         xAxis.redraw = function () {
             xAxis.call(axis);
@@ -790,7 +800,7 @@ console.log(band.y, band.h);
 
         xBrush.selectAll("rect")
             .attr("y", 0)
-            .attr("height", band.h);
+            .attr("height", timelineGeometry.flowHeight("birdView") + 2);
 
         return timeline;
     };
@@ -805,7 +815,10 @@ console.log(band.y, band.h);
           .attr("class", "referenceline")
           .append("line")
     // Add margin.top to y coordinate translations to leave gap for top margin.
-          .attr("x1", band.w/2).attr("y1", timelineGeometry.margin.top).attr("x2", band.w/2).attr("y2", band.h + timelineGeometry.margin.top);
+          .attr("x1", band.w/2)
+          .attr("y1", timelineGeometry.margin.top)
+          .attr("x2", band.w/2)
+          .attr("y2", band.h + timelineGeometry.margin.top);
         return timeline;
     };
 
