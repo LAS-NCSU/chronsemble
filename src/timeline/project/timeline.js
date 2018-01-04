@@ -16,6 +16,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bandY = 0,       // Y-Position of the next band
         bandNum = 0,     // Count of bands for ids
         itemsPerTrack = [];
+    var lastEvent = null;
 
     var svg = d3.select(domTimelineElement).append("svg");
     var chart = svg;
@@ -67,6 +68,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           };
 
  //showItems();
+(items[0].loc === undefined) ? spatioFlow = false : console.log("SpatioFow");
+ //("loc" in items[0]) ? console.log("SpatioFow") : spatioFlow = false;
 
         function compareAscending(item1, item2) {
             //compareAscending sorts events according to the following:
@@ -368,6 +371,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             arrayObject.start = value.start;
             arrayObject.end = value.end;
             arrayObject.label = value.label;
+//            console.log("loc:", value.loc);
             arrayObject.loc = value.loc;
             arrayObject.proximity = "0";
             arrayObject.track = value.track;
@@ -420,7 +424,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                    Math.abs(referenceValue - endDateOfEvent))).toString();
                 }
                 // Is location unique? If not, do max hold on proximity.
-                eventsWithinScruber.forEach(function(eventItem) {
+                if (spatioFlow) {
+                  eventsWithinScruber.forEach(function(eventItem) {
                   if (value.loc === eventItem.loc) {
                     var eventProximity = parseFloat(eventItem.proximity);
                     if (value.proximity > eventProximity) {
@@ -431,47 +436,56 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                       value.proximity = eventProximity;
                     }
                   }
-                })
-                value.proximity = value.proximity.toString();
-                eventsWithinScruber.push(value);
+                });
+              }
+              value.proximity = value.proximity.toString();
+              eventsWithinScruber.push(value);
 
 // Find the tighest event bounding the reference or, if no bounding event, then
 // the event closest to the reference.
 
-                if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
-                  if (!referenceBoundedByEvent) {
-                    referenceBoundedByEvent = true;
-                    currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
-                    referenceEvent.push(value);
-                  } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
-                    currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+              if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
+                if (!referenceBoundedByEvent) {
+                  referenceBoundedByEvent = true;
+                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+                  referenceEvent.push(value);
+                } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
+                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+                  referenceEvent.push(value);
+                }
+              } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
+                  // reference is in past relative to event
+                  if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
+                    currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
                     referenceEvent.push(value);
                   }
-                } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
-                    // reference is in past relative to event
-                    if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
-                      currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
-                      referenceEvent.push(value);
-                    }
-                } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
-                    // refence is in the future relative to event
-                    if (Math.abs(eventStopToReferenceGap) < currentReferenceEventGap) {
-                      currentReferenceEventGap = Math.abs(eventStopToReferenceGap);
-                      referenceEvent.push(value);
-                    }
-                }
+              } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
+                  // refence is in the future relative to event
+                  if (Math.abs(eventStopToReferenceGap) < currentReferenceEventGap) {
+                    currentReferenceEventGap = Math.abs(eventStopToReferenceGap);
+                    referenceEvent.push(value);
+                  }
+              }
             }
         });
 
-        if(referenceEvent.length==0){
-            referenceEvent[0] = "";
+        if (referenceEvent.length===0) {
+          // This fixes bug where there are no timeflow events within the scrubber
+          // window; however the fix is not ideal (FIXME) because the infoflow
+          // pane will retain the last event regardless of proximity to reference
+          // line.
+//          console.log("ref.length:", referenceEvent, "lastEvent: ", lastEvent);
+          referenceEvent[0] = lastEvent;
+        } else {
+          lastEvent = referenceEvent[0];
         }
         // Highlight the timeline row corresponding to the cards in the
         // info-flow band.
         d3.select(".infoRow")
             .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
-            var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-            var locations = updateSpatioFlow(eventsWithinScruber, maxProximity);
+
+        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
+        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
 
 
     }
@@ -673,8 +687,8 @@ console.log(band.y, band.h);
             var min = band.xScale.domain()[0],
                 max = band.xScale.domain()[1];
 
-            labels.text(function (d) { return d[4](min, max).toFixed(1); })
-
+            labels.text(function (d) { return (isString(d[4](min, max)) ?
+              d[4](min, max) : d[4](min, max).toFixed(1)); })
         };
 
         band.parts.push(labels);
