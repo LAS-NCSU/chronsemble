@@ -1,8 +1,10 @@
 // tiimeline geometry
 
 var timelineGeometry = {
-  maxHeight: 400,   // Maximum height of the timeflow pane
-  maxWidth: 960,    // Maximm width of the timeflow pane
+  // The height of the timeflow pane is determined by the value of
+  // - timeFlow.maxTracks this sets the maximum number of tracks that can be
+  //                      viewed simultaneously on the timeflow pane.
+  maxWidth: 960,    // Maximum width of the timeflow and all other panes
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
   // margin surrounding the three *flow panes
   margin: {top: 20 , right: 20, bottom: 20, left: 20},
@@ -23,18 +25,19 @@ var timelineGeometry = {
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, margin: 0}},
-  timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
+  timeFlow: {maxTracks: 30, minTracks: 3, maxHeight: 292,
     margin: {top: 0, bottom: 1},
     track: {maxHeight: 14, height: 14, margin: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,
     margin: {top: 1, bottom: 1},
     track: {maxHeight: 1, height: 1, margin: 0}},
+  // - totalTracks is assigned after processing the data.
   totalTracks: 0,
 
   flowHeight: function(flowName) {
     return this[flowName].track.margin +
       (this[flowName].track.height + this[flowName].track.margin) *
-        Math.max(Math.min(this.totalTracks, this[flowName].maxTracks),
+        Math.max(Math.min(this.totalTracks, this.timeFlow.maxTracks),
         this[flowName].minTracks);
 
   },
@@ -55,3 +58,8 @@ var infoFlowCards = 5,      // number of cards visible in info pane.
 var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
                            "loc", "Initiator", "Outcome", "SideADeaths",
                            "SideBDeaths"]);
+var spatioFlow = true;
+
+function isString (obj) {
+ return (Object.prototype.toString.call(obj) === '[object String]');
+}
