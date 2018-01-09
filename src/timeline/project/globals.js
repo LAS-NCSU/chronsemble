@@ -1,4 +1,4 @@
-// tiimeline geometry
+// timeline geometry
 
 var timelineGeometry = {
   // The height of the timeflow pane is determined by the value of
@@ -10,8 +10,8 @@ var timelineGeometry = {
   margin: {top: 20 , right: 20, bottom: 20, left: 20},
   // axis geometry includes a top and bottom margin used to set off from
   // elements above and below
-  axis: {labelHeight: 14, tickHeight: 6, lineStroke: 1,
-    margin: {top: 0, bottom: 3}},
+  axis: {labelHeight: 10, tickHeight: 6, lineStroke: 1,
+    margin: {top: 1, bottom: 3}},
   // *flow geometries include a margin to set off the flow from elements above and
   // below; this is redundant for all except the birdView which needs an independent
   // margin to afford space for the brush.
@@ -21,25 +21,25 @@ var timelineGeometry = {
   //              birdView.maxTracks should always equal timeFlow.maxTracks. The
   //              track.
   // - track.height sets the height of the timeline track for the given flow.
-  // - track.margin setst the verticle space between adjacent timeline tracks.
+  // - track.space sets the verticle space between adjacent timeline tracks.
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
-    track: {maxHeight: 160, height: 160, margin: 0}},
+    track: {maxHeight: 160, height: 160, space: 0}},
   timeFlow: {maxTracks: 30, minTracks: 3, maxHeight: 292,
-    margin: {top: 0, bottom: 1},
-    track: {maxHeight: 14, height: 14, margin: 3}},
+    margin: {top: 3, bottom: 4},
+    track: {maxHeight: 14, height: 14, space: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,
     margin: {top: 1, bottom: 1},
-    track: {maxHeight: 1, height: 1, margin: 0}},
-  // - totalTracks is assigned after processing the data.
+    track: {maxHeight: 1, height: 1, space: 0}},
+  // - totalTracks is reset after processing the data.
   totalTracks: 0,
 
   flowHeight: function(flowName) {
-    return this[flowName].track.margin +
-      (this[flowName].track.height + this[flowName].track.margin) *
+    return this[flowName].margin.top +
+      (this[flowName].track.height + this[flowName].track.space) *
         Math.max(Math.min(this.totalTracks, this.timeFlow.maxTracks),
-        this[flowName].minTracks);
-
+        this[flowName].minTracks) - this[flowName].track.space +
+        this[flowName].margin.bottom;
   },
 
   axisHeight: function( ) {
