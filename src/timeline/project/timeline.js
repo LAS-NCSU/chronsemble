@@ -68,7 +68,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           };
 
  //showItems();
-(items[0].loc === undefined) ? spatioFlow = false : console.log("SpatioFow");
+        if (items[0].loc === undefined) spatioFlow = false;
  //("loc" in items[0]) ? console.log("SpatioFow") : spatioFlow = false;
 
         function compareAscending(item1, item2) {
@@ -189,41 +189,39 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         return timeline;
     };
 
-    timeline.defineTimelineArea = function( ) {
-      // Create svg element
+    timeline.defineTimelinePane = function( ) {
+      // Create svg element to contain all of the timeline elements
         svg.attr("class", "svg")
            .attr("id", "svg")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
              timelineGeometry.flowHeight("timeFlow") +
-             timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
              timelineGeometry.flowHeight("birdView") +
-             timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
-             timelineGeometry.axisHeight() * 2)
-           .append("g")
-    // Translation does not include the margin.top in the Y coordinate to prevent
-    // clipping of labels in the top margin.
-             .attr("transform", "translate(" + timelineGeometry.margin.left + ", 0)")
-             .append("clipPath")
-                .attr("id", "chart-area")
-                .append("rect")
-                .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
-                  timelineGeometry.margin.right)
-    // Size of clip path updated to encompass margin.top and margin.bottom to enable
-    //  using the top and bottom margins as a label region.
-                .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-                  timelineGeometry.flowHeight("timeFlow") +
-                  timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
-                  timelineGeometry.flowHeight("birdView") +
-                  timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
-                  timelineGeometry.axisHeight() * 2);
-
-        chart = chart.select("g").append("g")
-            .attr("class", "chart")
-            .attr("clip-path", "url(#chart-area)" );
+             timelineGeometry.axisHeight() * 2);
 
         return timeline;
     }
+
+    timeline.defineTimeflowArea = function( ) {
+       svg.append("g")
+          .attr("transform", "translate(" + timelineGeometry.margin.left + "," +
+            timelineGeometry.margin.top + ")")
+          .append("clipPath")
+          .attr("id", "timeflow-area")
+          .append("rect")
+          .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                  timelineGeometry.margin.right)
+    // Size of clip path updated to encompass margin.top and margin.bottom to enable
+    //  using the top and bottom margins as a label region.
+          .attr("height", timelineGeometry.flowHeight("timeFlow"));
+
+        chart = chart.select("g").append("g")
+            .attr("class", "chart")
+            .attr("clip-path", "url(#timeflow-area)" );
+
+        return timeline;
+    }
+
     //----------------------------------------------------------------------
     //
     // band
@@ -247,7 +245,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         band.marginTop = timelineGeometry[bandName].margin.top;
         band.marginBottom = timelineGeometry[bandName].margin.Bottom;
-        band.trackOffset = timelineGeometry[bandName].track.margin;
+        band.trackOffset = timelineGeometry[bandName].track.space;
         band.itemHeight = timelineGeometry[bandName].track.height;
         band.trackHeight = band.trackOffset + band.itemHeight;
         band.parts = [],
@@ -258,8 +256,18 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .range([0, band.w]);
 
         band.yTrackPos = function (track) {
-            return band.marginTop + band.trackOffset + track * band.trackHeight;
+            return band.marginTop + track * band.trackHeight;
         };
+
+        band.yTrackPosLimit = function (track) {
+          return (band.marginTop + track * band.trackHeight +
+            (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) ?
+            2 : 3);
+//            ((track + 2 > timelineGeometry.timeFlow.maxTracks) ?
+//            (timelineGeometry.timeFlow.margin.bottom + timelineGeometry.axisHeight( ) * 2 +
+//            timelineGeometry.flowHeight("birdView") + timelineGeometry.margin.bottom) : 0) : 0;
+        };
+
   // Translating y coordinate by + margin.top here because the margin.top
   // translation was removed from the chart clip area translation to enable
   // using the top margin for label data. This means margin.top must be added
@@ -267,7 +275,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         band.g = chart.append("g")
             .attr("id", band.id)
-            .attr("transform", "translate(0," + (band.y + timelineGeometry.margin.top) + ")");
+//            .attr("transform", "translate(0," + (band.y + timelineGeometry.margin.top) + ")");
+            .attr("transform", "translate(0," + band.y + ")");
 
         band.g.append("rect")
             .attr("class", "band")
@@ -289,7 +298,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var items = band.g.selectAll("g")
             .data(data.items)
             .enter().append("svg")
-            .attr("y", function (d) { return band.yTrackPos(d.track); })
+            .attr("y", function (d) { console.log("yTrackPos:", band.yTrackPos(d.track),
+            "yTrackPosLimit:", band.yTrackPosLimit(d.track));
+            return band.yTrackPos(d.track); })
             .attr("height", band.itemHeight)
             .attr("class", function (d) { return d.instant ? "part instant" : "part interval";});
 
@@ -351,8 +362,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bands[bandName] = band;
         components.push(band);
         // Adjust values for next band
-        bandY += band.h + timelineGeometry[bandName].margin.top +
-          timelineGeometry[bandName].margin.bottom + timelineGeometry.axisHeight( );
+//        bandY += band.h + timelineGeometry[bandName].margin.top +
+        bandY += band.h + timelineGeometry.axisHeight( );
         bandNum += 1;
 
         return timeline;
@@ -597,10 +608,8 @@ console.log("Labeling band:" + bandName);
             labelHeight = 20,
             tooltipTop = timelineGeometry.infoFlowHeight +
               timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-  //            timelineGeometry.timeFlow.track.margin +
               timelineGeometry.flowHeight("timeFlow") +
               timelineGeometry.flowHeight("birdView") +
-  //            timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
               timelineGeometry.axisHeight( ) * 2 - 10;
             y = band.y + band.h + 1,
             yText = 15;
@@ -649,12 +658,10 @@ console.log(band.y, band.h);
     // timeFlow labels in the top margin (0 translation) and birdView labels in
     // the bottom margin.
 
-            .attr("transform", "translate(0," + ((bandName === "timeFlow") ? "0" :
-              timelineGeometry.margin.top +
+            .attr("transform", "translate(0," + ((bandName === "timeFlow") ? "-" + timelineGeometry.margin.top :
+  //            timelineGeometry.margin.top +
               timelineGeometry.flowHeight("timeFlow") +
-              timelineGeometry.timeFlow.margin.top + timelineGeometry.timeFlow.margin.bottom +
               timelineGeometry.flowHeight("birdView") +
-              timelineGeometry.birdView.margin.top + timelineGeometry.birdView.margin.bottom +
               timelineGeometry.axisHeight( ) * 2) + ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
@@ -762,17 +769,17 @@ console.log(band.y, band.h);
             .tickSize(6, 0)
             .tickFormat(function (d) { return toYear(d); });
 
+        chart = svg.select("g");
+
         var xAxis = chart.append("g")
             .attr("class", "axis")
 
       // Add margin.top to y coordinate translation to account for top margin.
-            .attr("transform", "translate(0," + (timelineGeometry.margin.top +
-              timelineGeometry.timeFlow.margin.top +
+//      .attr("transform", "translate(0," + (timelineGeometry.margin.top +
+        .attr("transform", "translate(0," + (
               timelineGeometry.flowHeight("timeFlow") +
-              timelineGeometry.timeFlow.margin.bottom +
               timelineGeometry.axis.margin.top +
               ((bandName === "timeFlow") ? 0 : timelineGeometry.flowHeight("birdView") +
-               + timelineGeometry.axis.margin.top + timelineGeometry.axis.margin.bottom +
                timelineGeometry.axisHeight())) + ")");
 console.log("band.y:", band.y, "band.h:", band.h);
 
@@ -814,7 +821,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
 
         xBrush.selectAll("rect")
             .attr("y", 0)
-            .attr("height", timelineGeometry.flowHeight("birdView") + 2);
+            .attr("height", timelineGeometry.flowHeight("birdView"));
 
         return timeline;
     };
@@ -830,9 +837,9 @@ console.log("band.y:", band.y, "band.h:", band.h);
           .append("line")
     // Add margin.top to y coordinate translations to leave gap for top margin.
           .attr("x1", band.w/2)
-          .attr("y1", timelineGeometry.margin.top)
+          .attr("y1", 0)
           .attr("x2", band.w/2)
-          .attr("y2", band.h + timelineGeometry.margin.top);
+          .attr("y2", band.h);
         return timeline;
     };
 
