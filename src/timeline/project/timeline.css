@@ -18,6 +18,9 @@
     shape-rendering: crispEdges;
 }
 
+.tick text {
+  font: 10px sans-serif;
+}
 /* timeline band */
 
 .band { /* band background */
