@@ -65,6 +65,12 @@
     fill: #EEEEEE;
 }
 
+.vscroll {
+    fill: none;
+    stroke-width: 1;
+    stroke: lightgray;
+}
+
 .interval {
   //fill: #AAFFFF;
   //fill: #ff9999;
