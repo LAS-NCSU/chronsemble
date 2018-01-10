@@ -114,11 +114,17 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             function sortBackward() {
                 // older items assigned to early tracks
                 tracks[0] = Number.MAX_SAFE_INTEGER;
+                itemsPerTrack[0] = 0;
                 items.forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.end < tracks[i]) { break; }
                     }
                     item.track = track;
+                    if (track > totalTracks - 1) {
+                      totalTracks++;
+                      itemsPerTrack[totalTracks] = 0;
+                    }
+                    itemsPerTrack[track]++;
                     tracks[track] = item.start;
                 });
             }
@@ -174,13 +180,25 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             if (item.end > today) { item.end = today};
         });
 
-        //calculateTracks(data.items);
         // Show patterns
         //calculateTracks(data.items, "ascending", "backward");
         //calculateTracks(data.items, "descending", "forward");
         // Show real data
-        //calculateTracks(data.items, "descending", "backward");
         calculateTracks(data.items, "ascending", "forward");
+        console.log("Sort forward total tracks: ", totalTracks);
+        timelineGeometry.totalTracks = totalTracks;
+        totalTracks = 0;
+        calculateTracks(data.items, "descending", "backward");
+        console.log("Sort backward total tracks: ", totalTracks);
+        if (totalTracks < timelineGeometry.totalTracks) {
+          timelineGeometry.totalTracks = totalTracks;
+          console.log("Using descending backward!");
+        } else {
+          console.log("Using ascending forward!");
+          totalTracks = 0;
+          calculateTracks(data.items, "ascending", "forward");
+        }
+
         data.nTracks = tracks.length;
         data.minDate = d3.min(data.items, function (d) { return d.start; });
         data.maxDate = d3.max(data.items, function (d) { return d.end; });
@@ -227,15 +245,34 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           .append("rect")
           .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
                   timelineGeometry.margin.right)
-          .attr("height", timelineGeometry.flowHeight("birdView"))
+//          .attr("height", timelineGeometry.flowHeight("birdView"))
+          .attr("height", (timelineGeometry.flowHeight("birdView") -
+            timelineGeometry.birdView.margin.top - timelineGeometry.birdView.margin.bottom))
           .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow") +
-                  timelineGeometry.axisHeight( )) + ")");
+                  timelineGeometry.axisHeight( ) + timelineGeometry.birdView.margin.top) + ")");
 
        chart = svg.select("g").append("g")
                   .attr("class", "chart")
                   .attr("clip-path", "url(#birdview-area)" );
 
         return timeline;
+    }
+
+    timeline.defineVerticalScrollArea = function( ) {
+      if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
+        // Add vertical scroll area
+        svg.select("g")
+           .append("g")
+           .attr("class", "vscroll")
+           .attr("id", "verticalScroll-area")
+           .append("rect")
+           .attr("width", timelineGeometry.margin.right/2)
+ //          .attr("height", timelineGeometry.flowHeight("birdView"))
+           .attr("height", timelineGeometry.flowHeight("timeFlow"))
+           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
+             timelineGeometry.margin.left - timelineGeometry.margin.right) + ")");
+      }
+      return timeline;
     }
 
     //----------------------------------------------------------------------
@@ -814,13 +851,22 @@ console.log("band.y:", band.y, "band.h:", band.h);
                 });
             });
 
-        var xBrush = band.g.append("svg")
+// To place the brush element within the band it accompanies, swap in the following
+// xBrush declaration and then remove the transform translate attribute on the
+// xBrush rect selection below. We should also redefine the clip area for the
+// birdview (add the top & bottom margins back) to prevent clipping the top and
+// bottom brush outlines.
+//      var xBrush = band.g.append("svg")
+        var xBrush = svg.select("g").append("svg")
             .attr("class", "x brush")
             .call(brush);
 
         xBrush.selectAll("rect")
             .attr("y", 0)
-            .attr("height", timelineGeometry.flowHeight("birdView"));
+            .attr("height", timelineGeometry.flowHeight("birdView"))
+// Remove this transform when locating brush under the band element
+            .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow") +
+                timelineGeometry.axisHeight( )) + ")");
 
         return timeline;
     };
