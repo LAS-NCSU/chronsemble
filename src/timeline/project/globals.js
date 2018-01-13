@@ -25,21 +25,27 @@ var timelineGeometry = {
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 0}},
-  timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
+  timeFlow: {maxTracks: 8, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,
     margin: {top: 1, bottom: 1},
     track: {maxHeight: 1, height: 1, space: 0}},
   // - totalTracks is reset after processing the data.
+  vScroll: {margin: {left: 2, right: 2}},
   totalTracks: 0,
 
-  flowHeight: function(flowName) {
+// flowHeight - determines the height in pixels of the named flow where flowName
+// is one of ["timeFlow", "birdView"].
+//  - visible is boolean that returns the height of the flow that is inside the
+//            region when true and, when false, returns the height of the total flow.
+
+  flowHeight: function(flowName, visible) {
     return this[flowName].margin.top +
-      (this[flowName].track.height + this[flowName].track.space) *
+      (this[flowName].track.height + this[flowName].track.space) * ((visible) ?
         Math.max(Math.min(this.totalTracks, this.timeFlow.maxTracks),
-        this[flowName].minTracks) - this[flowName].track.space +
-        this[flowName].margin.bottom;
+        this[flowName].minTracks) : Math.max(this.totalTracks, this[flowName].minTracks)) -
+        this[flowName].track.space + this[flowName].margin.bottom;
   },
 
   axisHeight: function( ) {
