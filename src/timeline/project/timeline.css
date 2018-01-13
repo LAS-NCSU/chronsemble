@@ -55,20 +55,46 @@
 }
 /* brush */
 
-.brush .extent {
+.xBrush .extent {
     stroke: gray;
+    stroke-width : 1;
     fill: blue;
     fill-opacity: .1;
+}
+
+.yBrush .background {
+  visibility: visible;
+  cursor: none;
+  width: 9px;
+  fill: #EEEEEE;
+}
+
+.yBrush .extent {
+  /*  stroke: none; */
+    stroke-width: 1px;
+    stroke-linecap: round;
+    width: 7px;
+    fill: gray;
+    rx: 4;
+    ry: 4;
 }
 
 .chart {
     fill: #EEEEEE;
 }
 
-.vscroll {
-    fill: none;
-    stroke-width: 1;
-    stroke: lightgray;
+.vScroll {
+/*   background-color: #EEEEEE; */
+/*   border-style: none; */
+    fill: #EEEEEE;
+    stroke: none;
+}
+
+.scrollBar {
+  stroke: gray;
+  stroke-width: 7px;
+  stroke-linecap: round;
+  fill: gray;
 }
 
 .interval {
