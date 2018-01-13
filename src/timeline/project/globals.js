@@ -25,7 +25,7 @@ var timelineGeometry = {
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 0}},
-  timeFlow: {maxTracks: 8, minTracks: 3, maxHeight: 292,
+  timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,

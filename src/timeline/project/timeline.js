@@ -126,8 +126,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
-                      console.log("track:", track, "totalTracks:", totalTracks);
-
+//                      console.log("track:", track, "totalTracks:", totalTracks);
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.start;
@@ -146,8 +145,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
-                      console.log("track:", track, "totalTracks:", totalTracks);
-
+//                      console.log("track:", track, "totalTracks:", totalTracks);
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.end;
@@ -207,6 +205,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         } else {
           console.log("Using ascending forward!");
           totalTracks = 0;
+          tracks = [];
           calculateTracks(data.items, "ascending", "forward");
         }
 
@@ -268,96 +267,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         return timeline;
     }
-/*
-    timeline.defineVerticalScrollArea = function( ) {
-      if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
-        // Add vertical scroll area
-        var scrollArea = svg.select("g")
-               .append("g")
-        //       .attr("class", "vScroll")
-               .attr("id", "verticalScroll-area")
-        //       .attr("height", timelineGeometry.flowHeight("timeFlow"))
-        //       .attr("width", timelineGeometry.margin.right/2)
-      //         .append("g")
-               .attr("transform", "translate(" + (timelineGeometry.maxWidth -
-                 timelineGeometry.margin.left - timelineGeometry.margin.right +
-                 timelineGeometry.vScroll.margin.left) + ", 0)");
-            scrollArea.append("rect")
-               .attr("class", "vScroll")
-               .attr("width", timelineGeometry.margin.right/2)
-    //           .attr("height", timelineGeometry.flowHeight("birdView"))
-               .attr("height", timelineGeometry.flowHeight("timeFlow", true));
-    //           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
-    //             timelineGeometry.margin.left - timelineGeometry.margin.right +
-    //             timelineGeometry.vScroll.margin.left) + ", 0)");
 
-      scrollArea.append("line")
-                .attr("class", "scrollBar")
-                .attr("draggable", "true")
-                .attr("ondrag", function(event) {
-                  console.log("dragging scroll bar");
-                })
-                .attr("x1", timelineGeometry.vScroll.margin.left + 3)
-//                  .attr("x1", (timelineGeometry.maxWidth -
-//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
-//                  timelineGeometry.vScroll.margin.left))
-                .attr("y1", 4)
-                .attr("x2", timelineGeometry.vScroll.margin.left + 3)
-//                  .attr("x2", (timelineGeometry.maxWidth -
-//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
-//                  timelineGeometry.vScroll.margin.left))
-                .attr("y2", 4 + timelineGeometry.flowHeight("timeFlow", true) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks));
-
-              }
-
-      return timeline;
-    }
-
-    timeline.defineVerticalScrollBrush = function( ) {
-      if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
-        // Add vertical scroll area
-        var scrollArea = svg.select("g")
-               .append("g")
-        //       .attr("class", "vScroll")
-               .attr("id", "verticalScroll-area")
-        //       .attr("height", timelineGeometry.flowHeight("timeFlow"))
-        //       .attr("width", timelineGeometry.margin.right/2)
-      //         .append("g")
-               .attr("transform", "translate(" + (timelineGeometry.maxWidth -
-                 timelineGeometry.margin.left - timelineGeometry.margin.right +
-                 timelineGeometry.vScroll.margin.left) + ", 0)");
-            scrollArea.append("rect")
-               .attr("class", "vScroll")
-               .attr("width", timelineGeometry.margin.right/2)
-    //           .attr("height", timelineGeometry.flowHeight("birdView"))
-               .attr("height", timelineGeometry.flowHeight("timeFlow", true));
-    //           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
-    //             timelineGeometry.margin.left - timelineGeometry.margin.right +
-    //             timelineGeometry.vScroll.margin.left) + ", 0)");
-
-      scrollArea.append("line")
-                .attr("class", "scrollBar")
-                .attr("draggable", "true")
-                .attr("ondrag", function(event) {
-                  console.log("dragging scroll bar");
-                })
-                .attr("x1", timelineGeometry.vScroll.margin.left + 3)
-//                  .attr("x1", (timelineGeometry.maxWidth -
-//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
-//                  timelineGeometry.vScroll.margin.left))
-                .attr("y1", 4)
-                .attr("x2", timelineGeometry.vScroll.margin.left + 3)
-//                  .attr("x2", (timelineGeometry.maxWidth -
-//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
-//                  timelineGeometry.vScroll.margin.left))
-                .attr("y2", 4 + timelineGeometry.flowHeight("timeFlow", true) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks));
-
-              }
-
-      return timeline;
-    }
-
-*/
     //----------------------------------------------------------------------
     //
     // band
@@ -954,39 +864,51 @@ console.log("band.y:", band.y, "band.h:", band.h);
     // vscroll
     //
 
-    timeline.vScroll = function (bandName) {
-      var band = bands[bandName];
+    timeline.vScroll = function ( ) {
+      if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
 
-      var yTFScrollScale = d3.scale.linear()
-          .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
-          .range([0, timelineGeometry.flowHeight("timeFlow", true)]);
+        var bandTF = bands["timeFlow"];
+        var bandBV = bands["birdView"];
 
-      var yBVScrollScale = d3.scale.linear()
-          .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
-          .range([0, timelineGeometry.flowHeight("birdView", true)]);
+var TFBVRatio = (timelineGeometry.flowHeight("timeFlow", true)*timelineGeometry.flowHeight("birdView", false))/
+  (timelineGeometry.flowHeight("timeFlow", false)*timelineGeometry.flowHeight("birdView", true));
 
-console.log("band:", band);
-      var brush = d3.svg.brush()
-          .y(yTFScrollScale)
-          .extent([0, timelineGeometry.flowHeight("timeFlow", false) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks)])
-          .on("brush", function() {
-          band.g.attr("transform", "translate(0, -" + brush.extent()[0] + ")");
+        var yTFScrollScale = d3.scale.linear()
+            .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
+            .range([0, timelineGeometry.flowHeight("timeFlow", true)]);
 
-            console.log('brush.y:', brush.extent()[0]);
-              });
+        var yBVScrollScale = d3.scale.linear()
+            .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
+            .range([0, timelineGeometry.flowHeight("birdView", true)]);
 
-      var yBrush = svg.select("g").append("svg")
-          .attr("class", "yBrush")
-          .call(brush);
+  //console.log("band:", band);
+        var brush = d3.svg.brush()
+            .y(yTFScrollScale)
+            .extent([0, timelineGeometry.flowHeight("timeFlow", false) *
+              (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks)])
+            .on("brush", function() {
+            bandTF.g.attr("transform", "translate(0, -" + Math.round(brush.extent()[0]) + ")");
+            bandBV.g.attr("transform", "translate(0," +
+              (bandBV.y - Math.round(yBVScrollScale(brush.extent()[0] *
+              ((timelineGeometry.flowHeight("timeFlow", true)*timelineGeometry.flowHeight("birdView", false))/
+              (timelineGeometry.flowHeight("timeFlow", false)*timelineGeometry.flowHeight("birdView", true)))))) + ")");
 
-      yBrush.select(".background")
-          .attr("style", "visibility: visible; cursor: none;")
-          .attr("x", band.w + timelineGeometry.vScroll.margin.left);
+  //            console.log('brush.y:', brush.extent()[0]);
+//  console.log("yBVScrollScale: ", bandBV.y - yBVScrollScale(brush.extent()[0])*TFBVRatio);
+                });
 
-      yBrush.select(".extent")
-          .attr("x", band.w + timelineGeometry.vScroll.margin.left + 1);
-      yBrush.selectAll(".resize").remove();
+        var yBrush = svg.select("g").append("svg")
+            .attr("class", "yBrush")
+            .call(brush);
 
+        yBrush.select(".background")
+            .attr("style", "visibility: visible; cursor: none;")
+            .attr("x", bandTF.w + timelineGeometry.vScroll.margin.left);
+
+        yBrush.select(".extent")
+            .attr("x", bandTF.w + timelineGeometry.vScroll.margin.left + 1);
+        yBrush.selectAll(".resize").remove();
+      };
       return timeline;
     };
 
