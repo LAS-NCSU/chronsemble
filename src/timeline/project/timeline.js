@@ -113,9 +113,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
             function sortBackward() {
                 // older items assigned to early tracks
-                tracks[0] = Number.MAX_SAFE_INTEGER;
-                itemsPerTrack[0] = 0;
-                items.forEach(function (item) {
+                tracks[0] = items[0].start;
+                items[0].track = 0;
+                itemsPerTrack[0] = 1;
+                itemsPerTrack[1] = 0;
+                totalTracks = 1;
+                items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.end < tracks[i]) { break; }
                     }
@@ -123,6 +126,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
+                      console.log("track:", track, "totalTracks:", totalTracks);
+
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.start;
@@ -141,6 +146,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
+                      console.log("track:", track, "totalTracks:", totalTracks);
+
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.end;
@@ -184,10 +191,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         //calculateTracks(data.items, "ascending", "backward");
         //calculateTracks(data.items, "descending", "forward");
         // Show real data
+        // Calculate tracks in both directions to find the layout with fewest
+        // tracks.
         calculateTracks(data.items, "ascending", "forward");
         console.log("Sort forward total tracks: ", totalTracks);
         timelineGeometry.totalTracks = totalTracks;
+    //timelineGeometry.totalTracks = Number.MAX_SAFE_INTEGER;
         totalTracks = 0;
+        tracks = [];
         calculateTracks(data.items, "descending", "backward");
         console.log("Sort backward total tracks: ", totalTracks);
         if (totalTracks < timelineGeometry.totalTracks) {
@@ -213,8 +224,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
            .attr("id", "svg")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-             timelineGeometry.flowHeight("timeFlow") +
-             timelineGeometry.flowHeight("birdView") +
+             timelineGeometry.flowHeight("timeFlow", true) +
+             timelineGeometry.flowHeight("birdView", true) +
              timelineGeometry.axisHeight() * 2);
 
         return timeline;
@@ -229,7 +240,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           .append("rect")
           .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
                   timelineGeometry.margin.right)
-          .attr("height", timelineGeometry.flowHeight("timeFlow"));
+          .attr("height", timelineGeometry.flowHeight("timeFlow", true));
 
        chart = chart.select("g").append("g")
                     .attr("class", "chart")
@@ -246,9 +257,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
                   timelineGeometry.margin.right)
 //          .attr("height", timelineGeometry.flowHeight("birdView"))
-          .attr("height", (timelineGeometry.flowHeight("birdView") -
+          .attr("height", (timelineGeometry.flowHeight("birdView", true) -
             timelineGeometry.birdView.margin.top - timelineGeometry.birdView.margin.bottom))
-          .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow") +
+          .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow", true) +
                   timelineGeometry.axisHeight( ) + timelineGeometry.birdView.margin.top) + ")");
 
        chart = svg.select("g").append("g")
@@ -257,24 +268,96 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         return timeline;
     }
-
+/*
     timeline.defineVerticalScrollArea = function( ) {
       if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
         // Add vertical scroll area
-        svg.select("g")
-           .append("g")
-           .attr("class", "vscroll")
-           .attr("id", "verticalScroll-area")
-           .append("rect")
-           .attr("width", timelineGeometry.margin.right/2)
- //          .attr("height", timelineGeometry.flowHeight("birdView"))
-           .attr("height", timelineGeometry.flowHeight("timeFlow"))
-           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
-             timelineGeometry.margin.left - timelineGeometry.margin.right) + ")");
-      }
+        var scrollArea = svg.select("g")
+               .append("g")
+        //       .attr("class", "vScroll")
+               .attr("id", "verticalScroll-area")
+        //       .attr("height", timelineGeometry.flowHeight("timeFlow"))
+        //       .attr("width", timelineGeometry.margin.right/2)
+      //         .append("g")
+               .attr("transform", "translate(" + (timelineGeometry.maxWidth -
+                 timelineGeometry.margin.left - timelineGeometry.margin.right +
+                 timelineGeometry.vScroll.margin.left) + ", 0)");
+            scrollArea.append("rect")
+               .attr("class", "vScroll")
+               .attr("width", timelineGeometry.margin.right/2)
+    //           .attr("height", timelineGeometry.flowHeight("birdView"))
+               .attr("height", timelineGeometry.flowHeight("timeFlow", true));
+    //           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
+    //             timelineGeometry.margin.left - timelineGeometry.margin.right +
+    //             timelineGeometry.vScroll.margin.left) + ", 0)");
+
+      scrollArea.append("line")
+                .attr("class", "scrollBar")
+                .attr("draggable", "true")
+                .attr("ondrag", function(event) {
+                  console.log("dragging scroll bar");
+                })
+                .attr("x1", timelineGeometry.vScroll.margin.left + 3)
+//                  .attr("x1", (timelineGeometry.maxWidth -
+//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
+//                  timelineGeometry.vScroll.margin.left))
+                .attr("y1", 4)
+                .attr("x2", timelineGeometry.vScroll.margin.left + 3)
+//                  .attr("x2", (timelineGeometry.maxWidth -
+//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
+//                  timelineGeometry.vScroll.margin.left))
+                .attr("y2", 4 + timelineGeometry.flowHeight("timeFlow", true) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks));
+
+              }
+
       return timeline;
     }
 
+    timeline.defineVerticalScrollBrush = function( ) {
+      if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
+        // Add vertical scroll area
+        var scrollArea = svg.select("g")
+               .append("g")
+        //       .attr("class", "vScroll")
+               .attr("id", "verticalScroll-area")
+        //       .attr("height", timelineGeometry.flowHeight("timeFlow"))
+        //       .attr("width", timelineGeometry.margin.right/2)
+      //         .append("g")
+               .attr("transform", "translate(" + (timelineGeometry.maxWidth -
+                 timelineGeometry.margin.left - timelineGeometry.margin.right +
+                 timelineGeometry.vScroll.margin.left) + ", 0)");
+            scrollArea.append("rect")
+               .attr("class", "vScroll")
+               .attr("width", timelineGeometry.margin.right/2)
+    //           .attr("height", timelineGeometry.flowHeight("birdView"))
+               .attr("height", timelineGeometry.flowHeight("timeFlow", true));
+    //           .attr("transform", "translate(" + (timelineGeometry.maxWidth -
+    //             timelineGeometry.margin.left - timelineGeometry.margin.right +
+    //             timelineGeometry.vScroll.margin.left) + ", 0)");
+
+      scrollArea.append("line")
+                .attr("class", "scrollBar")
+                .attr("draggable", "true")
+                .attr("ondrag", function(event) {
+                  console.log("dragging scroll bar");
+                })
+                .attr("x1", timelineGeometry.vScroll.margin.left + 3)
+//                  .attr("x1", (timelineGeometry.maxWidth -
+//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
+//                  timelineGeometry.vScroll.margin.left))
+                .attr("y1", 4)
+                .attr("x2", timelineGeometry.vScroll.margin.left + 3)
+//                  .attr("x2", (timelineGeometry.maxWidth -
+//                  timelineGeometry.margin.left - timelineGeometry.margin.right +
+//                  timelineGeometry.vScroll.margin.left))
+                .attr("y2", 4 + timelineGeometry.flowHeight("timeFlow", true) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks));
+
+              }
+
+      return timeline;
+    }
+
+*/
     //----------------------------------------------------------------------
     //
     // band
@@ -291,7 +374,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         band.y = bandY;
         band.w = timelineGeometry.maxWidth - timelineGeometry.margin.left -
           timelineGeometry.margin.right;
-        band.h = timelineGeometry.flowHeight(bandName);
+        band.h = timelineGeometry.flowHeight(bandName, true);
 
         //console.log("band.h", band.h);
         // trackOffset controls distance of first track from band edge and other tracks
@@ -309,8 +392,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .range([0, band.w]);
 
         band.yTrackPos = function (track) {
-            return band.marginTop + track * band.trackHeight;
-        };
+            return band.marginTop + track * band.trackHeight;};
 
         band.g = chart.append("g")
             .attr("id", band.id)
@@ -319,7 +401,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         band.g.append("rect")
             .attr("class", "band")
             .attr("width", band.w)
-            .attr("height", band.h);
+            .attr("height", timelineGeometry.flowHeight(bandName, false));
 
         if (bandName === "timeFlow") {
           band.g.append("svg")
@@ -644,8 +726,8 @@ console.log("Labeling band:" + bandName);
             labelHeight = 20,
             tooltipTop = timelineGeometry.infoFlowHeight +
               timelineGeometry.margin.top + timelineGeometry.margin.bottom +
-              timelineGeometry.flowHeight("timeFlow") +
-              timelineGeometry.flowHeight("birdView") +
+              timelineGeometry.flowHeight("timeFlow", true) +
+              timelineGeometry.flowHeight("birdView", true) +
               timelineGeometry.axisHeight( ) * 2 - 10;
             y = band.y + band.h + 1,
             yText = 15;
@@ -690,14 +772,13 @@ console.log(band.y, band.h);
         var bandLabels = chart.append("g")
             .attr("id", bandName + "Labels")
 
-    // Check for timeFlow and if so, don't translate the y coordinate to place
-    // timeFlow labels in the top margin (0 translation) and birdView labels in
+    // Check for timeFlow and if so, translate the y coordinate to place
+    // timeFlow labels in the top margin and birdView labels in
     // the bottom margin.
 
             .attr("transform", "translate(0," + ((bandName === "timeFlow") ? "-" + timelineGeometry.margin.top :
-  //            timelineGeometry.margin.top +
-              timelineGeometry.flowHeight("timeFlow") +
-              timelineGeometry.flowHeight("birdView") +
+              timelineGeometry.flowHeight("timeFlow", true) +
+              timelineGeometry.flowHeight("birdView", true) +
               timelineGeometry.axisHeight( ) * 2) + ")")
             .selectAll("#" + bandName + "Labels")
             .data(labelDefs)
@@ -809,13 +890,10 @@ console.log(band.y, band.h);
 
         var xAxis = chart.append("g")
             .attr("class", "axis")
-
-      // Add margin.top to y coordinate translation to account for top margin.
-//      .attr("transform", "translate(0," + (timelineGeometry.margin.top +
-        .attr("transform", "translate(0," + (
-              timelineGeometry.flowHeight("timeFlow") +
+            .attr("transform", "translate(0," + (
+              timelineGeometry.flowHeight("timeFlow", true) +
               timelineGeometry.axis.margin.top +
-              ((bandName === "timeFlow") ? 0 : timelineGeometry.flowHeight("birdView") +
+              ((bandName === "timeFlow") ? 0 : timelineGeometry.flowHeight("birdView", true) +
                timelineGeometry.axisHeight())) + ")");
 console.log("band.y:", band.y, "band.h:", band.h);
 
@@ -858,17 +936,58 @@ console.log("band.y:", band.y, "band.h:", band.h);
 // bottom brush outlines.
 //      var xBrush = band.g.append("svg")
         var xBrush = svg.select("g").append("svg")
-            .attr("class", "x brush")
+            .attr("class", "xBrush")
             .call(brush);
 
         xBrush.selectAll("rect")
             .attr("y", 0)
-            .attr("height", timelineGeometry.flowHeight("birdView"))
+            .attr("height", timelineGeometry.flowHeight("birdView", true))
 // Remove this transform when locating brush under the band element
-            .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow") +
+            .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow", true) +
                 timelineGeometry.axisHeight( )) + ")");
 
         return timeline;
+    };
+
+    //----------------------------------------------------------------------
+    //
+    // vscroll
+    //
+
+    timeline.vScroll = function (bandName) {
+      var band = bands[bandName];
+
+      var yTFScrollScale = d3.scale.linear()
+          .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
+          .range([0, timelineGeometry.flowHeight("timeFlow", true)]);
+
+      var yBVScrollScale = d3.scale.linear()
+          .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
+          .range([0, timelineGeometry.flowHeight("birdView", true)]);
+
+console.log("band:", band);
+      var brush = d3.svg.brush()
+          .y(yTFScrollScale)
+          .extent([0, timelineGeometry.flowHeight("timeFlow", false) * (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks)])
+          .on("brush", function() {
+          band.g.attr("transform", "translate(0, -" + brush.extent()[0] + ")");
+
+            console.log('brush.y:', brush.extent()[0]);
+              });
+
+      var yBrush = svg.select("g").append("svg")
+          .attr("class", "yBrush")
+          .call(brush);
+
+      yBrush.select(".background")
+          .attr("style", "visibility: visible; cursor: none;")
+          .attr("x", band.w + timelineGeometry.vScroll.margin.left);
+
+      yBrush.select(".extent")
+          .attr("x", band.w + timelineGeometry.vScroll.margin.left + 1);
+      yBrush.selectAll(".resize").remove();
+
+      return timeline;
     };
 
 // mainReference draws the center reference line on the timeline. This is the
@@ -880,7 +999,6 @@ console.log("band.y:", band.y, "band.h:", band.h);
       var mainReference = chart.append("g")
           .attr("class", "referenceline")
           .append("line")
-    // Add margin.top to y coordinate translations to leave gap for top margin.
           .attr("x1", band.w/2)
           .attr("y1", 0)
           .attr("x2", band.w/2)
