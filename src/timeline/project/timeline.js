@@ -870,32 +870,26 @@ console.log("band.y:", band.y, "band.h:", band.h);
         var bandTF = bands["timeFlow"];
         var bandBV = bands["birdView"];
 
-var TFBVRatio = (timelineGeometry.flowHeight("timeFlow", true)*timelineGeometry.flowHeight("birdView", false))/
-  (timelineGeometry.flowHeight("timeFlow", false)*timelineGeometry.flowHeight("birdView", true));
-
         var yTFScrollScale = d3.scale.linear()
             .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
             .range([0, timelineGeometry.flowHeight("timeFlow", true)]);
 
-        var yBVScrollScale = d3.scale.linear()
-            .domain([0, timelineGeometry.flowHeight("timeFlow", false)])
-            .range([0, timelineGeometry.flowHeight("birdView", true)]);
+        var yBVRange = d3.scale.linear()
+            .domain([0, (timelineGeometry.flowHeight("timeFlow", false) - timelineGeometry.flowHeight("timeFlow", true))])
+            .range([0, timelineGeometry.totalTracks - timelineGeometry.birdView.maxTracks]);
 
   //console.log("band:", band);
         var brush = d3.svg.brush()
             .y(yTFScrollScale)
-            .extent([0, timelineGeometry.flowHeight("timeFlow", false) *
-              (timelineGeometry.timeFlow.maxTracks/timelineGeometry.totalTracks)])
+            .extent([0, timelineGeometry.flowHeight("timeFlow", true)])
             .on("brush", function() {
-            bandTF.g.attr("transform", "translate(0, -" + Math.round(brush.extent()[0]) + ")");
-            bandBV.g.attr("transform", "translate(0," +
-              (bandBV.y - Math.round(yBVScrollScale(brush.extent()[0] *
-              ((timelineGeometry.flowHeight("timeFlow", true)*timelineGeometry.flowHeight("birdView", false))/
-              (timelineGeometry.flowHeight("timeFlow", false)*timelineGeometry.flowHeight("birdView", true)))))) + ")");
+                bandTF.g.attr("transform", "translate(0,-" + Math.round(brush.extent()[0]) + ")");
 
-  //            console.log('brush.y:', brush.extent()[0]);
-//  console.log("yBVScrollScale: ", bandBV.y - yBVScrollScale(brush.extent()[0])*TFBVRatio);
-                });
+                if (timelineGeometry.totalTracks > timelineGeometry.birdView.maxTracks) {
+                  bandBV.g.attr("transform", "translate(0," +
+                  (bandBV.y - Math.round(yBVRange(brush.extent()[0]))) + ")");
+                }
+            });
 
         var yBrush = svg.select("g").append("svg")
             .attr("class", "yBrush")
@@ -907,6 +901,7 @@ var TFBVRatio = (timelineGeometry.flowHeight("timeFlow", true)*timelineGeometry.
 
         yBrush.select(".extent")
             .attr("x", bandTF.w + timelineGeometry.vScroll.margin.left + 1);
+            
         yBrush.selectAll(".resize").remove();
       };
       return timeline;
