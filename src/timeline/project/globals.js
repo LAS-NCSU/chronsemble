@@ -18,14 +18,14 @@ var timelineGeometry = {
   //  - maxTracks this parameter sets the limit on the number of timeline tracks
   //              that can be viewed in the pane; this is not a limit on the total
   //              tracks allowed in a session which can be greater. The value for
-  //              birdView.maxTracks should always equal timeFlow.maxTracks. The
-  //              track.
+  //              birdView.maxTracks should always be equal or gt
+  //              timeFlow.maxTracks or vertical scrolling will fail.
   // - track.height sets the height of the timeline track for the given flow.
   // - track.space sets the verticle space between adjacent timeline tracks.
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 0}},
-  timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
+  timeFlow: {maxTracks: 8, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,
@@ -52,7 +52,6 @@ var timelineGeometry = {
     return this.axis.labelHeight + this.axis.tickHeight + this.axis.lineStroke +
       this.axis.margin.top + this.axis.margin.bottom;
   }
-
 }
 
 var infoFlowCards = 5,      // number of cards visible in info pane.
