@@ -17,6 +17,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bandNum = 0,     // Count of bands for ids
         itemsPerTrack = [];
     var lastEvent = null;
+//    var savedXbrushWidth = 0;
 
     var svg = d3.select(domTimelineElement).append("svg");
     var chart = svg;
@@ -120,7 +121,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 totalTracks = 1;
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
-                        if (item.end < tracks[i]) { break; }
+                        if (item.end < tracks[i]) break;
                     }
                     item.track = track;
                     if (track > totalTracks - 1) {
@@ -133,6 +134,30 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 });
             }
 
+
+            function sortForward() {
+                // younger items assigned to early tracks
+                tracks[0] = items[0].end;
+                items[0].track = 0;
+                itemsPerTrack[0] = 1;
+                itemsPerTrack[1] = 0;
+                totalTracks = 1;
+
+                items.slice(1).forEach(function (item) {
+                    for (i = 0, track = 0; i < tracks.length; i++, track++) {
+                        if (item.start > tracks[i]) break;
+                    }
+                    item.track = track;
+                    if (track > totalTracks - 1) {
+                      totalTracks++;
+                      itemsPerTrack[totalTracks] = 0;
+//                      console.log("track:", track, "totalTracks:", totalTracks);
+                    }
+                    itemsPerTrack[track]++;
+                    tracks[track] = item.end;
+                });
+            }
+/*
             function sortForward() {
                 // younger items assigned to early tracks
                 tracks[0] = Number.MIN_SAFE_INTEGER;
@@ -151,7 +176,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     tracks[track] = item.end;
                 });
             }
-
+*/
             if (sortOrder === "ascending")
                 data.items.sort(compareAscending);
             else
@@ -377,12 +402,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         };
 
         band.redraw = function () {
+          //console.log("band.parts[1]:", band.parts[1]);
             items
                 .attr("x", function (d) { return band.xScale(d.start);})
                 .attr("width", function (d) {
                     return band.xScale(d.end) - band.xScale(d.start); });
             band.parts.forEach(function(part) { part.redraw(); })
-//console.log("band.parts[1]:", band.parts[1]);
 //scrubberValue(band.parts[1], items);
             if (band.id === "band0") scrubberValue(band);
         };
@@ -525,8 +550,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
         var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
-
-
     }
 
     function updateSpatioFlow(eventLocations, maxProximity) {
@@ -819,25 +842,46 @@ console.log("band.y:", band.y, "band.h:", band.h);
 
     //----------------------------------------------------------------------
     //
+    // move
+    //
+
+//    timeline.hScroll = function () {
+//      console.log("timeline.hScroll");
+//      bandTF.g.attr("transform", "translate(0,-" + Math.round(brush.extent()[0]) + ")");
+//                      band.g.attr("transform", "translate(" + Math.round(brush.extent()[0]) + ",0)");
+
+//    };
+
+    //----------------------------------------------------------------------
+    //
     // brush
     //
 
     timeline.brush = function (bandName, targetNames) {
 
         var band = bands[bandName];
-
+        var xBrushWidth = 0;
         var brush = d3.svg.brush()
             .x(band.xScale.range([0, band.w]))
             .on("brush", function() {
-                var domain = brush.empty()
-                    ? band.xScale.domain()
-                    : brush.extent();
+                var domain = brush.empty() ? band.xScale.domain() : brush.extent();
+  //              console.log("extent:", brush.extent(), " domain:", domain);
                 targetNames.forEach(function(d) {
                     bands[d].xScale.domain(domain);
-                    bands[d].redraw();
-    //                console.log("moving: d",d,domain);
-                });
-            });
+  //                  xBrushWidth = d3.select(".extent").attr("width");
+  //                  if (xBrushWidth != savedXbrushWidth) {
+                      bands[d].redraw();
+  //                  } else {
+  //                    console.log(bands[d]);
+  //                    timeline.hScroll();
+                //      bands[d].hScroll();
+                })
+              });
+//            })
+//            .on("brushend", function() {
+//              savedXbrushWidth = xBrushWidth;
+//              console.log("saved width:", savedXbrushWidth);
+//              console.log("width:", d3.select(".extent").attr("width"));
 
 // To place the brush element within the band it accompanies, swap in the following
 // xBrush declaration and then remove the transform translate attribute on the
@@ -901,7 +945,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
 
         yBrush.select(".extent")
             .attr("x", bandTF.w + timelineGeometry.vScroll.margin.left + 1);
-            
+
         yBrush.selectAll(".resize").remove();
       };
       return timeline;
@@ -929,10 +973,12 @@ console.log("band.y:", band.y, "band.h:", band.h);
     //
 
     timeline.redraw = function () {
+//      console.log("timeline.redraw")
         components.forEach(function (component) {
             component.redraw();
         })
     };
+
 
     //--------------------------------------------------------------------------
     //
