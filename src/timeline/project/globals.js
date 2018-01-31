@@ -25,7 +25,7 @@ var timelineGeometry = {
   infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 0}},
-  timeFlow: {maxTracks: 8, minTracks: 3, maxHeight: 292,
+  timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
   birdView: {maxTracks: 17, minTracks: 17, maxHeight: 17,
@@ -34,6 +34,10 @@ var timelineGeometry = {
   // - totalTracks is reset after processing the data.
   vScroll: {margin: {left: 2, right: 2}},
   totalTracks: 0,
+  fitToScale: 0.05, // The percent of full scale to use as a target for ensuring
+                    // all timeline track labels are legible (w/o overlap). this
+                    // value is also used to set the pad amount for the start and
+                    // end of the timeline.
 
 // flowHeight - determines the height in pixels of the named flow where flowName
 // is one of ["timeFlow", "birdView"].
@@ -68,3 +72,17 @@ var spatioFlow = true;
 function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
 }
+
+// fcn to return the width (in pixels) of a string to be rendered on canvas.
+// This fcn is used to help provide "pretty" tracks with fully readable labels
+// at some prescribed zoom level.
+
+function getTextWidth(text, font) {
+    // if given, use cached canvas for better performance
+    // else, create new canvas
+    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    var context = canvas.getContext("2d");
+    context.font = font;
+    var metrics = context.measureText(text);
+    return Math.floor(metrics.width+1);
+};
