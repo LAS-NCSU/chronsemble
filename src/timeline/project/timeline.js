@@ -15,7 +15,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bands = {},      // Registry for all the bands in the timeline
         bandY = 0,       // Y-Position of the next band
         bandNum = 0,     // Count of bands for ids
-        itemsPerTrack = [];
+        itemsPerTrack = [];  // Array of size totalTracks where each element is
+                             // a count of the entities on that track.
     var lastEvent = null;
 //    var savedXbrushWidth = 0;
 
@@ -37,7 +38,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             tracks = [],
             yearMillis = 31622400000,
             totalTracks = 0,
-            instantOffset = 100 * yearMillis;
+            // instantOffset determines separation between an instant event and
+            //   the next event placed on the same track.
+            instantOffset = 100 * yearMillis, // 100 year gap after an instant event
+            timeRange = [];
 
         data.items = items;
 
@@ -157,26 +161,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     tracks[track] = item.end;
                 });
             }
-/*
-            function sortForward() {
-                // younger items assigned to early tracks
-                tracks[0] = Number.MIN_SAFE_INTEGER;
-                itemsPerTrack[0] = 0;
-                items.forEach(function (item) {
-                    for (i = 0, track = 0; i < tracks.length; i++, track++) {
-                        if (item.start > tracks[i]) break;
-                    }
-                    item.track = track;
-                    if (track > totalTracks - 1) {
-                      totalTracks++;
-                      itemsPerTrack[totalTracks] = 0;
-//                      console.log("track:", track, "totalTracks:", totalTracks);
-                    }
-                    itemsPerTrack[track]++;
-                    tracks[track] = item.end;
-                });
-            }
-*/
+
             if (sortOrder === "ascending")
                 data.items.sort(compareAscending);
             else
@@ -190,9 +175,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 sortBackward();
         }
 
+        // Initialize the time range; time range is
+        timeRange = [parseDate(data.items[0].start), parseDate(data.items[0].end)];
+//        console.log("data.items:", data.items[0]);
+// console.log("timeRange:", timeRange[0], timeRange[1]);
         // Convert yearStrings into dates
         data.items.forEach(function (item){
             item.start = parseDate(item.start);
+            if (item.start < timeRange[0]) timeRange[0] = item.start;
             if (item.end == "") {
                 //console.log("1 item.start: " + item.start);
                 //console.log("2 item.end: " + item.end);
@@ -208,8 +198,17 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             // This is an arbitrary decision.
             // Comment out, if dates in the future should be allowed.
             if (item.end > today) { item.end = today};
+            item.eventInterval = item.end;
+            if (item.end > timeRange[1]) timeRange[1] = item.end;
         });
-
+  //   console.log("timeRange:", timeRange[0], timeRange[1]);
+     // Pad the start and end of timeline by 1/2 of the fitToScale value.
+     var timeRangeBuffer = (timeRange[1]-timeRange[0])*timelineGeometry.fitToScale*0.5;
+     timeRange = [timeRange[0].getTime() - timeRangeBuffer, timeRange[1].getTime() + timeRangeBuffer];
+     timeRange = [new Date(timeRange[0]), new Date(timeRange[1])];
+  //   console.log("fitToScale Range:", timeRange[0], timeRange[1]);
+     data.minDate = timeRange[0];
+     data.maxDate = timeRange[1];
         // Show patterns
         //calculateTracks(data.items, "ascending", "backward");
         //calculateTracks(data.items, "descending", "forward");
@@ -235,8 +234,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         }
 
         data.nTracks = tracks.length;
-        data.minDate = d3.min(data.items, function (d) { return d.start; });
-        data.maxDate = d3.max(data.items, function (d) { return d.end; });
+  //      data.minDate = d3.min(data.items, function (d) { return d.start; });
+  //      data.maxDate = d3.max(data.items, function (d) { return d.end; });
   //      console.log(timelineGeometry);
         timelineGeometry.totalTracks = totalTracks;
         return timeline;
@@ -367,11 +366,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
           // Apply event labels to timeFlow (not visible on birdView)
           intervals.append("text")
-            .attr("class", "intervalLabel")
+            .attr("class", "eventLabel")
             .attr("x", 1)
             .attr("y", 10)
             .text(function (d) { return d.label; });
-        } else {
+        } else if (bandName === "birdView") {
           // Draw bird's eye view tracks
           intervals.append("rect")
             .attr("fill", "#808080")
@@ -401,6 +400,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             })
         };
 
+        // Redraw sets the width of an event interval
         band.redraw = function () {
           //console.log("band.parts[1]:", band.parts[1]);
             items
