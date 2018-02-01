@@ -36,11 +36,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         var today = new Date(),
             tracks = [],
-            yearMillis = 31622400000,
+//            yearMillis = 31622400000,
+            dayMillis = 86400,
             totalTracks = 0,
             // instantOffset determines separation between an instant event and
             //   the next event placed on the same track.
-            instantOffset = 100 * yearMillis, // 100 year gap after an instant event
+//            instantOffset = 100 * yearMillis, // 100 year gap after an instant event
+            instantOffset = dayMillis, // 1 day gap after an instant event
             timeRange = [];
 
         data.items = items;
@@ -110,6 +112,41 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             return 0;
         }
 
+        function setEventIntervals(items, timeRange, zoomTarget) {
+          // This fcn finds the width of the event label and, sets the event
+          // interval to the min ofthe label width or the duration width at the
+          // target zoom scale (this is arbitrary value defined in geometry object).
+          var zoom = {},
+              instant = {};
+
+          zoom.xScale = d3.time.scale()
+              .domain(zoomTarget)
+              .range([0, timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                timelineGeometry.margin.right]);
+
+          instant.xScale = d3.time.scale()
+              .domain(timeRange)
+              .range([0, timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                timelineGeometry.margin.right]);
+
+          var circleWidthms = instant.xScale.invert(2*timelineGeometry.instantRadius+3).getTime()
+
+          items.forEach(function(item) {
+            var labelWidth = getTextWidth(item.label, "10px sans-serif") + ((item.instant) ? 15 : 5);
+            var durationWidth = zoom.xScale(item.end) - zoom.xScale(item.start);
+  //          var eventInterval = (labelWidth > durationWidth) ? labelWidth : durationWidth;
+            item.intervalEnd = (labelWidth > durationWidth) ?
+              new Date(item.start.getTime() + zoom.xScale.invert(labelWidth).getTime() - timeRange[0].getTime()) : item.end;
+  //           = zoom.xScale.invert(eventInterval);
+            if (item.instant) {
+              var circleWidth = new Date(item.start.getTime() + (circleWidthms - timeRange[0].getTime()));
+              if (circleWidth > item.intervalEnd) item.intervalEnd = circleWidth;
+            }
+
+            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
+          })
+        }
+
         function calculateTracks(items, sortOrder, timeOrder) {
             var i, track;
 
@@ -125,7 +162,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 totalTracks = 1;
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
-                        if (item.end < tracks[i]) break;
+        //              if (item.end < tracks[i]) break;
+                      if (item.intervalEnd < tracks[i]) break;
                     }
                     item.track = track;
                     if (track > totalTracks - 1) {
@@ -141,7 +179,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
             function sortForward() {
                 // younger items assigned to early tracks
-                tracks[0] = items[0].end;
+                tracks[0] = items[0].intervalEnd;
                 items[0].track = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
@@ -158,7 +196,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                      console.log("track:", track, "totalTracks:", totalTracks);
                     }
                     itemsPerTrack[track]++;
-                    tracks[track] = item.end;
+                    tracks[track] = item.intervalEnd;
                 });
             }
 
@@ -198,7 +236,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             // This is an arbitrary decision.
             // Comment out, if dates in the future should be allowed.
             if (item.end > today) { item.end = today};
-            item.eventInterval = item.end;
+  //          item.eventInterval = null;
             if (item.end > timeRange[1]) timeRange[1] = item.end;
         });
   //   console.log("timeRange:", timeRange[0], timeRange[1]);
@@ -209,6 +247,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
   //   console.log("fitToScale Range:", timeRange[0], timeRange[1]);
      data.minDate = timeRange[0];
      data.maxDate = timeRange[1];
+     timeRangeBuffer = timeRangeBuffer * 2;
+     var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
+     console.log(zoomTarget);
+     data.items.forEach(function(item) {
+       //stopped here
+     });
+
+     setEventIntervals(data.items, timeRange, zoomTarget);
         // Show patterns
         //calculateTracks(data.items, "ascending", "backward");
         //calculateTracks(data.items, "descending", "forward");
@@ -223,7 +269,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         tracks = [];
         calculateTracks(data.items, "descending", "backward");
         console.log("Sort backward total tracks: ", totalTracks);
-        if (totalTracks < timelineGeometry.totalTracks) {
+        if (totalTracks <= timelineGeometry.totalTracks) {
           timelineGeometry.totalTracks = totalTracks;
           console.log("Using descending backward!");
         } else {
@@ -362,6 +408,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           intervals.append("rect")
             .attr("fill", "#AAFFFF")
             .attr("width", "100%")
+//            .attr("width", function(d) { return band.xScale(d.end) - band.xScale(d.start)})
             .attr("height", "100%");
 
           // Apply event labels to timeFlow (not visible on birdView)
@@ -382,7 +429,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         instants.append("circle")
             .attr("cx", band.itemHeight / 2)
             .attr("cy", band.itemHeight / 2)
-            .attr("r", 5);
+            .attr("r", timelineGeometry.instantRadius);
 
         if (bandName === "timeFlow") {
           // Apply event labels to timeFlow (not visible on birdView)
@@ -406,7 +453,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             items
                 .attr("x", function (d) { return band.xScale(d.start);})
                 .attr("width", function (d) {
-                    return band.xScale(d.end) - band.xScale(d.start); });
+    //              return band.xScale(d.end) - band.xScale(d.start); });
+                  return band.xScale(d.intervalEnd) - band.xScale(d.start); });
+
+            items.selectAll("rect").attr("width", function (d) {
+                return band.xScale(d.end) - band.xScale(d.start); });
+
             band.parts.forEach(function(part) { part.redraw(); })
 //scrubberValue(band.parts[1], items);
             if (band.id === "band0") scrubberValue(band);
