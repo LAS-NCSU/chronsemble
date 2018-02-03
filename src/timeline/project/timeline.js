@@ -37,6 +37,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var today = new Date(),
             tracks = [],
 //            yearMillis = 31622400000,
+            yearMillis = 31556952000,
             dayMillis = 86400,
             totalTracks = 0,
             // instantOffset determines separation between an instant event and
@@ -143,7 +144,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
               if (circleWidth > item.intervalEnd) item.intervalEnd = circleWidth;
             }
 
-            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
+//            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
           })
         }
 
@@ -247,9 +248,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
   //   console.log("fitToScale Range:", timeRange[0], timeRange[1]);
      data.minDate = timeRange[0];
      data.maxDate = timeRange[1];
+     timelineGeometry.brushExtent = timeRange;
      timeRangeBuffer = timeRangeBuffer * 2;
      var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
-     console.log(zoomTarget);
+//     console.log(zoomTarget);
      data.items.forEach(function(item) {
        //stopped here
      });
@@ -474,6 +476,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         return timeline;
     };
 
+    function getViewRange_ms(min, max) {
+      return (isString(min)) ? (max.getTime() - min.getTime()) : max - min;
+    }
+
     //----------------------------------------------------------------------
     //
     // infoFlow
@@ -496,11 +502,151 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         bandRef.parts[1].forEach(function (part) {
             scrubberWindow.push(part);
         });
+//        console.log(scrubberWindow);
 //        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
 //        var referenceValue = parseInt(scrubberWindow[0][1].innerHTML);
-        var scrubberWindowRange = parseFloat(scrubberWindow[0][0].innerHTML);
-        var referenceValue = parseFloat(scrubberWindow[0][1].innerHTML);
-        generateInfoFlow(bandRef, infoFlowValues, scrubberWindowRange, referenceValue);
+//        var scrubberWindowRange_ms = parseFloat(scrubberWindow[0][0].innerHTML);
+//var scrubberWindowRange_ms = getViewRange_ms(data.minDate, data.maxDate);
+//var scrubberWindowRange_ms = getViewRange_ms(brush.extent()[0], timeline.brush.extent()[1]);
+//        console.log(data.minDate, data.maxDate, scrubberWindow[0][1].innerHTML);
+//        var referenceValue = parseFloat(scrubberWindow[0][1].innerHTML);
+//var fullFormat = d3.time.format("%a, %d %b %Y %H:%M:%S GMT");
+//var fullFormat = "%a, %d %b %Y %H:%M:%S GMT";
+//console.log(scrubberWindow[0][1].innerHTML, Date.parse(scrubberWindow[0][1].innerHTML), parseDate(scrubberWindow[0][1].innerHTML, fullFormat));
+//        var referenceValueObj = (isString(scrubberWindow[0][1].innerHTML)) ? new Date(scrubberWindow[0][1].innerHTML) :
+//          parseFloat(scrubberWindow[0][1].innerHTML);
+//          console.log(referenceValueObj);
+//          var referenceValue = referenceValueObj.getTime();
+          var referenceValue = getViewRange_ms(timelineGeometry.brushExtent[0], timelineGeometry.brushExtent[1])/2 + timelineGeometry.brushExtent[0].getTime();
+//          console.log((new Date(referenceValue)).toUTCString(), referenceValue);
+
+//          generateInfoFlow(bandRef, infoFlowValues, scrubberWindowRange, referenceValue);
+          generateInfoFlow2(bandRef, infoFlowValues, referenceValue);
+    }
+
+    function generateInfoFlow2(band, infoFlowValues, referenceValue) {
+//        var start = referenceValue - maxProximity;
+//        var end = referenceValue + maxProximity;
+        var start = timelineGeometry.brushExtent[0].getTime();
+        var end = timelineGeometry.brushExtent[1].getTime();
+        var maxProximity = getViewRange_ms(start, end)/2;
+        var currentReferenceEventGap = Number.MAX_SAFE_INTEGER;
+        var eventsWithinScruber = [];
+        var referenceEvent = [];
+        var numValue = 1;
+        var referenceBoundedByEvent = false;
+        var colorGradientIndex = d3.scale.linear()
+                                      .domain([0, maxProximity])
+                                      .range([0,9]);
+
+//console.log("===================================", maxProximity);
+        infoFlowValues.forEach(function (value) {
+//          console.log(numValue, value);
+          numValue = numValue + 1;
+            var startDateOfEvent = value.start.getTime();
+            var endDateOfEvent = value.end.getTime();
+            if ((startDateOfEvent >= start && endDateOfEvent <= end) ||
+               (startDateOfEvent < start && (endDateOfEvent > start)) ||
+               (startDateOfEvent >= start && startDateOfEvent < end)) {
+
+                 var eventStartToReferenceGap = referenceValue - startDateOfEvent;
+                 var eventStopToReferenceGap = endDateOfEvent - referenceValue;
+                 var stuff = { label: value.label,
+                              start: value.start,
+                              end: value.end,
+                              startOfEvent: startDateOfEvent,
+                              endOfEvent: endDateOfEvent,
+                              brushStart: start,
+                              brushEnd: end,
+                              reference: referenceValue,
+                              startGap: eventStartToReferenceGap,
+                              stopGap: eventStopToReferenceGap,
+                              currentGap: currentReferenceEventGap
+                            }
+
+        //         console.log(value.label, value.start, value.end, startDateOfEvent, endDateOfEvent, start, end, eventStartToReferenceGap, eventStopToReferenceGap);
+//console.log(stuff);
+                // proximity measures distance of event from the reference line;
+                // in order to have the closer proximities look darker on the
+                // choropleth map, subtract the proximity to center from the
+                // total range of the scrubber window. In essence, this assigns
+                // larger values to events closest to the reference line.
+                if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
+//                  value.proximity = (maxProximity + 2);
+                  value.proximity = colorGradientIndex(maxProximity);
+        //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
+                } else {
+                  value.proximity = colorGradientIndex(Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
+                  (maxProximity - Math.abs(referenceValue - endDateOfEvent))));
+//                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
+//                    Math.abs(referenceValue - endDateOfEvent))).toString();
+                }
+                // Is location unique? If not, do max hold on proximity.
+                if (spatioFlow) {
+                  eventsWithinScruber.forEach(function(eventItem) {
+                  if (value.loc === eventItem.loc) {
+                    var eventProximity = parseFloat(eventItem.proximity);
+                    if (value.proximity > eventProximity) {
+        // console.log("\nswapping eventItem:", eventItem.proximity, " for value:", value.proximity);
+                      eventItem.proximity = value.proximity.toString();
+                    } else {
+        // console.log("\nretaining eventItem:", eventItem.proximity, " over value:", value.proximity);
+                      value.proximity = eventProximity;
+                    }
+                  }
+                });
+              }
+              value.proximity = value.proximity.toString();
+              eventsWithinScruber.push(value);
+
+// Find the tightest event bounding the reference or, if no bounding event, then
+// the event closest to the reference.
+
+              if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
+                if (!referenceBoundedByEvent) {
+//                  console.log("bounding:", value.label);
+                  referenceBoundedByEvent = true;
+                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+                  referenceEvent.push(value);
+                } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
+                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
+                  referenceEvent.push(value);
+//                  console.log(value.label, "gap:", currentReferenceEventGap);
+                }
+              } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
+                  // reference is in past relative to event
+                  if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
+                    currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
+                    referenceEvent.push(value);
+//                    console.log(value.label, "late gap:", currentReferenceEventGap);
+                  }
+              } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
+                  // refence is in the future relative to event
+                  if (Math.abs(eventStopToReferenceGap) < currentReferenceEventGap) {
+                    currentReferenceEventGap = Math.abs(eventStopToReferenceGap);
+                    referenceEvent.push(value);
+                  }
+              }
+            }
+        });
+
+        if (referenceEvent.length===0) {
+          // This fixes bug where there are no timeflow events within the scrubber
+          // window; however the fix is not ideal (FIXME) because the infoflow
+          // pane will retain the last event regardless of proximity to reference
+          // line.
+//          console.log("ref.length:", referenceEvent, "lastEvent: ", lastEvent);
+          referenceEvent[0] = lastEvent;
+        } else {
+          lastEvent = referenceEvent[0];
+        }
+        // Highlight the timeline row corresponding to the cards in the
+        // info-flow band.
+        d3.select(".infoRow")
+            .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
+
+        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
+        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
     }
 
     function generateInfoFlow(band, infoFlowValues, scrubberWindowRange, referenceValue) {
@@ -747,9 +893,11 @@ console.log(band.y, band.h);
               ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
                  band.w / 2 - labelWidth / 3,
                  function(min, max) {
-                   return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
-                        (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
-                        min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
+//console.log("min:", min.getTime(), "max:", max.getTime(), "ms:", (max.getTime() - min.getTime())/2 + min.getTime(), "Date:", (new Date((max.getTime() - min.getTime())/2 + min.getTime())).toString());
+                   return (new Date(((max.getTime() - min.getTime())/2 + min.getTime()))).toUTCString();},
+//                   return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
+//                        (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
+//                        min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
                  "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth,
                timelineGeometry.infoFlowHeight + 5]
             ];
@@ -918,6 +1066,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
             .on("brush", function() {
                 var domain = brush.empty() ? band.xScale.domain() : brush.extent();
   //              console.log("extent:", brush.extent(), " domain:", domain);
+                timelineGeometry.brushExtent = domain;
                 targetNames.forEach(function(d) {
                     bands[d].xScale.domain(domain);
   //                  xBrushWidth = d3.select(".extent").attr("width");
@@ -1037,7 +1186,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
     // Utility functions
     //
 
-    function parseDate(dateString) {
+    function parseDate(dateString, aFormatString) {
         // 'dateString' must either conform to the ISO date format YYYY-MM-DD
         // or be a full year without month and day.
         // AD years may not contain letters, only digits '0'-'9'!
@@ -1048,14 +1197,16 @@ console.log("band.y:", band.y, "band.h:", band.h);
         // A dateString of '0' will be converted to '1 BC'.
         // Because JavaScript can't define AD years between 0..99,
         // these years require a special treatment.
-
-        var format = d3.time.format("%Y-%m-%d"),
+        var formatString = aFormatString || "%Y-%m-%d";
+//        console.log(formatString);
+//        var format = d3.time.format("%Y-%m-%d"),
+        var format = d3.time.format(formatString),
             date,
             year;
 
         date = format.parse(dateString);
         if (date !== null) return date;
-
+//console.log("date null first pass");
         // BC yearStrings are not numbers!
         if (isNaN(dateString)) { // Handle BC year
             // Remove non-digits, convert to negative number
