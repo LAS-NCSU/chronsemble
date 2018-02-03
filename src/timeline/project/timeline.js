@@ -574,7 +574,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
 //                  value.proximity = (maxProximity + 2);
                   value.proximity = colorGradientIndex(maxProximity);
-        //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
+                  console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
                 } else {
                   value.proximity = colorGradientIndex(Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
                   (maxProximity - Math.abs(referenceValue - endDateOfEvent))));
@@ -646,7 +646,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
 
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
+        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
     }
 
     function generateInfoFlow(band, infoFlowValues, scrubberWindowRange, referenceValue) {
@@ -750,7 +750,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
     }
 
-    function updateSpatioFlow(eventLocations, maxProximity) {
+    function updateSpatioFlow(eventLocations, maxGradient) {
 
       var map = d3.geomap.choropleth()
                   .geofile('/d3-geomap/topojson/world/countries.json')
@@ -760,7 +760,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
 //                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
 //                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
-                  .domain([0, maxProximity + 2])
+                  .domain([0, maxGradient])
 //                  .legend(true)
                   .column('proximity')
                   .unitId('loc')
