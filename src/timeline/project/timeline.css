@@ -30,7 +30,8 @@
 /* labels */
 
 .bandLabel {
-    fill: #F0F0F0;
+/*  fill: #F0F0F0; */
+    fill: none;
     font: 10px sans-serif;
     font-weight: bold;
 }
