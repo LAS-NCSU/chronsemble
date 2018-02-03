@@ -39,6 +39,7 @@ var timelineGeometry = {
                     // value is also used to set the pad amount for the start and
                     // end of the timeline.
   instantRadius: 5,
+  brushExtent: [],
 
 // flowHeight - determines the height in pixels of the named flow where flowName
 // is one of ["timeFlow", "birdView"].
