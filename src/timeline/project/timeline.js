@@ -130,18 +130,31 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
               .range([0, timelineGeometry.maxWidth - timelineGeometry.margin.left -
                 timelineGeometry.margin.right]);
 
-          var circleWidthms = instant.xScale.invert(2*timelineGeometry.instantRadius+3).getTime()
-
+  //        var circleRadius_ms = instant.xScale.invert(2*timelineGeometry.instantRadius+3).getTime()
+          var circleRadius_ms = instant.xScale.invert(timelineGeometry.instantRadius).getTime() - timeRange[0].getTime();
+console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleRadius_ms);
           items.forEach(function(item) {
-            var labelWidth = getTextWidth(item.label, "10px sans-serif") + ((item.instant) ? 15 : 5);
+  //          var labelWidth = getTextWidth(item.label, "10px sans-serif") + ((item.instant) ? timelineGeometry.instantRadius + 2 : 1);
+            var labelWidth = getTextWidth(item.label, "10px sans-serif");
             var durationWidth = zoom.xScale(item.end) - zoom.xScale(item.start);
   //          var eventInterval = (labelWidth > durationWidth) ? labelWidth : durationWidth;
-            item.intervalEnd = (labelWidth > durationWidth) ?
-              new Date(item.start.getTime() + zoom.xScale.invert(labelWidth).getTime() - timeRange[0].getTime()) : item.end;
+            item.intervalBegin = item.start;
+
+            if (labelWidth > durationWidth) {
+              labelWidth = labelWidth + ((item.instant) ? timelineGeometry.instantRadius + 2 : 1);
+              item.intervalEnd = new Date(item.start.getTime() + zoom.xScale.invert(labelWidth).getTime() - timeRange[0].getTime());
+            } else {
+              item.intervalEnd = item.end;
+            }
+  //      item.intervalEnd = (labelWidth > durationWidth) ?
+    //          new Date(item.start.getTime() + zoom.xScale.invert(labelWidth).getTime() - timeRange[0].getTime()) : item.end;
   //           = zoom.xScale.invert(eventInterval);
             if (item.instant) {
-              var circleWidth = new Date(item.start.getTime() + (circleWidthms - timeRange[0].getTime()));
-              if (circleWidth > item.intervalEnd) item.intervalEnd = circleWidth;
+  //            item.intervalBegin = new Date(item.start.getTime() - circleRadius_ms/2);
+              var markerEnd = new Date(item.start.getTime() + circleRadius_ms);
+              item.intervalBegin = new Date(item.start.getTime() - circleRadius_ms);
+              if (markerEnd > item.intervalEnd) item.intervalEnd = markerEnd;
+              console.log(item.label,":", labelWidth, ":", durationWidth, "\n", item.start, item.intervalBegin, "\n", item.end, item.intervalEnd);
             }
 
 //            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
@@ -156,7 +169,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
             function sortBackward() {
                 // older items assigned to early tracks
-                tracks[0] = items[0].start;
+            //    tracks[0] = items[0].start;
+                tracks[0] = items[0].intervalBegin;
                 items[0].track = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
@@ -173,7 +187,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //                      console.log("track:", track, "totalTracks:", totalTracks);
                     }
                     itemsPerTrack[track]++;
-                    tracks[track] = item.start;
+//                    tracks[track] = item.start;
+                    tracks[track] = item.intervalBegin;
                 });
             }
 
@@ -188,7 +203,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
-                        if (item.start > tracks[i]) break;
+                        if (item.intervalBegin > tracks[i]) break;
                     }
                     item.track = track;
                     if (track > totalTracks - 1) {
@@ -252,9 +267,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
      timeRangeBuffer = timeRangeBuffer * 2;
      var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
 //     console.log(zoomTarget);
-     data.items.forEach(function(item) {
+//     data.items.forEach(function(item) {
        //stopped here
-     });
+//     });
 
      setEventIntervals(data.items, timeRange, zoomTarget);
         // Show patterns
@@ -405,6 +420,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("class", function (d) { return d.instant ? "part instant" : "part interval";});
 
         var intervals = d3.select("#band" + bandNum).selectAll(".interval");
+        var instants = d3.select("#band" + bandNum).selectAll(".instant");
 
         if (bandName === "timeFlow") {
           intervals.append("rect")
@@ -417,30 +433,37 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           intervals.append("text")
             .attr("class", "eventLabel")
             .attr("x", 1)
-            .attr("y", 10)
+            .attr("y", timelineGeometry.timeFlow.track.height/2 + timelineGeometry.timeFlow.track.space)
             .text(function (d) { return d.label; });
+
+          instants.append("circle")
+      //          .attr("cx", band.itemHeight / 2)
+            .attr("cx", timelineGeometry.instantRadius + 1)
+            .attr("cy", band.itemHeight / 2)
+            .attr("r", timelineGeometry.instantRadius);
+
+          // Apply event labels to timeFlow (not visible on birdView)
+
+          instants.append("text")
+            .attr("class", "instantLabel")
+            .attr("x", 2*timelineGeometry.instantRadius + 3)
+            .attr("y", timelineGeometry.timeFlow.track.height/2 + timelineGeometry.timeFlow.track.space)
+            .text(function (d) { return d.label; });
+
         } else if (bandName === "birdView") {
           // Draw bird's eye view tracks
           intervals.append("rect")
             .attr("fill", "#808080")
             .attr("width", "100%")
             .attr("height", "100%");
+
+          instants.append("circle")
+      //          .attr("cx", band.itemHeight / 2)
+            .attr("cx", 1)
+            .attr("cy", 1)
+            .attr("r", 2);
+
         }
-
-        var instants = d3.select("#band" + bandNum).selectAll(".instant");
-        instants.append("circle")
-            .attr("cx", band.itemHeight / 2)
-            .attr("cy", band.itemHeight / 2)
-            .attr("r", timelineGeometry.instantRadius);
-
-        if (bandName === "timeFlow") {
-          // Apply event labels to timeFlow (not visible on birdView)
-          instants.append("text")
-              .attr("class", "instantLabel")
-              .attr("x", 15)
-              .attr("y", 10)
-              .text(function (d) { return d.label; });
-        };
 
         band.addActions = function(actions) {
             // actions - array: [[trigger, function], ...]
@@ -452,18 +475,29 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         // Redraw sets the width of an event interval
         band.redraw = function () {
           //console.log("band.parts[1]:", band.parts[1]);
+          if (band.id === "band0") {
             items
-                .attr("x", function (d) { return band.xScale(d.start);})
+                .attr("x", function (d) {
+                    return (band.xScale(d.start) - ((d.instant) ?
+                      (timelineGeometry.instantRadius + 1) : 0));})
                 .attr("width", function (d) {
-    //              return band.xScale(d.end) - band.xScale(d.start); });
-                  return band.xScale(d.intervalEnd) - band.xScale(d.start); });
+                    return band.xScale(d.intervalEnd) - band.xScale(d.start) +
+                      ((d.instant) ? (timelineGeometry.instantRadius + 2) : 0);});
 
             items.selectAll("rect").attr("width", function (d) {
                 return band.xScale(d.end) - band.xScale(d.start); });
 
             band.parts.forEach(function(part) { part.redraw(); })
-//scrubberValue(band.parts[1], items);
-            if (band.id === "band0") scrubberValue(band);
+            scrubberValue(band);
+          } else {
+            items
+                .attr("x", function (d) { return band.xScale(d.start) - ((d.instant) ?
+                  1 : 0);})
+                .attr("width", function (d) {
+                    return ((d.instant) ? 2 : band.xScale(d.end) - band.xScale(d.start));});
+
+            band.parts.forEach(function(part) { part.redraw(); })
+          }
         };
 
         bands[bandName] = band;
@@ -476,17 +510,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         return timeline;
     };
 
-    function getViewRange_ms(min, max) {
-      return (isString(min)) ? (max.getTime() - min.getTime()) : max - min;
-    }
-
     //----------------------------------------------------------------------
     //
     // infoFlow
     //
 
     function scrubberValue(bandRef) {
-        var scrubberWindow = [];
+  //      var scrubberWindow = [];
         var infoFlowValues = [];
         data.items.forEach(function (value) {
             var arrayObject = new Object();
@@ -499,9 +529,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             arrayObject.track = value.track;
             infoFlowValues.push(arrayObject);
         });
-        bandRef.parts[1].forEach(function (part) {
-            scrubberWindow.push(part);
-        });
+//        bandRef.parts[1].forEach(function (part) {
+//            scrubberWindow.push(part);
+//        });
 //        console.log(scrubberWindow);
 //        var scrubberWindowRange = parseInt(scrubberWindow[0][0].innerHTML);
 //        var referenceValue = parseInt(scrubberWindow[0][1].innerHTML);
@@ -521,12 +551,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //          console.log((new Date(referenceValue)).toUTCString(), referenceValue);
 
 //          generateInfoFlow(bandRef, infoFlowValues, scrubberWindowRange, referenceValue);
-          generateInfoFlow2(bandRef, infoFlowValues, referenceValue);
+          generateInfoFlow(bandRef, infoFlowValues, referenceValue);
     }
 
-    function generateInfoFlow2(band, infoFlowValues, referenceValue) {
-//        var start = referenceValue - maxProximity;
-//        var end = referenceValue + maxProximity;
+    function generateInfoFlow(band, infoFlowValues, referenceValue) {
         var start = timelineGeometry.brushExtent[0].getTime();
         var end = timelineGeometry.brushExtent[1].getTime();
         var maxProximity = getViewRange_ms(start, end)/2;
@@ -550,7 +578,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                (startDateOfEvent >= start && startDateOfEvent < end)) {
 
                  var eventStartToReferenceGap = referenceValue - startDateOfEvent;
-                 var eventStopToReferenceGap = endDateOfEvent - referenceValue;
+                 var eventStopToReferenceGap = endDateOfEvent - referenceValue
+                 /*
                  var stuff = { label: value.label,
                               start: value.start,
                               end: value.end,
@@ -563,7 +592,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                               stopGap: eventStopToReferenceGap,
                               currentGap: currentReferenceEventGap
                             }
-
+                  */
         //         console.log(value.label, value.start, value.end, startDateOfEvent, endDateOfEvent, start, end, eventStartToReferenceGap, eventStopToReferenceGap);
 //console.log(stuff);
                 // proximity measures distance of event from the reference line;
@@ -572,14 +601,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 // total range of the scrubber window. In essence, this assigns
                 // larger values to events closest to the reference line.
                 if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
-//                  value.proximity = (maxProximity + 2);
                   value.proximity = colorGradientIndex(maxProximity);
-                  console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
+//                  console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
                 } else {
                   value.proximity = colorGradientIndex(Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
                   (maxProximity - Math.abs(referenceValue - endDateOfEvent))));
-//                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
-//                    Math.abs(referenceValue - endDateOfEvent))).toString();
                 }
                 // Is location unique? If not, do max hold on proximity.
                 if (spatioFlow) {
@@ -647,107 +673,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
         var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
-    }
-
-    function generateInfoFlow(band, infoFlowValues, scrubberWindowRange, referenceValue) {
-        var maxProximity = scrubberWindowRange / 2;
-        var start = referenceValue - maxProximity;
-        var end = referenceValue + maxProximity;
-        var currentReferenceEventGap = Number.MAX_SAFE_INTEGER;
-        var eventsWithinScruber = [];
-        var referenceEvent = [];
-        var numValue = 1;
-        var referenceBoundedByEvent = false;
-
-        infoFlowValues.forEach(function (value) {
-//          console.log(numValue, value);
-          numValue = numValue + 1;
-            var startDateOfEvent = value.start.getUTCFullYear() +
-                ((value.start.getUTCMonth() + value.start.getUTCDate()/32)/12);
-            var endDateOfEvent = value.end.getUTCFullYear() +
-                ((value.end.getUTCMonth() + value.end.getUTCDate()/32)/12);
-            if ((startDateOfEvent >= start && endDateOfEvent <= end) ||
-               (startDateOfEvent < start && (endDateOfEvent > start)) ||
-               (startDateOfEvent >= start && startDateOfEvent < end)) {
-                 var eventStartToReferenceGap = referenceValue - startDateOfEvent;
-                 var eventStopToReferenceGap = endDateOfEvent - referenceValue;
-                // proximity measures distance of event from the reference line;
-                // in order to have the closer proximities look darker on the
-                // choropleth map, subtract the proximity to center from the
-                // total range of the scrubber window. In essence, this assigns
-                // larger values to events closest to the reference line.
-                if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
-                  value.proximity = (maxProximity + 2);
-        //          console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
-                } else {
-                  value.proximity = Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
-                  (maxProximity - Math.abs(referenceValue - endDateOfEvent)));
-//                  value.proximity = Math.max(value.proximity, (scrubberWindowRange -
-//                    Math.abs(referenceValue - endDateOfEvent))).toString();
-                }
-                // Is location unique? If not, do max hold on proximity.
-                if (spatioFlow) {
-                  eventsWithinScruber.forEach(function(eventItem) {
-                  if (value.loc === eventItem.loc) {
-                    var eventProximity = parseFloat(eventItem.proximity);
-                    if (value.proximity > eventProximity) {
-        // console.log("\nswapping eventItem:", eventItem.proximity, " for value:", value.proximity);
-                      eventItem.proximity = value.proximity.toString();
-                    } else {
-        // console.log("\nretaining eventItem:", eventItem.proximity, " over value:", value.proximity);
-                      value.proximity = eventProximity;
-                    }
-                  }
-                });
-              }
-              value.proximity = value.proximity.toString();
-              eventsWithinScruber.push(value);
-
-// Find the tighest event bounding the reference or, if no bounding event, then
-// the event closest to the reference.
-
-              if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
-                if (!referenceBoundedByEvent) {
-                  referenceBoundedByEvent = true;
-                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
-                  referenceEvent.push(value);
-                } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
-                  currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
-                  referenceEvent.push(value);
-                }
-              } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
-                  // reference is in past relative to event
-                  if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
-                    currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
-                    referenceEvent.push(value);
-                  }
-              } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
-                  // refence is in the future relative to event
-                  if (Math.abs(eventStopToReferenceGap) < currentReferenceEventGap) {
-                    currentReferenceEventGap = Math.abs(eventStopToReferenceGap);
-                    referenceEvent.push(value);
-                  }
-              }
-            }
-        });
-
-        if (referenceEvent.length===0) {
-          // This fixes bug where there are no timeflow events within the scrubber
-          // window; however the fix is not ideal (FIXME) because the infoflow
-          // pane will retain the last event regardless of proximity to reference
-          // line.
-//          console.log("ref.length:", referenceEvent, "lastEvent: ", lastEvent);
-          referenceEvent[0] = lastEvent;
-        } else {
-          lastEvent = referenceEvent[0];
-        }
-        // Highlight the timeline row corresponding to the cards in the
-        // info-flow band.
-        d3.select(".infoRow")
-            .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
-
-        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, maxProximity) : null;
     }
 
     function updateSpatioFlow(eventLocations, maxGradient) {
@@ -1066,6 +991,8 @@ console.log("band.y:", band.y, "band.h:", band.h);
             .on("brush", function() {
                 var domain = brush.empty() ? band.xScale.domain() : brush.extent();
   //              console.log("extent:", brush.extent(), " domain:", domain);
+                // Save the window extent in the timeline geometry for use in
+                // future computations.
                 timelineGeometry.brushExtent = domain;
                 targetNames.forEach(function(d) {
                     bands[d].xScale.domain(domain);
@@ -1200,7 +1127,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
         var formatString = aFormatString || "%Y-%m-%d";
 //        console.log(formatString);
 //        var format = d3.time.format("%Y-%m-%d"),
-        var format = d3.time.format(formatString),
+        var format = d3.time.format.utc(formatString),
             date,
             year;
 
