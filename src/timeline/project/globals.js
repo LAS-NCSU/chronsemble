@@ -88,3 +88,7 @@ function getTextWidth(text, font) {
     var metrics = context.measureText(text);
     return Math.floor(metrics.width+1);
 };
+
+function getViewRange_ms(min, max) {
+  return (isString(min)) ? (max.getTime() - min.getTime()) : max - min;
+}
