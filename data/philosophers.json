@@ -1,0 +1,558 @@
+﻿{
+   "Homer": {
+      "start": "800 BC",
+      "end": "701 BC"
+   },
+   "Hesiod": {
+      "start": "750 BC",
+      "end": "650 BC"
+   },
+   "Thales": {
+      "start": "624 BC",
+      "end": "546 BC"
+   },
+   "Anaximander": {
+      "start": "610 BC",
+      "end": "546 BC"
+   },
+   "Anaximenes": {
+      "start": "585 BC",
+      "end": "525 BC"
+   },
+   "Pythagoras": {
+      "start": "582 BC",
+      "end": "496 BC"
+   },
+   "Philolaus": {
+      "start": "470 BC",
+      "end": "380 BC"
+   },
+   "Archytas": {
+      "start": "428 BC",
+      "end": "347 BC"
+   },
+   "Xenophanes": {
+      "start": "570 BC",
+      "end": "470 BC"
+   },
+   "Parmenides": {
+      "start": "510 BC",
+      "end": "440 BC"
+   },
+   "Heraclitus": {
+      "start": "535 BC",
+      "end": "475 BC"
+   },
+   "Empedocles": {
+      "start": "490 BC",
+      "end": "430 BC"
+   },
+   "Anaxagoras": {
+      "start": "500 BC",
+      "end": "428 BC"
+   },
+   "Leucippus": {
+      "start": "480 BC",
+      "end": "420 BC"
+   },
+   "Democritus": {
+      "start": "460 BC",
+      "end": "370 BC"
+   },
+   "Protagoras": {
+      "start": "490 BC",
+      "end": "420 BC"
+   },
+   "Gorgias": {
+      "start": "487 BC",
+      "end": "376 BC"
+   },
+   "Theophrastus": {
+      "start": "371 BC",
+      "end": "287 BC"
+   },
+   "Socrates": {
+      "start": "469 BC",
+      "end": "399 BC"
+   },
+   "Euclid of Megara": {
+      "start": "450 BC",
+      "end": "380 BC"
+   },
+   "Antisthenes": {
+      "start": "445 BC",
+      "end": "360 BC"
+   },
+   "Aristippus": {
+      "start": "435 BC",
+      "end": "356 BC"
+   },
+   "Plato": {
+      "start": "428 BC",
+      "end": "347 BC"
+   },
+   "Diogenes of Sinope": {
+      "start": "405 BC",
+      "end": "320 BC"
+   },
+   "Xenocrates": {
+      "start": "396 BC",
+      "end": "314 BC"
+   },
+   "Aristotle": {
+      "start": "384 BC",
+      "end": "322 BC"
+   },
+   "Epicurus": {
+      "start": "341 BC",
+      "end": "270 BC"
+   },
+   "Archimedes": {
+      "start": "287 BC",
+      "end": "212 BC"
+   },
+   "Chrysippus": {
+      "start": "280 BC",
+      "end": "207 BC"
+   },
+   "Stilpo": {
+      "start": "360 BC",
+      "end": "280 BC"
+   },
+   "Zeno of Citium": {
+      "start": "334 BC",
+      "end": "262 BC"
+   },
+   "Clitomachus": {
+      "start": "187 BC",
+      "end": "109 BC"
+   },
+   "Cicero": {
+      "start": "106 BC",
+      "end": "43 BC"
+   },
+   "Lucretius": {
+      "start": "94 BC",
+      "end": "55 BC"
+   },
+   "Seneca": {
+      "start": "4 BC",
+      "end": "65"
+   },
+   "Musonius Rufus": {
+      "start": "30",
+      "end": "100"
+   },
+   "Plutarch": {
+      "start": "45",
+      "end": "120"
+   },
+   "Epictetus": {
+      "start": "55",
+      "end": "135"
+   },
+   "Polycarp": {
+      "start": "70",
+      "end": "156"
+   },
+   "Marcus Aurelius": {
+      "start": "121",
+      "end": "180"
+   },
+   "Clement of Alexandria": {
+      "start": "150",
+      "end": "215"
+   },
+   "Sextus Empiricus": {
+      "start": "160",
+      "end": "210"
+   },
+   "Plotinus": {
+      "start": "205",
+      "end": "270"
+   },
+   "Porphyry": {
+      "start": "232",
+      "end": "304"
+   },
+   "Nicolaus of Myra": {
+      "start": "270",
+      "end": "351"
+   },
+   "Athanasius": {
+      "start": "295",
+      "end": "373"
+   },
+   "Hilarius of Poitiers": {
+      "start": "315",
+      "end": "367"
+   },
+   "Themistius": {
+      "start": "317",
+      "end": "388"
+   },
+   "Gregorius of Nazianz": {
+      "start": "329",
+      "end": "390"
+   },
+   "Basilius": {
+      "start": "330",
+      "end": "379"
+   },
+   "Gregorius of Nyssa": {
+      "start": "335",
+      "end": "394"
+   },
+   "Ambrosius": {
+      "start": "339",
+      "end": "397"
+   },
+   "Hieronymus": {
+      "start": "340",
+      "end": "420"
+   },
+   "Chrisostomos": {
+      "start": "354",
+      "end": "407"
+   },
+   "Cyrill": {
+      "start": "381",
+      "end": "444"
+   },
+   "Proclus": {
+      "start": "411",
+      "end": "485"
+   },
+   "Damascius": {
+      "start": "462",
+      "end": "540"
+   },
+   "Boethius": {
+      "start": "472",
+      "end": "524"
+   },
+   "Anselm of Canterbury": {
+      "start": "1033",
+      "end": "1109"
+   },
+   "Bernhard of Clairvaux": {
+      "start": "1091",
+      "end": "1153"
+   },
+   "Maimonides": {
+      "start": "1135",
+      "end": "1204"
+   },
+   "Bonaventura": {
+      "start": "1221",
+      "end": "1274"
+   },
+   "Thomas of Aquin": {
+      "start": "1225",
+      "end": "1274"
+   },
+   "Rymundus Lullus": {
+      "start": "1235",
+      "end": "1315"
+   },
+   "Albertus Magnus": {
+      "start": "1193",
+      "end": "1280"
+   },
+   "Dante": {
+      "start": "1265",
+      "end": "1321"
+   },
+   "Duns Scotus": {
+      "start": "1266",
+      "end": "1308"
+   },
+   "Occam": {
+      "start": "1287",
+      "end": "1347"
+   },
+   "Trapezuntius": {
+      "start": "1396",
+      "end": "1484"
+   },
+   "Cusanus": {
+      "start": "1401",
+      "end": "1464"
+   },
+   "Agricola": {
+      "start": "1443",
+      "end": "1485"
+   },
+   "Savonarola": {
+      "start": "1452",
+      "end": "1498"
+   },
+   "Erasmus": {
+      "start": "1467",
+      "end": "1536"
+   },
+   "Machiavelli": {
+      "start": "1469",
+      "end": "1527"
+   },
+   "Morus": {
+      "start": "1478",
+      "end": "1535"
+   },
+   "Kopernikus": {
+      "start": "1473",
+      "end": "1543"
+   },
+   "Luther": {
+      "start": "1483",
+      "end": "1546"
+   },
+   "Zwingli": {
+      "start": "1484",
+      "end": "1531"
+   },
+   "Agrippa": {
+      "start": "1486",
+      "end": "1535"
+   },
+   "Paracelsus": {
+      "start": "1493",
+      "end": "1541"
+   },
+   "Melanchton": {
+      "start": "1497",
+      "end": "1560"
+   },
+   "Calvin": {
+      "start": "1509",
+      "end": "1564"
+   },
+   "Scaliger": {
+      "start": "1540",
+      "end": "1609"
+   },
+   "Brahe": {
+      "start": "1546",
+      "end": "1601"
+   },
+   "Bacon": {
+      "start": "1560",
+      "end": "1626"
+   },
+   "Galilei": {
+      "start": "1564",
+      "end": "1642"
+   },
+   "Hobbes": {
+      "start": "1588",
+      "end": "1679"
+   },
+   "Descartes": {
+      "start": "1596",
+      "end": "1659"
+   },
+   "Pascal": {
+      "start": "1623",
+      "end": "1662"
+   },
+   "Spinoza": {
+      "start": "1632",
+      "end": "1677"
+   },
+   "Leibniz": {
+      "start": "1646",
+      "end": "1716"
+   },
+   "Berkeley": {
+      "start": "1685",
+      "end": "1735"
+   },
+   "Hume": {
+      "start": "1711",
+      "end": "1776"
+   },
+   "Kant": {
+      "start": "1724",
+      "end": "1804"
+   },
+   "Jacobi": {
+      "start": "1743",
+      "end": "1819"
+   },
+   "Bentham": {
+      "start": "1748",
+      "end": "1832"
+   },
+   "Hegel": {
+      "start": "1770",
+      "end": "1831"
+   },
+   "Schelling": {
+      "start": "1775",
+      "end": "1854"
+   },
+   "Fichte": {
+      "start": "1762",
+      "end": "1814"
+   },
+   "Schopenhauer": {
+      "start": "1788",
+      "end": "1860"
+   },
+   "Marx": {
+      "start": "1818",
+      "end": "1883"
+   },
+   "Dühring": {
+      "start": "1833",
+      "end": "1921"
+   },
+   "Dilthey": {
+      "start": "1833",
+      "end": "1911"
+   },
+   "Nietzsche": {
+      "start": "1844",
+      "end": "1900"
+   },
+   "Frege": {
+      "start": "1848",
+      "end": "1925"
+   },
+   "Dewey": {
+      "start": "1859",
+      "end": "1952"
+   },
+   "Bergson": {
+      "start": "1859",
+      "end": "1941"
+   },
+   "Russell": {
+      "start": "1872",
+      "end": "1970"
+   },
+   "Moore": {
+      "start": "1873",
+      "end": "1958"
+   },
+   "Scheler": {
+      "start": "1874",
+      "end": "1928"
+   },
+   "Schlick": {
+      "start": "1882",
+      "end": "1936"
+   },
+   "Bloch": {
+      "start": "1885",
+      "end": "1977"
+   },
+   "Wittgenstein": {
+      "start": "1889",
+      "end": "1951"
+   },
+   "Ajdukiewicz": {
+      "start": "1890",
+      "end": "1963"
+   },
+   "Ryle": {
+      "start": "1900",
+      "end": "1976"
+   },
+   "Bochenski": {
+      "start": "1902",
+      "end": "1995"
+   },
+   "Popper": {
+      "start": "1902",
+      "end": "1994"
+   },
+   "Jonas": {
+      "start": "1903",
+      "end": "1993"
+   },
+   "Adorno": {
+      "start": "1903",
+      "end": "1969"
+   },
+   "Quine": {
+      "start": "1908",
+      "end": "2000"
+   },
+   "Ayer": {
+      "start": "1910",
+      "end": "1989"
+   },
+   "Austin": {
+      "start": "1911",
+      "end": "1960"
+   },
+   "Rawls": {
+      "start": "1921",
+      "end": "2002"
+   },
+   "Stegmüller": {
+      "start": "1923",
+      "end": "1991"
+   },
+   "Rorty": {
+      "start": "1931-10-04",
+      "end": "2007-06-08"
+   },
+   "Iliad": {
+      "start": "760 BC",
+      "end": ""
+   },
+   "Odyssey": {
+      "start": "740 BC",
+      "end": ""
+   },
+   "Theogony": {
+      "start": "700 BC",
+      "end": ""
+   },
+   "Critique of Pure Reason": {
+      "start": "1781",
+      "end": ""
+   },
+   "The World as Will and Representation": {
+      "start": "1818",
+      "end": ""
+   },
+   "A Treatise of Human Nature": {
+      "start": "1739",
+      "end": ""
+   },
+   "An Enquiry Concerning Human Understanding": {
+      "start": "1748",
+      "end": ""
+   },
+   "The Phenomenology of Spirit": {
+      "start": "1807",
+      "end": ""
+   },
+   "The Prince": {
+      "start": "1532",
+      "end": ""
+   },
+   "The Republic": {
+      "start": "380 BC",
+      "end": ""
+   },
+   "Leviathan": {
+      "start": "1651",
+      "end": ""
+   },
+   "A Treatise Concerning the Principles of Human Knowledge": {
+      "start": "1710",
+      "end": ""
+   },
+   "Discourse on the Method": {
+      "start": "1637",
+      "end": ""
+   },
+   "Thus Spoke Zarathustra": {
+      "start": "1883",
+      "end": ""
+   }
+}
