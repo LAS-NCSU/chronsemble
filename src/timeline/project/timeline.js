@@ -5,8 +5,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     //--------------------------------------------------------------------------
     //
-    // chart
+    // #####     #    #    #  ######  #          #    #    #  ######
+    //   #       #    ##  ##  #       #          #    ##   #  #
+    //   #       #    # ## #  #####   #          #    # #  #  #####
+    //   #       #    #    #  #       #          #    #  # #  #
+    //   #       #    #    #  #       #          #    #   ##  #
+    //   #       #    #    #  ######  ######     #    #    #  ######
     //
+    //--------------------------------------------------------------------------
 
     // global timeline variables
     var timeline = {},   // The timeline
@@ -19,8 +25,11 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                              // a count of the entities on that track.
     var lastEvent = null;
 
-    var svg = d3.select(domTimelineElement).append("svg");
-    var chart = svg;
+    var svgTime = d3.select(domTimelineElement).append("svg");
+//    var svgInfo = d3.select(domInfoFlowElement).append("svg").append("g");
+
+    var timelineElement = svgTime;
+//    var infoFlowElement = svgInfo;
     var tooltip = d3.select("body")
         .append("div")
         .attr("class", "tooltip")
@@ -28,8 +37,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     //--------------------------------------------------------------------------
     //
-    // data
+    //  #####     ##     #####    ##
+    //  #    #   #  #      #     #  #
+    //  #    #  #    #     #    #    #
+    //  #    #  ######     #    ######
+    //  #    #  #    #     #    #    #
+    //  #####   #    #     #    #    #
     //
+    //--------------------------------------------------------------------------
 
     timeline.data = function(items) {
 
@@ -303,10 +318,19 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         timelineGeometry.totalTracks = totalTracks;
         return timeline;
     };
-
+    //--------------------------------------------------------------------------
+    //
+    //  #    #  #    #          #####     ##    #    #  ######   ####
+    //  ##  ##  #   #           #    #   #  #   ##   #  #       #
+    //  # ## #  ####            #    #  #    #  # #  #  #####    ####
+    //  #    #  #  #            #####   ######  #  # #  #            #
+    //  #    #  #   #           #       #    #  #   ##  #       #    #
+    //  #    #  #    #          #       #    #  #    #  ######   ####
+    //
+    //--------------------------------------------------------------------------
     timeline.defineTimelinePane = function( ) {
       // Create svg element to contain all of the timeline elements
-        svg.attr("class", "svg")
+        svgTime.attr("class", "svg")
            .attr("id", "svg")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
@@ -318,7 +342,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
     }
 
     timeline.defineTimeflowArea = function( ) {
-       svg.append("g")
+       svgTime.append("g")
           .attr("transform", "translate(" + timelineGeometry.margin.left + "," +
             timelineGeometry.margin.top + ")")
           .append("clipPath")
@@ -328,15 +352,26 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                   timelineGeometry.margin.right)
           .attr("height", timelineGeometry.flowHeight("timeFlow", true));
 
-       chart = chart.select("g").append("g")
+       timelineElement = timelineElement.select("g").append("g")
                     .attr("class", "chart")
                     .attr("clip-path", "url(#timeflow-area)" );
 
         return timeline;
     }
 
+    //--------------------------------------------------------------------------
+    //
+    //   #####      #    #####   #####   #    #     #    ######  #    #
+    //   #    #     #    #    #  #    #  #    #     #    #       #    #
+    //   #####      #    #    #  #    #  #    #     #    #####   #    #
+    //   #    #     #    #####   #    #  #    #     #    #       # ## #
+    //   #    #     #    #   #   #    #   #  #      #    #       ##  ##
+    //   #####      #    #    #  #####     ##       #    ######  #    #
+    //
+    //--------------------------------------------------------------------------
+
     timeline.defineBirdViewArea = function( ) {
-       svg.select("g")
+       svgTime.select("g")
           .append("clipPath")
           .attr("id", "birdview-area")
           .append("rect")
@@ -348,17 +383,23 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
           .attr("transform", "translate(0," + (timelineGeometry.flowHeight("timeFlow", true) +
                   timelineGeometry.axisHeight( ) + timelineGeometry.birdView.margin.top) + ")");
 
-       chart = svg.select("g").append("g")
+       timelineElement = svgTime.select("g").append("g")
                   .attr("class", "chart")
                   .attr("clip-path", "url(#birdview-area)" );
 
         return timeline;
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // band
+    //  #####     ##    #    #  #####
+    //  #    #   #  #   ##   #  #    #
+    //  #####   #    #  # #  #  #    #
+    //  #    #  ######  #  # #  #    #
+    //  #    #  #    #  #   ##  #    #
+    //  #####   #    #  #    #  #####
     //
+    //--------------------------------------------------------------------------
 
     timeline.band = function (bandName) {
 //      console.log("Building band:" + bandName, "Geometry:", timelineGeometry[bandName]);
@@ -391,7 +432,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         band.yTrackPos = function (track) {
             return band.marginTop + track * band.trackHeight;};
 
-        band.g = chart.append("g")
+        band.g = timelineElement.append("g")
             .attr("id", band.id)
             .attr("transform", "translate(0," + band.y + ")");
 
@@ -511,21 +552,29 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         return timeline;
     };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // infoFlow
+    //     #    #    #  ######   ####   ######  #        ####   #    #
+    //     #    ##   #  #       #    #  #       #       #    #  #    #
+    //     #    # #  #  #####   #    #  #####   #       #    #  #    #
+    //     #    #  # #  #       #    #  #       #       #    #  # ## #
+    //     #    #   ##  #       #    #  #       #       #    #  ##  ##
+    //     #    #    #  #        ####   #       ######   ####   #    #
     //
+    //--------------------------------------------------------------------------
 
     function generateInfoFlow(band) {
-        var referenceValue = getViewRange_ms(timelineGeometry.brushExtent[0], timelineGeometry.brushExtent[1])/2 + timelineGeometry.brushExtent[0].getTime();
+  //      var referenceValue = getViewRange_ms(timelineGeometry.brushExtent[0], timelineGeometry.brushExtent[1])/2 + timelineGeometry.brushExtent[0].getTime();
 
         var start = timelineGeometry.brushExtent[0].getTime();
         var end = timelineGeometry.brushExtent[1].getTime();
         var maxProximity = getViewRange_ms(start, end)/2;
+        var referenceValue = maxProximity + start;
+
         var currentReferenceEventGap = Number.MAX_SAFE_INTEGER;
         var eventsWithinScruber = [];
         var referenceEvent = [];
-        var numValue = 1;
+  //      var numValue = 1;
         var referenceBoundedByEvent = false;
         var colorGradientIndex = d3.scale.linear()
                                       .domain([0, maxProximity])
@@ -535,7 +584,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         data.items.forEach(function(value) {
 //        infoFlowValues.forEach(function (value) {
 //          console.log(numValue, value);
-          numValue = numValue + 1;
+//          numValue = numValue + 1;
             var startDateOfEvent = value.start.getTime();
             var endDateOfEvent = value.end.getTime();
             if (startDateOfEvent < end && endDateOfEvent >= start) {
@@ -634,48 +683,8 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
 
         var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
-        console.log(referenceEvent);
+//        console.log(referenceEvent);
         var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
-    }
-
-    function updateSpatioFlow(eventLocations, maxGradient) {
-
-      var map = d3.geomap.choropleth()
-                  .geofile('/d3-geomap/topojson/world/countries.json')
-//                  .colors(['red','green'])
-//                  .colors(['rgb(247,251,255)','rgb(222,235,247)','rgb(198,219,239)','rgb(158,202,225)','rgb(107,174,214)','rgb(66,146,198)','rgb(33,113,181)','rgb(8,81,156)','rgb(8,48,107)'])
-//                  .colors(['rgb(255,255,255)','rgb(253,229,230)','rgb(251,204,206)',
-//                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
-//                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
-//                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
-                  .domain([0, maxGradient])
-//                  .legend(true)
-                  .column('proximity')
-                  .unitId('loc')
-                  .postUpdate(function() {
-
-                  // Remove old maps tagged with the "base" id.
-
-                      d3.selectAll(domSpatioFlow)
-                        .select('#base').remove();
-
-// Attach the "base" id to the newly created map - this will be removed AFTER
-// the next map is draw. Delaying the removal of the prior map provides
-// smooth animatation of the region shading.
-
-                      var spatioFlowTagSvg = d3.selectAll(domSpatioFlow)
-                                                .select('#map')
-                                                .select('svg')
-                                                .attr('id', 'base');});
-
-      //console.log(eventLocation);
-      // Map new locations - this will append a new svg section for the map.
-      // Old maps are removed in the postUpdate function -
-      var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
-                               .select('#map')
-                               .datum(eventLocations)
-                               .call(map.draw, map);
-
     }
 
     function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
@@ -734,10 +743,67 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // labels
+    //   ####   #####     ##     #####     #     ####   ######  #        ####   #    #
+    //  #       #    #   #  #      #       #    #    #  #       #       #    #  #    #
+    //   ####   #    #  #    #     #       #    #    #  #####   #       #    #  #    #
+    //       #  #####   ######     #       #    #    #  #       #       #    #  # ## #
+    //  #    #  #       #    #     #       #    #    #  #       #       #    #  ##  ##
+    //   ####   #       #    #     #       #     ####   #       ######   ####   #    #
     //
+    //--------------------------------------------------------------------------
+
+    function updateSpatioFlow(eventLocations, maxGradient) {
+
+      var map = d3.geomap.choropleth()
+                  .geofile('/d3-geomap/topojson/world/countries.json')
+//                  .colors(['red','green'])
+//                  .colors(['rgb(247,251,255)','rgb(222,235,247)','rgb(198,219,239)','rgb(158,202,225)','rgb(107,174,214)','rgb(66,146,198)','rgb(33,113,181)','rgb(8,81,156)','rgb(8,48,107)'])
+//                  .colors(['rgb(255,255,255)','rgb(253,229,230)','rgb(251,204,206)',
+//                    'rgb(249,178,181)','rgb(247,153,157)','rgb(245,127,132)',
+//                    'rgb(243,102,108)','rgb(241,76,83)','rgb(239,51,59)',
+//                    'rgb(237,25,34)','rgb(241,76,83)','rgb(235,0,10)'])
+                  .domain([0, maxGradient])
+//                  .legend(true)
+                  .column('proximity')
+                  .unitId('loc')
+                  .postUpdate(function() {
+
+                  // Remove old maps tagged with the "base" id.
+
+                      d3.selectAll(domSpatioFlow)
+                        .select('#base').remove();
+
+// Attach the "base" id to the newly created map - this will be removed AFTER
+// the next map is draw. Delaying the removal of the prior map provides
+// smooth animatation of the region shading.
+
+                      var spatioFlowTagSvg = d3.selectAll(domSpatioFlow)
+                                                .select('#map')
+                                                .select('svg')
+                                                .attr('id', 'base');});
+
+      //console.log(eventLocation);
+      // Map new locations - this will append a new svg section for the map.
+      // Old maps are removed in the postUpdate function -
+      var spatioFlowAddMap = d3.selectAll(domSpatioFlow)
+                               .select('#map')
+                               .datum(eventLocations)
+                               .call(map.draw, map);
+
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  #         ##    #####   ######  #        ####
+    //  #        #  #   #    #  #       #       #
+    //  #       #    #  #####   #####   #        ####
+    //  #       ######  #    #  #       #            #
+    //  #       #    #  #    #  #       #       #    #
+    //  ######  #    #  #####   ######  ######   ####
+    //
+    //--------------------------------------------------------------------------
 
     timeline.labels = function (bandName) {
 console.log("Labeling band:" + bandName);
@@ -791,7 +857,7 @@ console.log(band.y, band.h);
                timelineGeometry.infoFlowHeight + 5]
             ];
 
-        var bandLabels = chart.append("g")
+        var bandLabels = timelineElement.append("g")
             .attr("id", bandName + "Labels")
 
     // Check for timeFlow and if so, translate the y coordinate to place
@@ -845,10 +911,16 @@ console.log(band.y, band.h);
         return timeline;
     };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // tooltips
+    //   #####   ####    ####   #        #####     #    #####    ####
+    //     #    #    #  #    #  #          #       #    #    #  #
+    //     #    #    #  #    #  #          #       #    #    #   ####
+    //     #    #    #  #    #  #          #       #    #####        #
+    //     #    #    #  #    #  #          #       #    #       #    #
+    //     #     ####    ####   ######     #       #    #        ####
     //
+    //--------------------------------------------------------------------------
 
     timeline.tooltips = function (bandName) {
 
@@ -893,10 +965,16 @@ console.log(band.y, band.h);
         return timeline;
     };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // xAxis
+    //  #    #    ##    #    #     #     ####
+    //   #  #    #  #    #  #      #    #
+    //    ##    #    #    ##       #     ####
+    //    ##    ######    ##       #         #
+    //   #  #   #    #   #  #      #    #    #
+    //  #    #  #    #  #    #     #     ####
     //
+    //--------------------------------------------------------------------------
 
     timeline.xAxis = function (bandName, orientation) {
 
@@ -908,9 +986,9 @@ console.log(band.y, band.h);
             .tickSize(6, 0)
             .tickFormat(function (d) { return toYear(d); });
 
-        chart = svg.select("g");
+        timelineElement = svgTime.select("g");
 
-        var xAxis = chart.append("g")
+        var xAxis = timelineElement.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + (
               timelineGeometry.flowHeight("timeFlow", true) +
@@ -941,10 +1019,16 @@ console.log("band.y:", band.y, "band.h:", band.h);
 
 //    };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // brush
+    //  #####   #####   #    #   ####   #    #
+    //  #    #  #    #  #    #  #       #    #
+    //  #####   #    #  #    #   ####   ######
+    //  #    #  #####   #    #       #  #    #
+    //  #    #  #   #   #    #  #    #  #    #
+    //  #####   #    #   ####    ####   #    #
     //
+    //--------------------------------------------------------------------------
 
     timeline.brush = function (bandName, targetNames) {
 
@@ -981,7 +1065,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
 // birdview (add the top & bottom margins back) to prevent clipping the top and
 // bottom brush outlines.
 //      var xBrush = band.g.append("svg")
-        var xBrush = svg.select("g").append("svg")
+        var xBrush = svgTime.select("g").append("svg")
             .attr("class", "xBrush")
             .call(brush);
 
@@ -995,10 +1079,16 @@ console.log("band.y:", band.y, "band.h:", band.h);
         return timeline;
     };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // vscroll
+    //  #    #   ####    ####   #####    ####   #       #
+    //  #    #  #       #    #  #    #  #    #  #       #
+    //  #    #   ####   #       #    #  #    #  #       #
+    //  #    #       #  #       #####   #    #  #       #
+    //   #  #   #    #  #    #  #   #   #    #  #       #
+    //    ##     ####    ####   #    #   ####   ######  ######
     //
+    //--------------------------------------------------------------------------
 
     timeline.vScroll = function ( ) {
       if (timelineGeometry.totalTracks > timelineGeometry.timeFlow.maxTracks) {
@@ -1027,7 +1117,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
                 }
             });
 
-        var yBrush = svg.select("g").append("svg")
+        var yBrush = svgTime.select("g").append("svg")
             .attr("class", "yBrush")
             .call(brush);
 
@@ -1042,14 +1132,23 @@ console.log("band.y:", band.y, "band.h:", band.h);
       };
       return timeline;
     };
-
-// mainReference draws the center reference line on the timeline. This is the
-// reference point for the center of the infoFlow.
+    //--------------------------------------------------------------------------
+    //
+    //  #####   ######  ######  ######  #####   ######  #    #   ####   ######
+    //  #    #  #       #       #       #    #  #       ##   #  #    #  #
+    //  #    #  #####   #####   #####   #    #  #####   # #  #  #       #####
+    //  #####   #       #       #       #####   #       #  # #  #       #
+    //  #   #   #       #       #       #   #   #       #   ##  #    #  #
+    //  #    #  ######  #       ######  #    #  ######  #    #   ####   ######
+    //
+    //--------------------------------------------------------------------------
+    // mainReference draws the center reference line on the timeline. This is
+    // the reference point for the center of the infoFlow.
 
     timeline.mainReference = function(bandName) {
       var band = bands[bandName];
 
-      var mainReference = chart.append("g")
+      var mainReference = timelineElement.append("g")
           .attr("class", "referenceline")
           .append("line")
           .attr("x1", band.w/2)
@@ -1059,10 +1158,16 @@ console.log("band.y:", band.y, "band.h:", band.h);
         return timeline;
     };
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    // redraw
+    //  #####   ######  #####   #####     ##    #    #
+    //  #    #  #       #    #  #    #   #  #   #    #
+    //  #    #  #####   #    #  #    #  #    #  #    #
+    //  #####   #       #    #  #####   ######  # ## #
+    //  #   #   #       #    #  #   #   #    #  ##  ##
+    //  #    #  ######  #####   #    #  #    #  #    #
     //
+    //--------------------------------------------------------------------------
 
     timeline.redraw = function () {
 //      console.log("timeline.redraw")
@@ -1071,11 +1176,16 @@ console.log("band.y:", band.y, "band.h:", band.h);
         })
     };
 
-
     //--------------------------------------------------------------------------
     //
-    // Utility functions
+    //  #    #   #####     #    #          #     #####   #   #
+    //  #    #     #       #    #          #       #      # #
+    //  #    #     #       #    #          #       #       #
+    //  #    #     #       #    #          #       #       #
+    //  #    #     #       #    #          #       #       #
+    //   ####      #       #    ######     #       #       #
     //
+    //--------------------------------------------------------------------------
 
     function parseDate(dateString, aFormatString) {
         // 'dateString' must either conform to the ISO date format YYYY-MM-DD
