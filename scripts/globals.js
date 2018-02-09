@@ -22,7 +22,7 @@ var timelineGeometry = {
   //              timeFlow.maxTracks or vertical scrolling will fail.
   // - track.height sets the height of the timeline track for the given flow.
   // - track.space sets the verticle space between adjacent timeline tracks.
-  infoFlow: {maxTracks: 17, minTracks: 3, maxHeight: 2880,
+  infoFlow: {maxTracks: 1, minTracks: 1, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 0}},
   timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
@@ -42,15 +42,21 @@ var timelineGeometry = {
   brushExtent: [],
 
 // flowHeight - determines the height in pixels of the named flow where flowName
-// is one of ["timeFlow", "birdView"].
+// is one of ["infoFlow", "timeFlow", "birdView"].
 //  - visible is boolean that returns the height of the flow that is inside the
-//            region when true and, when false, returns the height of the total flow.
+//            visible (non-clipped) region when true and, when false, returns
+//            the height of the total flow.
 
   flowHeight: function(flowName, visible) {
-    return this[flowName].margin.top +
-      (this[flowName].track.height + this[flowName].track.space) * ((visible) ?
-        Math.max(Math.min(this.totalTracks, this.timeFlow.maxTracks),
-        this[flowName].minTracks) : Math.max(this.totalTracks, this[flowName].minTracks)) -
+    var visibleTracks = Math.max(Math.min(this.totalTracks, this[flowName].maxTracks),
+                            this[flowName].minTracks);
+                            
+    // in the event that there is only 1 visible track, do not add the "space"
+    // between tracks value into the height computation.
+
+    return this[flowName].margin.top + (this[flowName].track.height +
+      ((visibleTracks > 1) ? this[flowName].track.space : 0)) * ((visible) ?
+        visibleTracks : Math.max(this.totalTracks, this[flowName].minTracks)) -
         this[flowName].track.space + this[flowName].margin.bottom;
   },
 
@@ -59,6 +65,9 @@ var timelineGeometry = {
       this.axis.margin.top + this.axis.margin.bottom;
   }
 }
+
+if (timelineGeometry.birdView.maxTracks > timelineGeometry.timeFlow.maxTracks)
+  console.log("WARNING: timeline geometry value out of range: Bird's eye view maxTracks should be less than or equal to timeFlow maxTracks!!!");
 
 var infoFlowCards = 5,      // number of cards visible in info pane.
     cardLateralMargin = 5,  // number of pixels between cards.
