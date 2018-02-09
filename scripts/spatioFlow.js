@@ -40,10 +40,13 @@ function spatioFlow(domElement) {
 // Put a basic map in the pane - this will typically be overwritten for data
 // that includes location events but will remain static in there are no locations
 // attached to events.
-
+//  window.location.assign = 'lib/';
   var world = d3.geomap()
-       .geofile('/d3-geomap/topojson/world/countries.json');
+       .geofile('lib/d3-geomap/topojson/world/countries.json');
 
   d3.select('#map')
        .call(world.draw, world);
+
+  //window.location.href = "./";
+
 }
