@@ -19,16 +19,19 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         data = {},       // Container for the data
         components = [], // All the components of the timeline for redrawing
         bands = {},      // Registry for all the bands in the timeline
-        bandY = 0,       // Y-Position of the next band
+        subBandOffset = 0,       // Y-Position of the next band
         bandNum = 0,     // Count of bands for ids
         itemsPerTrack = [];  // Array of size totalTracks where each element is
                              // a count of the entities on that track.
     var lastEvent = null;
 
     var svgTime = d3.select(domTimelineElement).append("svg");
-//    var svgInfo = d3.select(domInfoFlowElement).append("svg").append("g");
+    var svgInfo = d3.select(domInfoFlowElement)
+//            .append("svg").append("g");
 
     var timelineElement = svgTime;
+    var infoFlowElement = svgInfo;
+
 //    var infoFlowElement = svgInfo;
     var tooltip = d3.select("body")
         .append("div")
@@ -328,6 +331,17 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
     //  #    #  #    #          #       #    #  #    #  ######   ####
     //
     //--------------------------------------------------------------------------
+
+    timeline.defineInfoflowPane = function( ) {
+      // Create svg element to contain all of the timeline elements
+        svgInfo.attr("class", "svg")
+           .attr("id", "svg")
+           .attr("width", timelineGeometry.maxWidth)
+           .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
+             timelineGeometry.flowHeight("infoFlow", true));
+        return timeline;
+    }
+
     timeline.defineTimelinePane = function( ) {
       // Create svg element to contain all of the timeline elements
         svgTime.attr("class", "svg")
@@ -337,6 +351,24 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
              timelineGeometry.flowHeight("timeFlow", true) +
              timelineGeometry.flowHeight("birdView", true) +
              timelineGeometry.axisHeight() * 2);
+
+        return timeline;
+    }
+
+    timeline.defineInfoflowArea = function( ) {
+       svgInfo.append("g")
+          .attr("transform", "translate(" + timelineGeometry.margin.left + "," +
+            timelineGeometry.margin.top + ")")
+          .append("clipPath")
+          .attr("id", "infoflow-area")
+          .append("rect")
+          .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                  timelineGeometry.margin.right)
+          .attr("height", timelineGeometry.flowHeight("infoFlow", true));
+
+       infoFlowElement = infoFlowElement.select("g").append("g")
+                    .attr("class", "chart")
+                    .attr("clip-path", "url(#infoflow-area)" );
 
         return timeline;
     }
@@ -401,7 +433,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
     //
     //--------------------------------------------------------------------------
 
-    timeline.band = function (bandName) {
+    timeline.band = function (bandName, subBand) {
 //      console.log("Building band:" + bandName, "Geometry:", timelineGeometry[bandName]);
       console.log("Building band:" + bandName);
 //      console.log(itemsPerTrack);
@@ -409,7 +441,8 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         var band = {};
         band.id = "band" + bandNum;
         band.x = 0;
-        band.y = bandY;
+        if (!subBand) subBandOffset = 0;
+        band.y = subBandOffset;
         band.w = timelineGeometry.maxWidth - timelineGeometry.margin.left -
           timelineGeometry.margin.right;
         band.h = timelineGeometry.flowHeight(bandName, true);
@@ -545,8 +578,8 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         bands[bandName] = band;
         components.push(band);
         // Adjust values for next band
-//        bandY += band.h + timelineGeometry[bandName].margin.top +
-        bandY += band.h + timelineGeometry.axisHeight( );
+//        subBandOffset += band.h + timelineGeometry[bandName].margin.top +
+        subBandOffset += band.h + timelineGeometry.axisHeight( );
         bandNum += 1;
 
         return timeline;
