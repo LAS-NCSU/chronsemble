@@ -26,7 +26,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     var lastEvent = null;
 
     var svgTime = d3.select(domTimelineElement).append("svg");
-    var svgInfo = d3.select(domInfoFlowElement)
+    var svgInfo = d3.select(domInfoFlowElement).append("svg");
 //            .append("svg").append("g");
 
     var timelineElement = svgTime;
@@ -367,8 +367,36 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
           .attr("height", timelineGeometry.flowHeight("infoFlow", true));
 
        infoFlowElement = infoFlowElement.select("g").append("g")
-                    .attr("class", "chart")
-                    .attr("clip-path", "url(#infoflow-area)" );
+          .attr("class", "band")
+          .attr("clip-path", "url(#infoflow-area)")
+
+          // Following rect will normally be constructed in band fcn!!
+          .append("rect")
+          .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+            timelineGeometry.margin.right)
+          .attr("height", timelineGeometry.infoFlowHeight - timelineGeometry.margin.top -
+            timelineGeometry.margin.bottom);
+
+        var textLabel = svgInfo.select(".band")
+            .append("svg")
+            .append("g")
+            .append("text")
+            .attr("id", "label");
+
+        var textBegin = svgInfo.select(".band")
+            .selectAll("g")
+            .append("text")
+            .attr("id", "begin");
+
+        var textEnd = svgInfo.select(".band")
+            .selectAll("g")
+            .append("text")
+            .attr("id", "end");
+
+        var textLoc = svgInfo.select(".band")
+            .selectAll("g")
+            .append("text")
+            .attr("id", "loc");
 
         return timeline;
     }
