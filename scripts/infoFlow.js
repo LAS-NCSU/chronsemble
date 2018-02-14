@@ -24,14 +24,15 @@ function infoFlow(domElement) {
 
   var flow = svg.append("g")
       .attr("class", "band")
-      .attr("clip-path", "url(#flow-area)" )
+      .attr("clip-path", "url(#flow-area)" );
+/*
       .append("rect")
       .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
         timelineGeometry.margin.right)
       .attr("height", timelineGeometry.infoFlowHeight - timelineGeometry.margin.top -
         timelineGeometry.margin.bottom);
 //      .append("text","Info-Flow");
-
+*/
   var textLabel = svg.select(".band")
       .append("svg")
       .append("g")

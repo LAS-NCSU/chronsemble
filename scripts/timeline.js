@@ -190,15 +190,18 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             //    tracks[0] = items[0].start;
                 tracks[0] = items[0].intervalBegin;
                 items[0].track = 0;
+                items[0].trackPos = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
+                console.log(items[0].label, items[0].track, items[0].trackPos);
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
         //              if (item.end < tracks[i]) break;
                       if (item.intervalEnd < tracks[i]) break;
                     }
                     item.track = track;
+                    item.trackPos = itemsPerTrack[track];
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
@@ -207,6 +210,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                     itemsPerTrack[track]++;
 //                    tracks[track] = item.start;
                     tracks[track] = item.intervalBegin;
+                    console.log(item.label, item.track, item.trackPos);
                 });
             }
 
@@ -215,15 +219,18 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                 // younger items assigned to early tracks
                 tracks[0] = items[0].intervalEnd;
                 items[0].track = 0;
+                items[0].trackPos = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
+                console.log(items[0].label, items[0].track, items[0].trackPos);
 
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
                         if (item.intervalBegin > tracks[i]) break;
                     }
                     item.track = track;
+                    item.trackPos = itemsPerTrack[track];
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
@@ -231,6 +238,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.intervalEnd;
+                    console.log(item.label, item.track, item.trackPos);
                 });
             }
 
@@ -240,11 +248,17 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                 data.items.sort(compareDescending);
 
   //          showItems(256);
-
+//console.log("====================================");
             if (timeOrder === "forward")
                 sortForward();
             else
                 sortBackward();
+        }
+
+        function infoFlowConfigObject(dataKeys) {
+          var infoFlowConfigObject = dataKeys;
+          console.log(infoFlowConfigObject);
+          return infoFlowConfigObject;
         }
 
         // Initialize the time range; time range is
@@ -290,29 +304,37 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 //     });
 
      setEventIntervals(data.items, timeRange, zoomTarget);
-        // Show patterns
-        //calculateTracks(data.items, "ascending", "backward");
-        //calculateTracks(data.items, "descending", "forward");
-        // Show real data
-        // Calculate tracks in both directions to find the layout with fewest
-        // tracks.
-        calculateTracks(data.items, "ascending", "forward");
-        console.log("Sort forward total tracks: ", totalTracks);
+      // Show patterns
+      //calculateTracks(data.items, "ascending", "backward");
+      //calculateTracks(data.items, "descending", "forward");
+      // Show real data
+      // Calculate tracks in both directions to find the layout with fewest
+      // tracks.
+      calculateTracks(data.items, "ascending", "forward");
+      console.log("Sort forward total tracks: ", totalTracks);
+      timelineGeometry.totalTracks = totalTracks;
+  //timelineGeometry.totalTracks = Number.MAX_SAFE_INTEGER;
+      totalTracks = 0;
+      tracks = [];
+      itemsPerTrack = [];
+      calculateTracks(data.items, "descending", "backward");
+      console.log("Sort backward total tracks: ", totalTracks);
+      if (totalTracks <= timelineGeometry.totalTracks) {
         timelineGeometry.totalTracks = totalTracks;
-    //timelineGeometry.totalTracks = Number.MAX_SAFE_INTEGER;
+        console.log("Using descending backward!");
+        timelineGeometry.eventSortDirection = sortDirection.reverse;
+      } else {
+        console.log("Using ascending forward!");
         totalTracks = 0;
         tracks = [];
-        calculateTracks(data.items, "descending", "backward");
-        console.log("Sort backward total tracks: ", totalTracks);
-        if (totalTracks <= timelineGeometry.totalTracks) {
-          timelineGeometry.totalTracks = totalTracks;
-          console.log("Using descending backward!");
-        } else {
-          console.log("Using ascending forward!");
-          totalTracks = 0;
-          tracks = [];
-          calculateTracks(data.items, "ascending", "forward");
-        }
+        itemsPerTrack = [];
+        calculateTracks(data.items, "ascending", "forward");
+        timelineGeometry.eventSortDirection = sortDirection.forward;
+
+      }
+
+  //    saveFile(JSON.stringify(d3.keys(data.items[1])), 'filename.txt', 'text/plain');
+        var confiData = infoFlowConfigObject(d3.keys(data.items[1]));
 
         data.nTracks = tracks.length;
   //      data.minDate = d3.min(data.items, function (d) { return d.start; });
@@ -368,8 +390,8 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 
        infoFlowElement = infoFlowElement.select("g").append("g")
           .attr("class", "band")
-          .attr("clip-path", "url(#infoflow-area)")
-
+          .attr("clip-path", "url(#infoflow-area)");
+/*
           // Following rect will normally be constructed in band fcn!!
           .append("rect")
           .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
@@ -397,7 +419,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             .selectAll("g")
             .append("text")
             .attr("id", "loc");
-
+*/
         return timeline;
     }
 
@@ -493,7 +515,12 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         band.yTrackPos = function (track) {
             return band.marginTop + track * band.trackHeight;};
 
-        band.g = timelineElement.append("g")
+        band.xTrackPos = function (position) {
+            return ((timelineGeometry.infoFlowCardWidth + 2) * position);};
+
+        var bandElement = ((bandName === "infoFlow") ? infoFlowElement : timelineElement);
+
+        band.g = bandElement.append("g")
             .attr("id", band.id)
             .attr("transform", "translate(0," + band.y + ")");
 
@@ -502,6 +529,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             .attr("width", band.w)
             .attr("height", timelineGeometry.flowHeight(bandName, false));
 
+        // Add vertical cursor to timeline
         if (bandName === "timeFlow") {
           band.g.append("svg")
            .attr("y", "2")
@@ -519,10 +547,14 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             .enter().append("svg")
             .attr("y", function (d) { return band.yTrackPos(d.track); })
             .attr("height", band.itemHeight)
-            .attr("class", function (d) { return d.instant ? "part instant" : "part interval";});
+            .attr("width", timelineGeometry.infoFlowCardWidth)
+            .attr("class", function (d) {
+              return ((bandName === "infoFlow") ? "infoFlowCard" :
+                ((d.instant) ? "part instant" : "part interval"));});
 
         var intervals = d3.select("#band" + bandNum).selectAll(".interval");
         var instants = d3.select("#band" + bandNum).selectAll(".instant");
+        var infoCards = d3.select("#band" + bandNum).selectAll(".infoFlowCard");
 
         if (bandName === "timeFlow") {
           intervals.append("rect")
@@ -565,6 +597,19 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
             .attr("cy", 1)
             .attr("r", 2);
 
+        } else if (bandName === "infoFlow") {
+          infoCards.append("g").append("rect")
+            .attr("width", "100%")
+            .attr("height", "100%");
+
+          infoCards.select("g").append("text")
+            .attr("x", "1")
+    //        .attr("y", function (d) { return band.yTrackPos(d.track) + 10; })
+            .attr("y", "10")
+            .attr("class", "infoFlowCardData")
+  //          .attr("y", timelineGeometry.timeFlow.track.height/2 + timelineGeometry.timeFlow.track.space)
+            .text(function (d) { return d.label; });
+//            console.log(d.label, d.track, d.trackPos);
         }
 
         band.addActions = function(actions) {
@@ -592,7 +637,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 
             band.parts.forEach(function(part) { part.redraw(); })
             generateInfoFlow(band);
-          } else {
+          } else if (band.id == "band1") {
             items
                 .attr("x", function (d) { return band.xScale(d.start) - ((d.instant) ?
                   1 : 0);})
@@ -600,6 +645,16 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                     return ((d.instant) ? 2 : band.xScale(d.end) - band.xScale(d.start));});
 
             band.parts.forEach(function(part) { part.redraw(); })
+          } else {
+            items
+                .attr("x", function (d) {
+                  return band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
+                    d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)); });
+  //                1 : 0);})
+  //              .attr("width", function (d) {
+  //                  return ((d.instant) ? 2 : band.xScale(d.end) - band.xScale(d.start));});
+
+          //  band.parts.forEach(function(part) { part.redraw(); })
           }
         };
 
@@ -743,13 +798,13 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         d3.select(".infoRow")
             .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
 
-        var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
+  //      var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
 //        console.log(referenceEvent);
         var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
     }
 
-    function displayInfoFlow(eventsWithinScruber, centreDisplayValue) {
-
+    function displayInfoFlow(eventsWithinScruber, referenceEvent) {
+//console.log("referenceEvent:", referenceEvent, "keys:", d3.keys(referenceEvent));
     //  console.log(topKeys);
     /*
     // Cache of the template
@@ -761,46 +816,48 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 
     // Loop through dataObject, replace placeholder tags
     // with actual data, and generate final HTML
-    d3.keys(centreDisplayValue).forEach(function (d) {
-        //console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
-        //console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
-//        console.log("Item: " + count + ": size: ", d3.keys(d).length, ": keys: ", d3.keys(d), "data: ", d);
-        tableHtml += templateHtml.replace(/{{field}}/g, d)
-                                .replace(/{{value}}/g, centreDisplayValue[d]);
-
+    d3.keys(referenceEvent).forEach(function (d) {
+    var count = 1;
+        console.log(toYear(d.start) + " - " + toYear(d.end) + ": " + d.label);
+        console.log("Item: " + count + ":" + d.start + " - " + d.end + ": " + d.label);
+        console.log("Item: " + count + ": size: ", d3.keys(d).length, ": keys: ", d3.keys(d), "data: ", d);
+//        tableHtml += templateHtml.replace(/{{field}}/g, d)
+//                                .replace(/{{value}}/g, referenceEvent[d]);
+count++;
     })
 
     // Replace the HTML of #list with final HTML
     document.getElementById("table").innerHTML = tableHtml;
     */
+
         var infoFlowTextLabel = d3.selectAll(domInfoFlow)
           .select(".band")
           .selectAll("g")
           .select("#label")
           .attr("transform", "translate(2, 10)")
-          .text(centreDisplayValue.label);
+          .text(referenceEvent.label);
 
-//console.log(d3.keys(centreDisplayValue));
+//console.log(d3.keys(referenceEvent));
         var infoFlowTextBegin = d3.selectAll(domInfoFlow)
             .select(".band")
             .selectAll("g")
             .select("#begin")
             .attr("transform", "translate(2, 20)")
-            .text(centreDisplayValue.start);
+            .text(referenceEvent.start);
 
         var infoFlowTextEnd = d3.selectAll(domInfoFlow)
             .select(".band")
             .selectAll("g")
             .select("#end")
             .attr("transform", "translate(2, 30)")
-            .text(centreDisplayValue.end);
+            .text(referenceEvent.end);
 
         var infoFlowTextLoc = d3.selectAll(domInfoFlow)
             .select(".band")
             .selectAll("g")
             .select("#loc")
             .attr("transform", "translate(2, 40)")
-            .text(centreDisplayValue.loc);
+            .text(referenceEvent.loc);
 
     }
 
