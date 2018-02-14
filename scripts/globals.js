@@ -1,11 +1,14 @@
 // timeline geometry
 
+var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
+
 var timelineGeometry = {
   // The height of the timeflow pane is determined by the value of
   // - timeFlow.maxTracks this sets the maximum number of tracks that can be
   //                      viewed simultaneously on the timeflow pane.
   maxWidth: 960,    // Maximum width of the timeflow and all other panes
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
+  infoFlowCardWidth: 182,    // Width of infoflow cards
   // margin surrounding the three *flow panes
   margin: {top: 20 , right: 20, bottom: 20, left: 20},
   // axis geometry includes a top and bottom margin used to set off from
@@ -24,7 +27,7 @@ var timelineGeometry = {
   // - track.space sets the verticle space between adjacent timeline tracks.
   infoFlow: {maxTracks: 1, minTracks: 1, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
-    track: {maxHeight: 160, height: 160, space: 0}},
+    track: {maxHeight: 160, height: 160, space: 2}},
   timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
@@ -40,6 +43,7 @@ var timelineGeometry = {
                     // end of the timeline.
   instantRadius: 5,
   brushExtent: [],
+  eventSortDirection: sortDirection.unsorted,
 
 // flowHeight - determines the height in pixels of the named flow where flowName
 // is one of ["infoFlow", "timeFlow", "birdView"].
@@ -50,14 +54,19 @@ var timelineGeometry = {
   flowHeight: function(flowName, visible) {
     var visibleTracks = Math.max(Math.min(this.totalTracks, this[flowName].maxTracks),
                             this[flowName].minTracks);
-                            
+
     // in the event that there is only 1 visible track, do not add the "space"
     // between tracks value into the height computation.
 
+//    return this[flowName].margin.top + (this[flowName].track.height +
+//      ((visibleTracks > 1) ? this[flowName].track.space : 0)) * ((visible) ?
+//        visibleTracks : Math.max(this.totalTracks, this[flowName].minTracks)) -
+//        this[flowName].track.space + this[flowName].margin.bottom;
     return this[flowName].margin.top + (this[flowName].track.height +
-      ((visibleTracks > 1) ? this[flowName].track.space : 0)) * ((visible) ?
+        this[flowName].track.space) * ((visible) ?
         visibleTracks : Math.max(this.totalTracks, this[flowName].minTracks)) -
         this[flowName].track.space + this[flowName].margin.bottom;
+
   },
 
   axisHeight: function( ) {
@@ -100,4 +109,42 @@ function getTextWidth(text, font) {
 
 function getViewRange_ms(min, max) {
   return (isString(min)) ? (max.getTime() - min.getTime()) : max - min;
+}
+
+function saveFile(strData, strFileName, strMimeType) {
+var docReference = document,
+    elementa = docReference.createElement("a"),
+    mimeType = strMimeType || "text/plain";
+
+//build download link:
+//elementa.href = "data:" + mimeType + "charset=utf-8," + escape(strData);
+elementa.href = "data:" + mimeType + "charset=utf-8," + encodeURIComponent(strData);
+
+if (window.MSBlobBuilder) { // IE10
+    var bb = new MSBlobBuilder();
+    bb.append(strData);
+    return navigator.msSaveBlob(bb, strFileName);
+} /* end if(window.MSBlobBuilder) */
+
+if ('download' in elementa) { //FF20, CH19
+    elementa.setAttribute("download", strFileName);
+    elementa.innerHTML = "downloading...";
+    docReference.body.appendChild(elementa);
+    setTimeout(function() {
+        var eventME = docReference.createEvent("MouseEvents");
+        eventME.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        elementa.dispatchEvent(eventME);
+        docReference.body.removeChild(elementa);
+    }, 66);
+    return true;
+}; /* end if('download' in a) */
+
+//do iframe dataURL download: (older W3)
+var iframeElement = docReference.createElement("iframe");
+docReference.body.appendChild(iframeElement);
+iframeElement.src = "data:" + (strMimeType ? strMimeType : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
+setTimeout(function() {
+    docReference.body.removeChild(iframeElement);
+}, 333);
+return true;
 }
