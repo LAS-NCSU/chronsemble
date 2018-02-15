@@ -598,6 +598,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("r", 2);
 
         } else if (bandName === "infoFlow") {
+          infoCards.attr("x", function(d){ return (band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
+              d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)));});
+
           infoCards.append("g").append("rect")
             .attr("width", "100%")
             .attr("height", "100%");
@@ -650,10 +653,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             var band2Group = d3.select("#band2")
                                .attr("transform", "translate(0," +
                                (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)) + ")");
+                               /*
             items
                 .attr("x", function (d) {
                   return band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
                     d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)); });
+                    */
   //              .attr("y", function (d) {
   //                return (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)); });
   //                1 : 0);})
