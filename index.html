@@ -67,8 +67,8 @@
             .xAxis("birdView")
             .labels("timeFlow")
             .labels("birdView")
-//            .band("infoFlow")
-            .brush("birdView", ["timeFlow"])
+            .brush("birdView", ["timeFlow", "infoFlow"])
+            .band("infoFlow", false)
             .vScroll( )
 //            .defineVerticalScrollArea( )
             .redraw();

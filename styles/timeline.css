@@ -163,8 +163,7 @@
 }
 
 .infoFlowCard {
-/*  fill: #FFAAFF;
-*/
+  fill: #F0F0F0;
   stroke-width: 1px;
   stroke: black;
   font: 10px sans-serif;

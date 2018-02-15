@@ -150,7 +150,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
   //        var circleRadius_ms = instant.xScale.invert(2*timelineGeometry.instantRadius+3).getTime()
           var circleRadius_ms = instant.xScale.invert(timelineGeometry.instantRadius).getTime() - timeRange[0].getTime();
-console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleRadius_ms);
+// console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleRadius_ms);
           items.forEach(function(item) {
   //          var labelWidth = getTextWidth(item.label, "10px sans-serif") + ((item.instant) ? timelineGeometry.instantRadius + 2 : 1);
             var labelWidth = getTextWidth(item.label, "10px sans-serif");
@@ -172,7 +172,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
               var markerEnd = new Date(item.start.getTime() + circleRadius_ms);
               item.intervalBegin = new Date(item.start.getTime() - circleRadius_ms);
               if (markerEnd > item.intervalEnd) item.intervalEnd = markerEnd;
-              console.log(item.label,":", labelWidth, ":", durationWidth, "\n", item.start, item.intervalBegin, "\n", item.end, item.intervalEnd);
+  //            console.log(item.label,":", labelWidth, ":", durationWidth, "\n", item.start, item.intervalBegin, "\n", item.end, item.intervalEnd);
             }
 
 //            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
@@ -194,7 +194,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
-                console.log(items[0].label, items[0].track, items[0].trackPos);
+//                console.log(items[0].label, items[0].track, items[0].trackPos);
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
         //              if (item.end < tracks[i]) break;
@@ -210,7 +210,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                     itemsPerTrack[track]++;
 //                    tracks[track] = item.start;
                     tracks[track] = item.intervalBegin;
-                    console.log(item.label, item.track, item.trackPos);
+//                    console.log(item.label, item.track, item.trackPos);
                 });
             }
 
@@ -223,7 +223,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
-                console.log(items[0].label, items[0].track, items[0].trackPos);
+//                console.log(items[0].label, items[0].track, items[0].trackPos);
 
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
@@ -238,7 +238,7 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
                     }
                     itemsPerTrack[track]++;
                     tracks[track] = item.intervalEnd;
-                    console.log(item.label, item.track, item.trackPos);
+//                    console.log(item.label, item.track, item.trackPos);
                 });
             }
 
@@ -646,15 +646,21 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
 
             band.parts.forEach(function(part) { part.redraw(); })
           } else {
+
+            var band2Group = d3.select("#band2")
+                               .attr("transform", "translate(0," +
+                               (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)) + ")");
             items
                 .attr("x", function (d) {
                   return band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
                     d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)); });
+  //              .attr("y", function (d) {
+  //                return (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)); });
   //                1 : 0);})
   //              .attr("width", function (d) {
   //                  return ((d.instant) ? 2 : band.xScale(d.end) - band.xScale(d.start));});
 
-          //  band.parts.forEach(function(part) { part.redraw(); })
+  //          band.parts.forEach(function(part) { part.redraw(); })
           }
         };
 
@@ -795,8 +801,9 @@ console.log(circleRadius_ms, getViewRange_ms(timeRange[0], timeRange[1])/circleR
         }
         // Highlight the timeline row corresponding to the cards in the
         // info-flow band.
+        timelineGeometry.verticalCursorTrack = referenceEvent[referenceEvent.length-1].track;
         d3.select(".infoRow")
-            .attr("y", referenceEvent[referenceEvent.length-1].track * band.trackHeight + band.trackOffset - 1);
+            .attr("y", timelineGeometry.verticalCursorTrack * band.trackHeight + band.trackOffset - 1);
 
   //      var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
 //        console.log(referenceEvent);

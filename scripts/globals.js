@@ -44,6 +44,7 @@ var timelineGeometry = {
   instantRadius: 5,
   brushExtent: [],
   eventSortDirection: sortDirection.unsorted,
+  verticalCursorTrack: null,
 
 // flowHeight - determines the height in pixels of the named flow where flowName
 // is one of ["infoFlow", "timeFlow", "birdView"].
