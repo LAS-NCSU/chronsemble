@@ -97,8 +97,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
  //("loc" in items[0]) ? console.log("SpatioFow") : spatioFlow = false;
 
         function compareAscending(item1, item2) {
-            //compareAscending sorts events according to the following:
-            // youngest sorts first; longest duration sorts first in event of tie.
+            // compareAscending sorts events according to the following:
+            // distant sorts before recent; longest duration sorts first in
+            // event of tie.
 
             // Every item must have two fields: 'start' and 'end'.
             var result = item1.start - item2.start;
@@ -114,12 +115,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         }
 
         function compareDescending(item1, item2) {
-            //compareDescending sorts events according to the following:
-            // oldest sorts first; shortest duration sorts first in event of tie.
+            // compareDescending sorts events according to the following:
+            // recent sorts before distant; shortest duration sorts first in
+            // event of tie.
 
             // Every item must have two fields: 'start' and 'end'.
             var result = item1.start - item2.start;
-            // later first
+            // recent first
             if (result < 0) { return 1; }  // item1 starts prior to item2 and sorts later
             if (result > 0) { return -1; } // item2 starts prior to item1 and sorts later
             // shorter first
@@ -177,6 +179,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
 //            console.log("label W:", labelWidth, " duration W:", durationWidth, "item end:", item.end, " result:", item.intervalEnd);
           })
+          return ;
         }
 
         function calculateTracks(items, sortOrder, timeOrder) {
@@ -186,14 +189,16 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             timeOrder = timeOrder || "backward";   // "forward" or default to "backward"
 
             function sortBackward() {
-                // older items assigned to early tracks
+                // recent events assigned to tracks before distant events.
             //    tracks[0] = items[0].start;
+
                 tracks[0] = items[0].intervalBegin;
                 items[0].track = 0;
                 items[0].trackPos = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
+
 //                console.log(items[0].label, items[0].track, items[0].trackPos);
                 items.slice(1).forEach(function (item) {
                     for (i = 0, track = 0; i < tracks.length; i++, track++) {
@@ -202,6 +207,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     }
                     item.track = track;
                     item.trackPos = itemsPerTrack[track];
+
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
@@ -212,17 +218,18 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     tracks[track] = item.intervalBegin;
 //                    console.log(item.label, item.track, item.trackPos);
                 });
+                return;
             }
 
-
             function sortForward() {
-                // younger items assigned to early tracks
+                // distant events assigned before recent events
                 tracks[0] = items[0].intervalEnd;
                 items[0].track = 0;
                 items[0].trackPos = 0;
                 itemsPerTrack[0] = 1;
                 itemsPerTrack[1] = 0;
                 totalTracks = 1;
+
 //                console.log(items[0].label, items[0].track, items[0].trackPos);
 
                 items.slice(1).forEach(function (item) {
@@ -231,6 +238,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     }
                     item.track = track;
                     item.trackPos = itemsPerTrack[track];
+
                     if (track > totalTracks - 1) {
                       totalTracks++;
                       itemsPerTrack[totalTracks] = 0;
@@ -240,6 +248,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     tracks[track] = item.intervalEnd;
 //                    console.log(item.label, item.track, item.trackPos);
                 });
+                return;
             }
 
             if (sortOrder === "ascending")
@@ -253,6 +262,55 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 sortForward();
             else
                 sortBackward();
+        }
+
+        function get2DArray(size) {
+            size = size > 0 ? size : 0;
+            var arr = [];
+
+            while(size--) {
+                arr.push([]);
+            }
+
+            return arr;
+        }
+
+        function buildInfoFlowScales(items) {
+          var dimension2 = 0;
+          pwlTrackDomains = get2DArray(timelineGeometry.totalTracks);
+          pwlTrackRanges = get2DArray(timelineGeometry.totalTracks);
+          pwlTrackDomains[0].push(data.minDate);
+          pwlTrackDomains[0].push(items[0].start);
+          pwlTrackDomains[0].push(items[0].end);
+          pwlTrackRanges[0].push(0);
+          pwlTrackRanges[0].push(timelineGeometry.infoFlow.track.space);
+          pwlTrackRanges[0].push(pwlTrackRanges[0][1] + timelineGeometry.infoFlowCardWidth);
+
+          items.slice(1).forEach(function (item) {
+            if (item.trackPos == 0) {
+              pwlTrackDomains[item.track].push(data.minDate);
+              pwlTrackRanges[item.track].push(0);
+              pwlTrackDomains[item.track].push(item.start);
+              pwlTrackRanges[item.track].push(timelineGeometry.infoFlow.track.space);
+              pwlTrackDomains[item.track].push(item.end);
+              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][1] + timelineGeometry.infoFlowCardWidth);
+            } else {
+              dimension2 = 2*item.trackPos + 1;
+              pwlTrackDomains[item.track].push(item.start);
+              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][dimension2-1] + timelineGeometry.infoFlow.track.space);
+              pwlTrackDomains[item.track].push(item.end);
+              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][dimension2] + timelineGeometry.infoFlowCardWidth);
+            }
+          });
+          // Add last range in case there are no more events on this
+          // track.
+          for (track = 0; track < timelineGeometry.totalTracks; track++) {
+            pwlTrackDomains[track].push(data.maxDate);
+            dimension2 = pwlTrackRanges[track].length-1;
+            pwlTrackRanges[track].push(pwlTrackRanges[track][dimension2] + timelineGeometry.infoFlow.track.space);
+          }
+
+          return;
         }
 
         function infoFlowConfigObject(dataKeys) {
@@ -299,9 +357,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
      timeRangeBuffer = timeRangeBuffer * 2;
      var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
 //     console.log(zoomTarget);
-//     data.items.forEach(function(item) {
-       //stopped here
-//     });
 
      setEventIntervals(data.items, timeRange, zoomTarget);
       // Show patterns
@@ -313,7 +368,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
       calculateTracks(data.items, "ascending", "forward");
       console.log("Sort forward total tracks: ", totalTracks);
       timelineGeometry.totalTracks = totalTracks;
-  //timelineGeometry.totalTracks = Number.MAX_SAFE_INTEGER;
       totalTracks = 0;
       tracks = [];
       itemsPerTrack = [];
@@ -330,8 +384,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         itemsPerTrack = [];
         calculateTracks(data.items, "ascending", "forward");
         timelineGeometry.eventSortDirection = sortDirection.forward;
-
       }
+
+      buildInfoFlowScales(data.items);
 
   //    saveFile(JSON.stringify(d3.keys(data.items[1])), 'filename.txt', 'text/plain');
         var confiData = infoFlowConfigObject(d3.keys(data.items[1]));
@@ -343,6 +398,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         timelineGeometry.totalTracks = totalTracks;
         return timeline;
     };
+
     //--------------------------------------------------------------------------
     //
     //  #    #  #    #          #####     ##    #    #  ######   ####
@@ -388,7 +444,14 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                   timelineGeometry.margin.right)
           .attr("height", timelineGeometry.flowHeight("infoFlow", true));
 
-       infoFlowElement = infoFlowElement.select("g").append("g")
+        infoFlowElement = infoFlowElement.select("g")
+          .append("rect")
+          .attr("class", "band")
+          .attr("width", timelineGeometry.maxWidth - timelineGeometry.margin.left -
+                  timelineGeometry.margin.right)
+          .attr("height", timelineGeometry.flowHeight("infoFlow", true));
+
+       infoFlowElement = svgInfo.select("g").append("g")
           .attr("class", "band")
           .attr("clip-path", "url(#infoflow-area)");
 /*
@@ -512,6 +575,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .domain([data.minDate, data.maxDate])
             .range([0, band.w]);
 
+//console.log(pwlTrackDomains);
+//console.log(pwlTrackRanges);
         band.yTrackPos = function (track) {
             return band.marginTop + track * band.trackHeight;};
 
@@ -598,7 +663,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("r", 2);
 
         } else if (bandName === "infoFlow") {
-          infoCards.attr("x", function(d){ return (band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
+          // position infoflow cards horizontally
+          infoCards.attr("x", function(d){
+            return (band.xTrackPos(((timelineGeometry.eventSortDirection == sortDirection.forward) ?
               d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)));});
 
           infoCards.append("g").append("rect")
@@ -650,8 +717,18 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             band.parts.forEach(function(part) { part.redraw(); })
           } else {
 
+            var xInfoScale = d3.time.scale()
+                .domain(pwlTrackDomains[timelineGeometry.verticalCursorTrack])
+                .range(pwlTrackRanges[timelineGeometry.verticalCursorTrack]);
+
+//           console.log(timelineGeometry.verticalCursorTrack,pwlTrackDomains[timelineGeometry.verticalCursorTrack],
+//             pwlTrackRanges[timelineGeometry.verticalCursorTrack],
+//             timelineGeometry.currentReferenceValue, xInfoScale(timelineGeometry.currentReferenceValue));
+            var xInfoFlowPos = (timelineGeometry.maxWidth - timelineGeometry.margin.left -
+              timelineGeometry.margin.right)/2 - xInfoScale(timelineGeometry.currentReferenceValue);
+
             var band2Group = d3.select("#band2")
-                               .attr("transform", "translate(0," +
+                               .attr("transform", "translate(" + xInfoFlowPos + "," +
                                (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)) + ")");
                                /*
             items
@@ -697,6 +774,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         var end = timelineGeometry.brushExtent[1].getTime();
         var maxProximity = getViewRange_ms(start, end)/2;
         var referenceValue = maxProximity + start;
+        timelineGeometry.currentReferenceValue = referenceValue;
 
         var currentReferenceEventGap = Number.MAX_SAFE_INTEGER;
         var eventsWithinScruber = [];

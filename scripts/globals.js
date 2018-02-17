@@ -1,6 +1,12 @@
 // timeline geometry
 
 var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
+// pwlTrackDomains is the 2D array that holds the piecewise linear temporal values
+//  for the events in a timeline row.
+// pwlTrackRanges is the 2D array that holds the piecewise linear ranges that
+//  map to the correspionding pwlTrackDomains.
+var pwlTrackDomains = [];
+var pwlTrackRanges = [];
 
 var timelineGeometry = {
   // The height of the timeflow pane is determined by the value of
@@ -38,13 +44,17 @@ var timelineGeometry = {
   vScroll: {margin: {left: 2, right: 2}},
   totalTracks: 0,
   fitToScale: 0.05, // The percent of full scale to use as a target for ensuring
-                    // all timeline track labels are legible (w/o overlap). this
+                    // all timeline track labels are legible (w/o overlap). This
                     // value is also used to set the pad amount for the start and
-                    // end of the timeline.
+                    // end of the timeline. Typically should not exceed 20%. A
+                    // value of 100% will attempt to ensure all labels are legible
+                    // at the fully zoomed out level which will likely cause timeline
+                    // tracks to grow beyond practical use.
   instantRadius: 5,
   brushExtent: [],
   eventSortDirection: sortDirection.unsorted,
   verticalCursorTrack: null,
+  currentReferenceValue: null,
 
 // flowHeight - determines the height in pixels of the named flow where flowName
 // is one of ["infoFlow", "timeFlow", "birdView"].
