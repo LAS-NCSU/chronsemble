@@ -63,6 +63,12 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             instantOffset = dayMillis, // 1 day gap after an instant event
             timeRange = [];
 
+        timelineGeometry.infoFlow.card.width =
+          Math.floor((timelineGeometry.maxWidth - timelineGeometry.margin.left -
+          timelineGeometry.margin.right -
+          (timelineGeometry.infoFlow.card.numberInPane - 1) * timelineGeometry.infoFlow.track.space) / timelineGeometry.infoFlow.card.numberInPane);
+        console.log("Card width:", timelineGeometry.infoFlow.card.width);
+
         data.items = items;
 
         function showItems(n) {
@@ -284,7 +290,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           pwlTrackDomains[0].push(items[0].end);
           pwlTrackRanges[0].push(0);
           pwlTrackRanges[0].push(timelineGeometry.infoFlow.track.space);
-          pwlTrackRanges[0].push(pwlTrackRanges[0][1] + timelineGeometry.infoFlowCardWidth);
+          pwlTrackRanges[0].push(pwlTrackRanges[0][1] + timelineGeometry.infoFlow.card.width);
 
           items.slice(1).forEach(function (item) {
             if (item.trackPos == 0) {
@@ -293,13 +299,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
               pwlTrackDomains[item.track].push(item.start);
               pwlTrackRanges[item.track].push(timelineGeometry.infoFlow.track.space);
               pwlTrackDomains[item.track].push(item.end);
-              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][1] + timelineGeometry.infoFlowCardWidth);
+              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][1] + timelineGeometry.infoFlow.card.width);
             } else {
               dimension2 = 2*item.trackPos + 1;
               pwlTrackDomains[item.track].push(item.start);
               pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][dimension2-1] + timelineGeometry.infoFlow.track.space);
               pwlTrackDomains[item.track].push(item.end);
-              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][dimension2] + timelineGeometry.infoFlowCardWidth);
+              pwlTrackRanges[item.track].push(pwlTrackRanges[item.track][dimension2] + timelineGeometry.infoFlow.card.width);
             }
           });
           // Add last range in case there are no more events on this
@@ -368,22 +374,25 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
       calculateTracks(data.items, "ascending", "forward");
       console.log("Sort forward total tracks: ", totalTracks);
       timelineGeometry.totalTracks = totalTracks;
-      totalTracks = 0;
-      tracks = [];
-      itemsPerTrack = [];
-      calculateTracks(data.items, "descending", "backward");
-      console.log("Sort backward total tracks: ", totalTracks);
-      if (totalTracks <= timelineGeometry.totalTracks) {
-        timelineGeometry.totalTracks = totalTracks;
-        console.log("Using descending backward!");
-        timelineGeometry.eventSortDirection = sortDirection.reverse;
-      } else {
-        console.log("Using ascending forward!");
+      timelineGeometry.eventSortDirection = sortDirection.forward;
+      if (false) {
         totalTracks = 0;
         tracks = [];
         itemsPerTrack = [];
-        calculateTracks(data.items, "ascending", "forward");
-        timelineGeometry.eventSortDirection = sortDirection.forward;
+        calculateTracks(data.items, "descending", "backward");
+        console.log("Sort backward total tracks: ", totalTracks);
+        if (totalTracks <= timelineGeometry.totalTracks) {
+          timelineGeometry.totalTracks = totalTracks;
+          console.log("Using descending backward!");
+          timelineGeometry.eventSortDirection = sortDirection.reverse;
+        } else {
+          console.log("Using ascending forward!");
+          totalTracks = 0;
+          tracks = [];
+          itemsPerTrack = [];
+          calculateTracks(data.items, "ascending", "forward");
+          timelineGeometry.eventSortDirection = sortDirection.forward;
+        }
       }
 
       buildInfoFlowScales(data.items);
@@ -581,7 +590,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             return band.marginTop + track * band.trackHeight;};
 
         band.xTrackPos = function (position) {
-            return ((timelineGeometry.infoFlowCardWidth + 2) * position);};
+            return ((timelineGeometry.infoFlow.card.width + timelineGeometry.infoFlow.track.space) * position);};
 
         var bandElement = ((bandName === "infoFlow") ? infoFlowElement : timelineElement);
 
@@ -612,7 +621,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .enter().append("svg")
             .attr("y", function (d) { return band.yTrackPos(d.track); })
             .attr("height", band.itemHeight)
-            .attr("width", timelineGeometry.infoFlowCardWidth)
+            .attr("width", timelineGeometry.infoFlow.card.width)
             .attr("class", function (d) {
               return ((bandName === "infoFlow") ? "infoFlowCard" :
                 ((d.instant) ? "part instant" : "part interval"));});
@@ -718,18 +727,20 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           } else {
 
             var xInfoScale = d3.time.scale()
-                .domain(pwlTrackDomains[timelineGeometry.verticalCursorTrack])
-                .range(pwlTrackRanges[timelineGeometry.verticalCursorTrack]);
+                .domain(pwlTrackDomains[timelineGeometry.verticalCursor.currentTrack])
+                .range(pwlTrackRanges[timelineGeometry.verticalCursor.currentTrack]);
 
-//           console.log(timelineGeometry.verticalCursorTrack,pwlTrackDomains[timelineGeometry.verticalCursorTrack],
-//             pwlTrackRanges[timelineGeometry.verticalCursorTrack],
+//           console.log(timelineGeometry.verticalCursor.currentTrack,pwlTrackDomains[timelineGeometry.verticalCursor.currentTrack],
+//             pwlTrackRanges[timelineGeometry.verticalCursor.currentTrack],
 //             timelineGeometry.currentReferenceValue, xInfoScale(timelineGeometry.currentReferenceValue));
+
             var xInfoFlowPos = (timelineGeometry.maxWidth - timelineGeometry.margin.left -
               timelineGeometry.margin.right)/2 - xInfoScale(timelineGeometry.currentReferenceValue);
 
             var band2Group = d3.select("#band2")
                                .attr("transform", "translate(" + xInfoFlowPos + "," +
-                               (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)) + ")");
+                (0 - band.yTrackPos(timelineGeometry.verticalCursor.currentTrack)) + ")");
+
                                /*
             items
                 .attr("x", function (d) {
@@ -737,7 +748,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                     d.trackPos : itemsPerTrack[d.track] - d.trackPos - 1)); });
                     */
   //              .attr("y", function (d) {
-  //                return (0 - band.yTrackPos(timelineGeometry.verticalCursorTrack)); });
+  //                return (0 - band.yTrackPos(timelineGeometry.verticalCursor.currentTrack)); });
   //                1 : 0);})
   //              .attr("width", function (d) {
   //                  return ((d.instant) ? 2 : band.xScale(d.end) - band.xScale(d.start));});
@@ -818,7 +829,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 // larger values to events closest to the reference line.
               if (startDateOfEvent <= referenceValue && referenceValue <= endDateOfEvent) {
                 value.proximity = colorGradientIndex(maxProximity);
-//                  console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
+              //    console.log("\nBAM!!!", value.label, value.start, value.end, value.proximity);
               } else {
                 value.proximity = colorGradientIndex(Math.max(Math.max(0, (maxProximity - Math.abs(eventStartToReferenceGap))),
                   (maxProximity - Math.abs(referenceValue - endDateOfEvent))));
@@ -846,21 +857,21 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
             if (eventStartToReferenceGap > 0 && eventStopToReferenceGap > 0) {
               if (!referenceBoundedByEvent) {
-//                  console.log("bounding:", value.label);
+              //    console.log("bounding:", value.label, value.proximity);
                 referenceBoundedByEvent = true;
                 currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
                 referenceEvent.push(value);
               } else if (eventStartToReferenceGap + eventStopToReferenceGap < currentReferenceEventGap) {
                 currentReferenceEventGap = eventStartToReferenceGap + eventStopToReferenceGap;
                 referenceEvent.push(value);
-//                  console.log(value.label, "gap:", currentReferenceEventGap);
+              //    console.log(value.label, "gap:", currentReferenceEventGap);
               }
             } else if (!referenceBoundedByEvent && eventStartToReferenceGap < 0) {
                   // reference is in past relative to event
               if (Math.abs(eventStartToReferenceGap) < currentReferenceEventGap) {
                 currentReferenceEventGap = Math.abs(eventStartToReferenceGap);
                 referenceEvent.push(value);
-//                    console.log(value.label, "late gap:", currentReferenceEventGap);
+              //      console.log(value.label, "late gap:", currentReferenceEventGap);
               }
             } else if (!referenceBoundedByEvent && eventStopToReferenceGap < 0) {
                   // refence is in the future relative to event
@@ -884,9 +895,10 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         }
         // Highlight the timeline row corresponding to the cards in the
         // info-flow band.
-        timelineGeometry.verticalCursorTrack = referenceEvent[referenceEvent.length-1].track;
+        //timelineGeometry.verticalCursorTrack = referenceEvent[referenceEvent.length-1].track;
+        updateCurrentCursorTrack(referenceEvent[referenceEvent.length-1].track);
         d3.select(".infoRow")
-            .attr("y", timelineGeometry.verticalCursorTrack * band.trackHeight + band.trackOffset - 1);
+            .attr("y", timelineGeometry.verticalCursor.currentTrack * band.trackHeight + band.trackOffset - 1);
 
   //      var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
 //        console.log(referenceEvent);

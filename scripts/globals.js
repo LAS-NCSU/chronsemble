@@ -14,7 +14,7 @@ var timelineGeometry = {
   //                      viewed simultaneously on the timeflow pane.
   maxWidth: 960,    // Maximum width of the timeflow and all other panes
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
-  infoFlowCardWidth: 182,    // Width of infoflow cards
+//  infoFlowCardWidth: 182,    // Width of infoflow cards
   // margin surrounding the three *flow panes
   margin: {top: 20 , right: 20, bottom: 20, left: 20},
   // axis geometry includes a top and bottom margin used to set off from
@@ -33,7 +33,8 @@ var timelineGeometry = {
   // - track.space sets the verticle space between adjacent timeline tracks.
   infoFlow: {maxTracks: 1, minTracks: 1, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
-    track: {maxHeight: 160, height: 160, space: 2}},
+    track: {maxHeight: 160, height: 160, space: 2},
+    card: {numberInPane: 4, width: null}},
   timeFlow: {maxTracks: 17, minTracks: 3, maxHeight: 292,
     margin: {top: 3, bottom: 3},
     track: {maxHeight: 14, height: 14, space: 3}},
@@ -53,7 +54,8 @@ var timelineGeometry = {
   instantRadius: 5,
   brushExtent: [],
   eventSortDirection: sortDirection.unsorted,
-  verticalCursorTrack: null,
+  verticalCursor: {currentTrack: null, previousTrack: null},
+//  verticalCursorTrack: null,
   currentReferenceValue: null,
 
 // flowHeight - determines the height in pixels of the named flow where flowName
@@ -88,13 +90,13 @@ var timelineGeometry = {
 
 if (timelineGeometry.birdView.maxTracks > timelineGeometry.timeFlow.maxTracks)
   console.log("WARNING: timeline geometry value out of range: Bird's eye view maxTracks should be less than or equal to timeFlow maxTracks!!!");
-
+/*
 var infoFlowCards = 5,      // number of cards visible in info pane.
     cardLateralMargin = 5,  // number of pixels between cards.
     infoFlowCardWidth = (timelineGeometry.maxWidth - timelineGeometry.margin.left -
       timelineGeometry.margin.right - (infoFlowCards - 1) * cardLateralMargin) / infoFlowCards,
     infoFlowCardHeight = 200 - timelineGeometry.margin.top - timelineGeometry.margin.bottom;
-
+*/
 var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
                            "loc", "Initiator", "Outcome", "SideADeaths",
                            "SideBDeaths"]);
@@ -120,6 +122,12 @@ function getTextWidth(text, font) {
 
 function getViewRange_ms(min, max) {
   return (isString(min)) ? (max.getTime() - min.getTime()) : max - min;
+}
+
+function updateCurrentCursorTrack(track) {
+  timelineGeometry.verticalCursor.previousTrack = timelineGeometry.verticalCursor.currentTrack;
+  timelineGeometry.verticalCursor.currentTrack = track;
+  return;
 }
 
 function saveFile(strData, strFileName, strMimeType) {
