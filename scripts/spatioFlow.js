@@ -45,7 +45,9 @@ function spatioFlow(domElement) {
        .geofile('lib/d3-geomap/topojson/world/countries.json');
 
   d3.select('#map')
-       .call(world.draw, world);
+       .call(world.draw, world)
+       .select('svg')
+       .attr('id', 'base');
 
   //window.location.href = "./";
 
