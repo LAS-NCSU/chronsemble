@@ -426,6 +426,13 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
              timelineGeometry.flowHeight("infoFlow", true));
+
+             d3.xml("scripts/edit.svg").mimeType("image/svg+xml").get(function(error, xml) {
+   if (error) throw error;
+   svgInfo.append("g")
+          .attr("transform", "translate(920,3)").node()
+                  .appendChild(xml.documentElement);
+});
         return timeline;
     }
 
