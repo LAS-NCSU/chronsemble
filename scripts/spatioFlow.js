@@ -42,7 +42,8 @@ function spatioFlow(domElement) {
 // attached to events.
 //  window.location.assign = 'lib/';
   var world = d3.geomap()
-       .geofile('lib/d3-geomap/topojson/world/countries.json');
+    .geofile('node_modules/d3/node_modules/d3-geomap/src/topojson/world/countries.json');
+    //.geofile('lib/d3-geomap/topojson/world/countries.json');
 
   d3.select('#map')
        .call(world.draw, world)
