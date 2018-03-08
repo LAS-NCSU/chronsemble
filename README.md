@@ -12,4 +12,4 @@ Installation:
    * cd to "node_modules/d3-geomap/src/sass"
    * sass geomap.sass geomap.css
 5. Start your webserver from top level directory where index.html resides (uses chrome):
-   * /usr/local/bin/browser-sync start --server --browser "Google Chrome" --files "*.html, styles/*.css, scripts/*.js"
+   * /usr/local/bin/browser-sync start --server --browser "Google Chrome" --files "\*.html, styles/\*.css, scripts/\*.js"
