@@ -8,6 +8,8 @@
     "test": "test"
   },
   "scripts": {
+    "postinstall": "npm run build:css",
+    "build:css": "sass node_modules/d3-geomap/src/sass/geomap.sass > css/geomap.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
