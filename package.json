@@ -10,6 +10,7 @@
   "scripts": {
     "postinstall": "npm run build:css",
     "build:css": "sass node_modules/d3-geomap/src/sass/geomap.sass > css/geomap.css",
+    "clean": "rm -rf node_modules css/geomap.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,6 +30,7 @@
   "homepage": "https://github.com/LAS-NCSU/chronsemble#readme",
   "dependencies": {
     "d3": "^3.5.17",
-    "d3-geomap": "^1.0.2"
+    "d3-geomap": "^1.0.2",
+    "patternfly": "^3.41.6"
   }
 }
