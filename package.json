@@ -9,8 +9,12 @@
   },
   "scripts": {
     "postinstall": "npm run build:css",
-    "build:css": "sass node_modules/d3-geomap/src/sass/geomap.sass > css/geomap.css",
-    "clean": "rm -rf node_modules css/geomap.css",
+    "build:css": "sass node_modules/d3-geomap/src/sass/geomap.sass > css/geomap.css && npm run lnpaths && npm run less",
+    "lnpaths": "npm run paths_less && npm run paths_assets",
+    "paths_less": "sh -c 'cd less && ln -s ../node_modules/patternfly/node_modules node_modules'",
+    "paths_assets": "ln -s data assets",
+    "less": "sh -c 'cd less && lessc styles.less ../css/styles.css'",
+    "clean": "rm -rf node_modules css/geomap.css css/styles.css less/node_modules && rm assets",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

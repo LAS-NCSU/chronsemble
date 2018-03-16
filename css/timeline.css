@@ -135,12 +135,14 @@
     border-width: 1px;
     border-color: black;
     background-color: #FFFFFF;
+    box-sizing: content-box;
 }
 
 .tooltip {
     width: auto;
     position: absolute;
-    visibility: hidden;
+    /*    visibility: hidden; */
+    /*visibility: visible;*/
     color : black;
     cursor:default;
     background-color: #FFFFEE;
@@ -153,6 +155,21 @@
 /* Info-flow */
 .infoFlow {
   font: 10px sans-serif;
+}
+
+#divTimelineStatusBar {
+  margin-top: 2px;
+  font: 10px sans-serif;
+  box-sizing: content-box;
+}
+
+#rectTimelineStatus {
+  box-sizing: content-box;
+  fill: #FAFAFA;
+}
+
+.textStatusBar {
+  font: 11px sans-serif;
 }
 
 .infoRow {

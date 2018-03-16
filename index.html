@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -7,38 +7,287 @@
     <meta name="keywords" lang="en" content="Timeline, Timemap, History, Chronology">
     <title>Chronsemble</title>
 
-    <!-- Local d3 path -->
-    <script src="node_modules/d3/d3.min.js"></script>
-    <!-- The 'official' path. Comment out, when working locally. -->
-    <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
 
-    <script src="src/globals.js"></script>
-    <script src="src/timeline.js"></script>
-    <script src="src/infoFlow.js"></script>
-    <script src="src/spatioFlow.js"></script>
-
-    <script src="node_modules/d3-geo-projection/d3.geo.projection.min.js"></script>
-    <script src="node_modules/d3-geomap/src/js/utils.js"></script>
-    <script src="node_modules/d3-geomap/src/js/colorbrewer.js"></script>
-    <script src="node_modules/topojson/build/topojson.min.js"></script>
-    <script src="node_modules/d3-geomap/src/js/geomap.js"></script>
-    <script src="node_modules/d3-geomap/src/js/choropleth.js"></script>
-
-    <!--<script src="d3-geomap/vendor/d3.geomap.dependencies.min.js"></script-->
-    <!--<script src="d3-geomap/js/d3.geomap.min.js"></script>-->
+    <!--<link href="/bower_components/patternfly/dist/css/patternfly.min.css" rel="stylesheet" media="screen, print">-->
+    <link href="css/styles.css" rel="stylesheet" media="screen">
+    <!--<link href="/node_modules/patternfly/dist/css/patternfly.min.css" rel="stylesheet" media="screen, print">-->
+    <!--<link rel="stylesheet" type="text/css" href="/bower_components/patternfly/dist/css/patternfly.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/bower_components/patternfly/dist/css/patternfly-additions.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/node_modules/patternfly/dist/css/patternfly.css">-->
+    <link rel="stylesheet" type="text/css" href="/node_modules/patternfly/dist/css/patternfly-additions.css">
 
     <link href="css/geomap.css" rel="stylesheet" type="text/css" />
-    <link href="css/timeline.css" rel="stylesheet" type="text/css" />
+    <link href="css/timeline.css" rel="stylesheet" type="text/css" media="screen"/>
 </head>
 
+
+<!--<script src="/bower_components/jquery/dist/jquery.js"></script>-->
+<!--<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>-->
+<!--<script src="node_modules/patternfly/node_modules/jquery/dist/jquery.js"></script>-->
+<!--<script src="node_modules/patternfly/node_modules/bootstrap/dist/js/bootstrap.js"></script>-->
+
+<!-- jQuery -->
+<script src="node_modules/patternfly/node_modules/jquery/dist/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="node_modules/patternfly/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- C3, D3 - Charting Libraries -->
+<!--<script src="node_modules/patternfly/node_modules/c3/c3.min.js"></script>-->
+<script src="node_modules/patternfly/node_modules/d3/d3.min.js"></script>
+
+<!-- Datatables, jQuery Grid Component -->
+<!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
+<!--<script src="node_modules/patternfly/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>orig-->
+<script src="node_modules/patternfly/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<script src="node_modules/patternfly/node_modules/drmonty-datatables-colvis/js/dataTables.colVis.js"></script>
+<script src="node_modules/patternfly/node_modules/datatables.net-colreorder/js/dataTables.colReorder.js"></script>
+
+<!-- PatternFly Custom Componets -  Sidebar, Popovers and Datatables Customizations -->
+<!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
+<!--<script src="node_modules/patternfly/node_modules/patternfly/dist/js/patternfly.min.js"></script>orig-->
+<script src="node_modules/patternfly/dist/js/patternfly.min.js"></script>
+
+<!-- Bootstrap Combobox -->
+<script src="node_modules/patternfly/node_modules/patternfly-bootstrap-combobox/js/bootstrap-combobox.js"></script>
+
+<!-- Bootstrap Date Picker -->
+<script src="node_modules/patternfly/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+
+<!-- Moment - required by Bootstrap Date Time Picker -->
+<script src="node_modules/patternfly/node_modules/moment/min/moment.min.js"></script>
+
+<!-- Bootstrap Date Time Picker - requires Moment -->
+<script src="node_modules/patternfly/node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+<!-- Bootstrap Select -->
+<script src="node_modules/patternfly/node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+<!-- Bootstrap Switch -->
+<script src="node_modules/patternfly/node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+
+<!-- Bootstrap Touchspin -->
+<script src="node_modules/patternfly/node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js"></script>
+
+<!-- Bootstrap Tree View -->
+<script src="node_modules/patternfly/node_modules/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
+
+<!-- Google Code Prettify - Syntax highlighting of code snippets -->
+<script src="node_modules/patternfly/node_modules/google-code-prettify/bin/prettify.min.js"></script>
+
+<!-- MatchHeight - Used to make sure dashboard cards are the same height -->
+<!--<script src="node_modules/patternfly/node_modules/jquery-match-height/jquery.matchHeight-min.js"></script>orig-->
+<script src="node_modules/patternfly/node_modules/jquery-match-height/dist/jquery.matchHeight-min.js"></script>
+
+<!-- Local d3 path -->
+<!--<script src="node_modules/d3/d3.min.js"></script>-->
+<!-- The 'official' path. Comment out, when working locally. -->
+<!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+
+<script src="src/globals.js"></script>
+<script src="src/timelineStatusBar.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/infoFlow.js"></script>
+<script src="src/spatioFlow.js"></script>
+
+<script src="node_modules/d3-geo-projection/d3.geo.projection.min.js"></script>
+<script src="node_modules/d3-geomap/src/js/utils.js"></script>
+<script src="node_modules/d3-geomap/src/js/colorbrewer.js"></script>
+<script src="node_modules/topojson/build/topojson.min.js"></script>
+<script src="node_modules/d3-geomap/src/js/geomap.js"></script>
+<script src="node_modules/d3-geomap/src/js/choropleth.js"></script>
+
+<!--<script src="d3-geomap/vendor/d3.geomap.dependencies.min.js"></script-->
+<!--<script src="d3-geomap/js/d3.geomap.min.js"></script>-->
+
 <body>
-<div class="infoFlow"></div>
-<div id="timeline"></div>
-<div class="spatioFlow"></div>
-<script>
+  <div class="container">
+
+
+    <nav class="navbar navbar-default navbar-pf" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">
+          <img src="/assets/img/brand.svg" alt="Chronsemble" />
+        </a>
+      </div>
+      <div class="collapse navbar-collapse navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-utility">
+    <!--Remove app launcher
+          <li class="applauncher-pf  applauncher-pf-block-list  dropdown dropdown-kebab-pf">
+      <a class="dropdown-toggle nav-item-iconic" data-toggle="dropdown" href="#">
+        <i class="fa fa-th applauncher-pf-icon" aria-hidden="true"></i>
+              <span class="applauncher-pf-title">
+                Application Launcher
+                <span class="caret" aria-hidden="true"></span>
+              </span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+        <li class="applauncher-pf-item" role="menuitem">
+          <a class="applauncher-pf-link" href="#">
+
+            <i class="applauncher-pf-link-icon pficon pficon-storage-domain" aria-hidden="true"></i>
+
+            <span class="applauncher-pf-link-title">Recteque</span>
+          </a>
+        </li>
+        <li class="applauncher-pf-item" role="menuitem">
+          <a class="applauncher-pf-link" href="#">
+
+            <i class="applauncher-pf-link-icon pficon pficon-virtual-machine" aria-hidden="true"></i>
+
+            <span class="applauncher-pf-link-title">Ipsum</span>
+          </a>
+        </li>
+        <li class="applauncher-pf-item" role="menuitem">
+          <a class="applauncher-pf-link" href="#">
+
+            <!-- Placeholder left to maintain spacing -->
+            <!-- continue remove application launcher
+            <i class="applauncher-pf-link-icon" aria-hidden="true"></i>
+
+            <span class="applauncher-pf-link-title">Suavitate</span>
+          </a>
+        </li>
+        <li class="applauncher-pf-item" role="menuitem">
+          <a class="applauncher-pf-link" href="#">
+
+            <i class="applauncher-pf-link-icon pficon pficon-domain" aria-hidden="true"></i>
+
+            <span class="applauncher-pf-link-title">Lorem</span>
+          </a>
+        </li>
+        <li class="applauncher-pf-item" role="menuitem">
+          <a class="applauncher-pf-link" href="#">
+
+            <i class="applauncher-pf-link-icon pficon pficon-home" aria-hidden="true"></i>
+
+            <span class="applauncher-pf-link-title">Home</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+    -->
+
+          <li class="dropdown">
+            <a href="#0" class="nav-item-iconic" id="horizontalDropdownMenu11" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span title="Help" class="fa pficon-help"></span>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="horizontalDropdownMenu11">
+              <li><a href="#0">Help</a></li>
+              <li><a href="#0">About</a></li>
+            </ul>
+          </li>
+    <!--      <li class="dropdown">
+            <a href="#0" class="dropdown-toggle" data-toggle="dropdown">
+              <span class="pficon pficon-user"></span>
+              Brian Johnson <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#0">Link</a>
+              </li>
+              <li>
+                <a href="#0">Another link</a>
+              </li>
+              <li>
+                <a href="#0">Something else here</a>
+              </li>
+              <li class="divider"></li>
+              <li class="dropdown-submenu">
+                <a tabindex="-1" href="#0">More options</a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="#0">Link</a>
+                  </li>
+                  <li>
+                    <a href="#0">Another link</a>
+                  </li>
+                  <li>
+                    <a href="#0">Something else here</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li class="dropdown-header">Nav header</li>
+                  <li>
+                    <a href="#0">Separated link</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#0">One more separated link</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#0">One more separated link</a>
+              </li>
+            </ul>
+          </li>
+        -->
+    <!--
+        <li class="dropdown">
+          <a href="#0" class="nav-item-iconic" id="horizontalDropdownMenu11" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span title="Help" class="fa pficon-help"></span>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="horizontalDropdownMenu11">
+            <li><a href="#0">Help</a></li>
+            <li><a href="#0">About</a></li>
+          </ul>
+        </li>
+
+    -->
+
+        </ul>
+        <ul class="nav navbar-nav navbar-primary">
+          <li class="dropdown">
+      <a class="nav-item-iconic" href="#0" id="inputSourceDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Input Source
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="inputSourceDropdown">
+        <li><a href="#0">Open File</a></li>
+        <li><a href="#0">Open Location</a></li>
+        <li role="presentation" class="divider"></li>
+        <li><a href="#0">Close</a></li>
+      </ul>
+    </li>
+    <!--
+          <li>
+            <a href="#0">Input Source</a>
+          </li>
+        -->
+          <li>
+            <a href="#0">Settings</a>
+          </li>
+          <li>
+            <a href="#0">Data Editor</a>
+          </li>
+          <li class="active">
+            <a href="#0">Spatio-temporal Visualization</a>
+          </li>
+          <li>
+            <a href="#0">Log</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+      <script>
+        $(document).ready(function() {
+          $('.applauncher-pf .dropdown-toggle').eq(0).click();
+        });
+
 
     // Define domElement and sourceFile
     var domTimeline = "#timeline";
+    var domStatusBar = "#divTimelineStatusBar";
     var domInfoFlow = ".infoFlow";
     var domSpatioFlow = ".spatioFlow";
     //*var sourceFile = "data/philosophers.csv";
@@ -53,7 +302,8 @@
     //d3.json(sourceFile, function(dataset) {
 
     //    infoFlow(domInfoFlow);
-        spatioFlow(domSpatioFlow);
+    timelineStatusBar(domStatusBar, sourceFile);
+    spatioFlow(domSpatioFlow);
 
         timeline(domTimeline, domSpatioFlow, domInfoFlow)
             .data(dataset)
@@ -80,6 +330,21 @@
 
 // d3.select(".infoFlow").append("p").html("testing");
 </script>
+
+
+<!-- Just enjoy various PatternFly components -->
+<!--
+    <div class="alert alert-success">
+      <span class="pficon pficon-ok"></span>
+      <strong>Great job!</strong> This is really working out <a href="#" class="alert-link">great for us</a>.
+    </div>
+-->
+
+<div id="divTimelineStatusBar"></div>
+<div class="infoFlow"></div>
+<div id="timeline"></div>
+<div class="spatioFlow"></div>
+</div>
 
 </body>
 

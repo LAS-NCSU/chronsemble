@@ -8,11 +8,28 @@ var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
 var pwlTrackDomains = [];
 var pwlTrackRanges = [];
 
+var symbolsUnicode = {
+  diamond: '\u2666',
+  ballotBox: '\u25A3',
+  ballotBox2: '\u2610',
+  pushButtonOff: '\u{1F532}',
+  pushButtonOn: '\u{1F533}',
+  lightVerticle: '\u2502',
+  heavyVerticle: '\u2503',
+  lightHorizontal: '\u2500',
+  heavyHorizontal: '\u2501',
+  lightDashedHorizontal: '\u2508',
+  heavyDashedHorizontal: '\u2509',
+
+}
+
+var statusFieldSeparator = " " + symbolsUnicode.lightDashedHorizontal + symbolsUnicode.lightDashedHorizontal + " ";
+
 var timelineGeometry = {
   // The height of the timeflow pane is determined by the value of
   // - timeFlow.maxTracks this sets the maximum number of tracks that can be
   //                      viewed simultaneously on the timeflow pane.
-  maxWidth: 960,    // Maximum width of the timeflow and all other panes
+  maxWidth: 938,    // Maximum width of the timeflow and all other panes
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
 //  infoFlowCardWidth: 182,    // Width of infoflow cards
   // margin surrounding the three *flow panes
@@ -31,6 +48,8 @@ var timelineGeometry = {
   //              timeFlow.maxTracks or vertical scrolling will fail.
   // - track.height sets the height of the timeline track for the given flow.
   // - track.space sets the verticle space between adjacent timeline tracks.
+  statusBar: {lines: 1 , height: 20,
+  margin: {top: 2, bottom: 2}},
   infoFlow: {maxTracks: 1, minTracks: 1, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 2},
