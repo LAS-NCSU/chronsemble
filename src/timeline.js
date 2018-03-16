@@ -430,7 +430,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
              d3.xml("data/img/edit.svg").mimeType("image/svg+xml").get(function(error, xml) {
    if (error) throw error;
    svgInfo.append("g")
-          .attr("transform", "translate(920,3)").node()
+          .attr("transform", "translate(900,3)").node()
                   .appendChild(xml.documentElement);
 });
         return timeline;
