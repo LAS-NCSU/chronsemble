@@ -7,6 +7,7 @@ var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
 //  map to the correspionding pwlTrackDomains.
 var pwlTrackDomains = [];
 var pwlTrackRanges = [];
+var fileList = [];
 
 var symbolsUnicode = {
   diamond: '\u2666',
@@ -49,7 +50,7 @@ var timelineGeometry = {
   // - track.height sets the height of the timeline track for the given flow.
   // - track.space sets the verticle space between adjacent timeline tracks.
   statusBar: {lines: 1 , height: 20,
-  margin: {top: 2, bottom: 2}},
+    margin: {top: 2, bottom: 2}},
   infoFlow: {maxTracks: 1, minTracks: 1, maxHeight: 2880,
     margin: {top: 0, bottom: 0},
     track: {maxHeight: 160, height: 160, space: 2},
@@ -148,6 +149,53 @@ function updateCurrentCursorTrack(track) {
   timelineGeometry.verticalCursor.currentTrack = track;
   return;
 }
+
+function handleFileSelect(evt) {
+  fileList=evt.target.files; // FileList object
+
+  var output = [];
+
+  for (var i = 0, f; f = fileList[i]; i++) {
+    output.push('Filename: ', escape(f.name), ' (', f.type || 'n/a', '), ',
+          f.size, ' bytes, last modified: ',
+          f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
+          );
+  }
+  var statusFilenameElement = document.getElementById('Filename');
+  statusFilenameElement.textContent = output.join('');
+
+  return;
+};
+  // files is a FileList of File objects. List some properties.
+  /*
+  var output = [];
+  for (var i = 0, f; f = files[i]; i++) {
+    output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                f.size, ' bytes, last modified: ',
+                f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                '</li>');
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var span = document.createElement('span');
+          var itemsCount = 0;
+          fileData=d3.csv.parse(e.target.result);
+          fileData.forEach(function(csvObject){
+            itemsCount++;
+//                  span.innerHTML += ['<text>', itemsCount + ": " + JSON.stringify(csvObject),'</text><br>'].join('');
+            span.innerHTML += '<text>' + itemsCount + ": " + JSON.stringify(csvObject) + '</text><br>';
+          });
+          document.getElementById('list').append(span, null);
+        };
+      })(f);
+
+      // Read in the file as text.
+      reader.readAsText(f);
+    }
+*/
 
 function saveFile(strData, strFileName, strMimeType) {
 var docReference = document,

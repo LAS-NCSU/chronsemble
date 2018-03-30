@@ -252,7 +252,9 @@
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu" role="menu" aria-labelledby="inputSourceDropdown">
-        <li><a href="#0">Open File</a></li>
+        <li><label class="dropdown-item" for="file-read">
+   <input type="file" id="file-read" accept=".csv, .json, .text, .txt"
+     onchange="handleFileSelect(event)" name="files[]" multiple/>Open File</label></li>
         <li><a href="#0">Open Location</a></li>
         <li role="presentation" class="divider"></li>
         <li><a href="#0">Close</a></li>
@@ -290,6 +292,8 @@
     var domStatusBar = "#divTimelineStatusBar";
     var domInfoFlow = ".infoFlow";
     var domSpatioFlow = ".spatioFlow";
+    var fileData=null;
+
     //*var sourceFile = "data/philosophers.csv";
     //var sourceFile = "philosophers.json";
     //var sourceFile = "philosophers2.json";
@@ -297,11 +301,16 @@
     var sourceFile = "data/Intra-StateWarData_v4.1.3.csv";
     //var sourceFile = "data/Inter-StateWarData_v4.0.1.csv";
 
+    // Check for the various File API support.
+    if (!(window.File) || !(window.FileReader) || !(window.FileList) ||
+      !(window.Blob)) {
+      alert('The File APIs are not fully supported in this browser.');
+    }
+
     // Read in the data and construct the timeline
     d3.csv(sourceFile, function(dataset) {
     //d3.json(sourceFile, function(dataset) {
 
-    //    infoFlow(domInfoFlow);
     timelineStatusBar(domStatusBar, sourceFile);
     spatioFlow(domSpatioFlow);
 
