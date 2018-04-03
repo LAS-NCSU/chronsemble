@@ -48,8 +48,150 @@ input[type="file"] {
     border-color: #bee1f4;
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
-.dropdown-menu > li > label:hover, .dropdown-menu > li > a:focus {
+.dropdown-menu > li > label:hover, .dropdown-menu > li > label:focus {
     text-decoration: none;
     color: #4d5258;
     background-color: #def3ff;
+}
+
+/* Button styles to match other list elements */
+
+.dropdown-menu > li > button {
+    border-color: transparent;
+    background: transparent;
+    border-style: solid;
+    border-width: 1px 0;
+    padding: 1px 10px;
+    width: 100%;
+    align-items: normal;
+    text-align: left;
+}
+
+.dropdown-menu > li > button {
+    display: block;
+/*    padding: 3px 20px;*/
+    clear: both;
+    font-weight: normal;
+    line-height: 1.66666667;
+    color: #363636;
+    white-space: nowrap;
+}
+
+.dropdown-menu > li > button:hover, .dropdown-menu > li > button:focus {
+    border-color: #bee1f4;
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.dropdown-menu > li > button:hover, .dropdown-menu > li > button:focus {
+    text-decoration: none;
+    color: #4d5258;
+    background-color: #def3ff;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.navbar-pf .navbar-primary > li > button {
+    position: relative;
+    outline: none;
+    margin: -1px 0 0;
+}
+
+.navbar-pf .navbar-primary > li > button:disabled {
+    position: relative;
+    outline: none;
+    margin: -1px 0 0;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.navbar-pf .navbar-nav > li > button {
+    padding: 10px 20px;
+    display: block;
+}
+
+.navbar-pf .navbar-nav > li > button {
+    color: #d1d1d1;
+    line-height: 1;
+    text-shadow: none;
+    text-decoration: none;
+    background-color: transparent;
+    border-style: none;
+}
+
+.navbar-pf .navbar-primary > li > button:hover {
+    color: #f5f5f5;
+}
+
+.button .disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media screen and (min-width: 767px) {
+  .navbar-pf .navbar-primary > li > button {
+      border-bottom: 1px solid transparent;
+      border-top: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+      position: relative;
+      outline: none;
+      margin: -1px 0 0;
+  }
+
+  .navbar-pf .navbar-primary > li > button:disabled {
+      border-bottom: 1px solid transparent;
+      border-top: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+      position: relative;
+      outline: none;
+      margin: -1px 0 0;
+      opacity: 0.6;
+      cursor: not-allowed;
+  }
+
+  .navbar-pf .navbar-nav > li > button {
+      padding-bottom: 14px;
+      padding-top: 14px;
+      display: block;
+  }
+
+  .navbar-pf .navbar-nav > li > button {
+      color: #d1d1d1;
+      line-height: 1;
+      text-shadow: none;
+      text-decoration: none;
+      background-color: transparent;
+  }
+
+  .navbar-pf .navbar-primary > li > button:hover {
+      background-color: #1d1d1d;
+      border-top-color: #5c5c5c;
+      color: #d1d1d1;
+      background-image: linear-gradient(to bottom, #363636 0%, #1d1d1d 100%);
+      background-repeat: repeat-x;
+  }
+
+}
+
+@media screen and (max-width: 767px) {
+.dropdown-menu > li > button, .dropdown-menu > li > label {
+    background-color: transparent;
+    border-color: transparent;
+    border: 0;
+    color: #d1d1d1;
+    outline: none;
+    padding: 5px 5px 0px 30px;
+}
+
+.dropdown-menu > li > button:hover,
+.dropdown-menu > li > label:hover {
+    color: #f5f5f5;
+    background-color: transparent;
+}
 }
