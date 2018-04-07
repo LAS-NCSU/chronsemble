@@ -266,18 +266,18 @@
           </li>
         -->
           <li>
-            <button class="tablinks" onclick="openTab(event, 'Settings')">Settings</button>
+            <button class="tablinks" id="tabSettings" onclick="openTab(event, 'Settings')">Settings</button>
           </li>
           <li>
-            <button disabled>Data Editor</button>
+            <button class="tablinks" id="tabDataEditor" disabled>Data Editor</button>
           </li>
           <!--<li class="active">-->
           <li>
             <!--<a href="#0">Spatio-temporal Visualization</a>-->
-            <button class="tablinks" onclick="openTab(event, 'Visualization')">Spatio-temporal Visualization</button>
+            <button class="tablinks" id="tabVisualization" onclick="openTab(event, 'Visualization')">Spatio-temporal Visualization</button>
           </li>
           <li>
-            <button disabled>Log</button>
+            <button class="tablinks" id="tabLog" onclick="openTab(event, 'Log')" disabled>Log</button>
           </li>
         </ul>
       </div>
@@ -352,7 +352,7 @@
      <!--<img src="/assets/img/chronsemble.svg" alt="Chronsemble logo" class="wow fadeInDown" />-->
      <h2>About</h2>
      <p class="description wow fadeIn" data-wow-delay="1250ms">
-       Chronsemble is an interactive spatio-temporal visualization developed at the Laboratory for Analytical Sciences on the campus of North Carolina State University. This tool is designed to offer a new way to explore data with both temporal and spatial coordinates.
+       Chronsemble is an interactive spatio-temporal visualization developed at the Laboratory for Analytical Sciences on the campus of North Carolina State University. This tool is designed to enable exploration of data tagged with temporal and spatial coordinates.
      </p>
      <p>Chronsemble includes modifications to the <a href="https://github.com/rengel-de/timeline">timeline</a> example developed by <a href="https://github.com/rengel-de">Reinhard Engel</a>
      </p>
@@ -381,6 +381,9 @@
 <div class="infoFlow"></div>
 <div id="timeline"></div>
 <div class="spatioFlow"></div>
+</div>
+
+<div class="tabcontent" id="Log">
 </div>
 
     <div class="alert alert-success">
