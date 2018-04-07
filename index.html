@@ -266,10 +266,10 @@
           </li>
         -->
           <li>
-            <a href="#0">Settings</a>
+            <button class="tablinks" onclick="openTab(event, 'Settings')">Settings</button>
           </li>
           <li>
-            <a href="#0">Data Editor</a>
+            <button disabled>Data Editor</button>
           </li>
           <!--<li class="active">-->
           <li>
@@ -277,7 +277,7 @@
             <button class="tablinks" onclick="openTab(event, 'Visualization')">Spatio-temporal Visualization</button>
           </li>
           <li>
-            <a href="#0">Log</a>
+            <button disabled>Log</button>
           </li>
         </ul>
       </div>
@@ -370,6 +370,11 @@
  </div>
 </div>
 </div>
+<div class="tabcontent" id="Settings">
+  <h2>Settings</h2>
+  <p>Set up the visualization.</p>
+</div>
+
 <div class="tabcontent" id="Visualization">
 
 <div id="divTimelineStatusBar"></div>
@@ -379,8 +384,8 @@
 </div>
 
     <div class="alert alert-success">
-      <span class="pficon pficon-ok"></span>
-      <strong>Great job!</strong> Bingo! <a href="#" class="alert-link">great for us</a>.
+      <span class="pficon pficon-topology"></span>
+      <strong>A spatio-temporal data exploration application.</strong>
     </div>
 
 </body>
