@@ -30,7 +30,9 @@ var timelineGeometry = {
   // The height of the timeflow pane is determined by the value of
   // - timeFlow.maxTracks this sets the maximum number of tracks that can be
   //                      viewed simultaneously on the timeflow pane.
-  maxWidth: 938,    // Maximum width of the timeflow and all other panes
+  //maxWidth: 938,    // Maximum width of the timeflow and all other panes
+  maxWidth: Math.max(window.innerWidth || document.documentElement.clientWidth ||
+            document.body.clientWidth, 767) - 30,
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
 //  infoFlowCardWidth: 182,    // Width of infoflow cards
   // margin surrounding the three *flow panes
@@ -196,6 +198,29 @@ function handleFileSelect(evt) {
       reader.readAsText(f);
     }
 */
+
+function openTab(evt, tabName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].parentElement.className = tablinks[i].parentElement.className.replace("active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(tabName).style.display = "block";
+  console.log(evt.currentTarget.parentElement);
+  evt.currentTarget.parentElement.className += "active";
+}
+
 
 function saveFile(strData, strFileName, strMimeType) {
 var docReference = document,

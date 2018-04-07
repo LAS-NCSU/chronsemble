@@ -6,7 +6,8 @@ function spatioFlow(domElement) {
   //
 
   // map geometry is based on timeline width for aesthetics
-  var spatioFlowAreaHeight = 440,
+  //var spatioFlowAreaHeight = 440,
+  var spatioFlowAreaHeight = Math.floor(timelineGeometry.maxWidth/2.15),
       spatioFlowHeight = spatioFlowAreaHeight - timelineGeometry.margin.top -
         timelineGeometry.margin.bottom;
 
