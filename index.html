@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" lang="de" content="Zeitleiste, Zeitlinie, Zeitkarte, Geschichte, Chronologie">
     <meta name="keywords" lang="en" content="Timeline, Timemap, History, Chronology">
     <title>Chronsemble</title>
@@ -87,7 +88,6 @@
 <script src="src/globals.js"></script>
 <script src="src/timelineStatusBar.js"></script>
 <script src="src/timeline.js"></script>
-<script src="src/infoFlow.js"></script>
 <script src="src/spatioFlow.js"></script>
 
 <script src="node_modules/d3-geo-projection/d3.geo.projection.min.js"></script>
@@ -101,7 +101,7 @@
 <!--<script src="d3-geomap/js/d3.geomap.min.js"></script>-->
 
 <body>
-  <div class="container">
+  <!--<div class="container">-->
 
 
     <nav class="navbar navbar-default navbar-pf" role="navigation">
@@ -181,7 +181,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="horizontalDropdownMenu11">
               <li><a href="#0">Help</a></li>
-              <li><a href="#0">About</a></li>
+              <li><button onclick="openTab(event,'Splash')">About</button></li>
             </ul>
           </li>
     <!--      <li class="dropdown">
@@ -271,8 +271,10 @@
           <li>
             <a href="#0">Data Editor</a>
           </li>
-          <li class="active">
-            <a href="#0">Spatio-temporal Visualization</a>
+          <!--<li class="active">-->
+          <li>
+            <!--<a href="#0">Spatio-temporal Visualization</a>-->
+            <button class="tablinks" onclick="openTab(event, 'Visualization')">Spatio-temporal Visualization</button>
           </li>
           <li>
             <a href="#0">Log</a>
@@ -340,20 +342,46 @@
 // d3.select(".infoFlow").append("p").html("testing");
 </script>
 
+<!--<div class="container-fluid" style="background-color:#a2c3c3">-->
+  <div class="container-fluid">
+   <div class="tabcontent" id="Splash">
+     <div class="row-splash">
+       <div class="column-splash" style="border-style:none">
+         <!--<div class="column-splash" style="background-color:#e0ebeb">-->
 
-<!-- Just enjoy various PatternFly components -->
-<!--
-    <div class="alert alert-success">
-      <span class="pficon pficon-ok"></span>
-      <strong>Great job!</strong> This is really working out <a href="#" class="alert-link">great for us</a>.
-    </div>
--->
+     <!--<img src="/assets/img/chronsemble.svg" alt="Chronsemble logo" class="wow fadeInDown" />-->
+     <h2>About</h2>
+     <p class="description wow fadeIn" data-wow-delay="1250ms">
+       Chronsemble is an interactive spatio-temporal visualization developed at the Laboratory for Analytical Sciences on the campus of North Carolina State University. This tool is designed to offer a new way to explore data with both temporal and spatial coordinates.
+     </p>
+     <p>Chronsemble includes modifications to the <a href="https://github.com/rengel-de/timeline">timeline</a> example developed by <a href="https://github.com/rengel-de">Reinhard Engel</a>
+     </p>
+     <p class="version wow fadeIn" data-wow-delay="1500ms"><strong>Version: </strong>0.0.0<br>
+     <strong>License: </strong><a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a></p>
+   </div>
+   <div class="column-splash">
+     <!--<div class="column-splash" style="background-color:#d8e5f3">-->
+     <h2>Credits</h2>
+     <p><strong>Developer: </strong><a href="https://github.com/johnnyNcsu">John Harkins</a><br>
+       <strong>Timeline design: </strong><a href="https://github.com/rengel-de">Reinhard Engel</a><br>
+       <strong>SVG Library: </strong><a href="https://d3js.org">D3.js</a> Version 3<br>
+       <strong>UXD Library: </strong><a href="https://www.patternfly.org">PatternFly</a></p>
+   </div>
+ </div>
+</div>
+</div>
+<div class="tabcontent" id="Visualization">
 
 <div id="divTimelineStatusBar"></div>
 <div class="infoFlow"></div>
 <div id="timeline"></div>
 <div class="spatioFlow"></div>
 </div>
+
+    <div class="alert alert-success">
+      <span class="pficon pficon-ok"></span>
+      <strong>Great job!</strong> Bingo! <a href="#" class="alert-link">great for us</a>.
+    </div>
 
 </body>
 
