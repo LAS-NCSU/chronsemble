@@ -8,6 +8,7 @@ var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
 var pwlTrackDomains = [];
 var pwlTrackRanges = [];
 var fileList = [];
+var fileData = null;
 
 var symbolsUnicode = {
   diamond: '\u2666',
@@ -162,9 +163,35 @@ function handleFileSelect(evt) {
           f.size, ' bytes, last modified: ',
           f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
           );
+
+
   }
   var statusFilenameElement = document.getElementById('Filename');
   statusFilenameElement.textContent = output.join('');
+  var d = new Date();
+
+  document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
+  setTabState(event, 'tabLog', 'enabled');
+
+  var reader = new FileReader();
+
+  // Closure to capture the file information.
+  reader.onload = (function(theFile) {
+    return function(e) {
+      var span = document.createElement('span');
+      var itemsCount = 0;
+      fileData=d3.csv.parse(e.target.result);
+//        fileData.forEach(function(csvObject){
+//          itemsCount++;
+//                  span.innerHTML += ['<text>', itemsCount + ": " + JSON.stringify(csvObject),'</text><br>'].join('');
+//          span.innerHTML += '<text>' + itemsCount + ": " + JSON.stringify(csvObject) + '</text><br>';
+//      });
+//        document.getElementById('list').append(span, null);
+    };
+  })(f);
+
+  // Read in the file as text.
+  reader.readAsText(fileList[0]);
 
   return;
 };
@@ -221,6 +248,9 @@ function openTab(evt, tabName) {
   evt.currentTarget.parentElement.className += "active";
 }
 
+function setTabState(evt, tabName, tabState) {
+  document.getElementById(tabName).disabled=((tabState === "disabled") ? true : false);
+}
 
 function saveFile(strData, strFileName, strMimeType) {
 var docReference = document,
