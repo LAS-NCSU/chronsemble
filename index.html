@@ -255,9 +255,9 @@
         <li><label class="dropdown-item" for="file-read">
    <input type="file" id="file-read" accept=".csv, .json, .text, .txt"
      onchange="handleFileSelect(event)" name="files[]" multiple/>Open File</label></li>
-        <li><a href="#0">Open Location</a></li>
+        <li><a class="dropdown-item disabled" href="#0">Open Location</a></li>
         <li role="presentation" class="divider"></li>
-        <li><a href="#0">Close</a></li>
+        <li><a class="dropdown-item disabled" href="#0">Close</a></li>
       </ul>
     </li>
     <!--
@@ -308,7 +308,7 @@
       !(window.Blob)) {
       alert('The File APIs are not fully supported in this browser.');
     }
-
+/*
     // Read in the data and construct the timeline
     d3.csv(sourceFile, function(dataset) {
     //d3.json(sourceFile, function(dataset) {
@@ -338,7 +338,7 @@
             .redraw();
 
     });
-
+*/
 // d3.select(".infoFlow").append("p").html("testing");
 </script>
 
