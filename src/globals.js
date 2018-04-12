@@ -129,6 +129,37 @@ function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
 }
 
+var processFileData = function (dataObject, aFile) {
+  //console.log(csvObject);
+  fileData=d3.csv.parse(dataObject);
+
+  //console.log("File: " + aFile.name + " read complete!", fileData);
+  timelineStatusBar(domStatusBar, aFile.name);
+  spatioFlow(domSpatioFlow);
+
+      timeline(domTimeline, domSpatioFlow, domInfoFlow)
+          .data(fileData)
+          .defineInfoflowPane( )
+          .defineInfoflowArea( )
+          .defineTimelinePane( )
+          .defineTimeflowArea( )
+          .band("timeFlow", false)
+          .mainReference("timeFlow")
+          .xAxis("timeFlow")
+          .tooltips("timeFlow")
+          .defineBirdViewArea( )
+          .band("birdView", true)
+          .xAxis("birdView")
+          .labels("timeFlow")
+          .labels("birdView")
+          .brush("birdView", ["timeFlow", "infoFlow"])
+          .band("infoFlow", false)
+          .vScroll( )
+//            .defineVerticalScrollArea( )
+          .redraw();
+
+}
+
 // fcn to return the width (in pixels) of a string to be rendered on canvas.
 // This fcn is used to help provide "pretty" tracks with fully readable labels
 // at some prescribed zoom level.
@@ -166,8 +197,8 @@ function handleFileSelect(evt) {
 
 
   }
-  var statusFilenameElement = document.getElementById('Filename');
-  statusFilenameElement.textContent = output.join('');
+//  var statusFilenameElement = document.getElementById('Filename');
+//  statusFilenameElement.textContent = output.join('');
   var d = new Date();
 
   document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
@@ -175,12 +206,26 @@ function handleFileSelect(evt) {
 
   var reader = new FileReader();
 
+//  reader.onload = function(event) {
+//    fileData=d3.csv.parse(event.target.result);
+//    console.log("fileData: ", fileData);
+//    return;
+//  }
+
   // Closure to capture the file information.
+/*
   reader.onload = (function(theFile) {
     return function(e) {
-      var span = document.createElement('span');
-      var itemsCount = 0;
+//      var span = document.createElement('span');
+//      var itemsCount = 0;
+//      console.log("event: ", e);
+
       fileData=d3.csv.parse(e.target.result);
+      console.log(fileData);
+//      fileData.forEach(function(csvObject) {
+//        console.log(JSON.stringify(csvObject));
+//      });
+
 //        fileData.forEach(function(csvObject){
 //          itemsCount++;
 //                  span.innerHTML += ['<text>', itemsCount + ": " + JSON.stringify(csvObject),'</text><br>'].join('');
@@ -189,6 +234,15 @@ function handleFileSelect(evt) {
 //        document.getElementById('list').append(span, null);
     };
   })(f);
+*/
+//reader.onload = processFileData(evt.target.result, fileList[0]);
+reader.onload = function(evt) {
+  return processFileData(evt.target.result, fileList[0]);
+};
+
+  //reader.onloadend = function(event) {
+  //  console.log(event, "File read complete!");
+  //}
 
   // Read in the file as text.
   reader.readAsText(fileList[0]);

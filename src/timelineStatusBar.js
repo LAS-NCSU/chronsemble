@@ -28,7 +28,7 @@ function timelineStatusBar(domElement, dataFilename) {
     .attr("class", "textStatusBar")
     .attr("id", "Filename")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
-    .text("Filename:");
+    .text("Filename: " + dataFilename);
 
     textLabel = d3.select(domElement).select("g").append("text")
       .attr("transform", "translate(" + timelineGeometry.maxWidth/2 + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
