@@ -132,31 +132,33 @@ function isString (obj) {
 var processFileData = function (dataObject, aFile) {
   //console.log(csvObject);
   fileData=d3.csv.parse(dataObject);
+  setTabState(event, 'tabVisualization', 'enabled');
+  setTabState(event, 'tabSettings', 'enabled');
 
   //console.log("File: " + aFile.name + " read complete!", fileData);
   timelineStatusBar(domStatusBar, aFile.name);
   spatioFlow(domSpatioFlow);
 
-      timeline(domTimeline, domSpatioFlow, domInfoFlow)
-          .data(fileData)
-          .defineInfoflowPane( )
-          .defineInfoflowArea( )
-          .defineTimelinePane( )
-          .defineTimeflowArea( )
-          .band("timeFlow", false)
-          .mainReference("timeFlow")
-          .xAxis("timeFlow")
-          .tooltips("timeFlow")
-          .defineBirdViewArea( )
-          .band("birdView", true)
-          .xAxis("birdView")
-          .labels("timeFlow")
-          .labels("birdView")
-          .brush("birdView", ["timeFlow", "infoFlow"])
-          .band("infoFlow", false)
-          .vScroll( )
+  timeline(domTimeline, domSpatioFlow, domInfoFlow)
+      .data(fileData)
+      .defineInfoflowPane( )
+      .defineInfoflowArea( )
+      .defineTimelinePane( )
+      .defineTimeflowArea( )
+      .band("timeFlow", false)
+      .mainReference("timeFlow")
+      .xAxis("timeFlow")
+      .tooltips("timeFlow")
+      .defineBirdViewArea( )
+      .band("birdView", true)
+      .xAxis("birdView")
+      .labels("timeFlow")
+      .labels("birdView")
+      .brush("birdView", ["timeFlow", "infoFlow"])
+      .band("infoFlow", false)
+      .vScroll( )
 //            .defineVerticalScrollArea( )
-          .redraw();
+      .redraw();
 
 }
 
