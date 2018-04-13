@@ -27,7 +27,7 @@
     "info-flow"
   ],
   "author": "John Harkins",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/LAS-NCSU/chronsemble/issues"
   },
