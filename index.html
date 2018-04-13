@@ -21,7 +21,6 @@
     <link href="css/timeline.css" rel="stylesheet" type="text/css" media="screen"/>
 </head>
 
-
 <!--<script src="/bower_components/jquery/dist/jquery.js"></script>-->
 <!--<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>-->
 <!--<script src="node_modules/patternfly/node_modules/jquery/dist/jquery.js"></script>-->
@@ -290,57 +289,20 @@
         });
 
 
-    // Define domElement and sourceFile
+    // Define visualiztion domElements
     var domTimeline = "#timeline";
     var domStatusBar = "#divTimelineStatusBar";
     var domInfoFlow = ".infoFlow";
     var domSpatioFlow = ".spatioFlow";
-    var fileData=null;
-
-    //*var sourceFile = "data/philosophers.csv";
-    //var sourceFile = "philosophers.json";
-    //var sourceFile = "philosophers2.json";
-    //var sourceFile = "philosophers3.json";
-    //*var sourceFile = "data/Intra-StateWarData_v4.1.3.csv";
-    //var sourceFile = "data/Inter-StateWarData_v4.0.1.csv";
 
     // Check for the various File API support.
     if (!(window.File) || !(window.FileReader) || !(window.FileList) ||
       !(window.Blob)) {
       alert('The File APIs are not fully supported in this browser.');
     }
-/*
     // Read in the data and construct the timeline
-    d3.csv(sourceFile, function(dataset) {
+    //d3.csv(sourceFile, function(dataset) {
     //d3.json(sourceFile, function(dataset) {
-
-    timelineStatusBar(domStatusBar, sourceFile);
-    spatioFlow(domSpatioFlow);
-
-        timeline(domTimeline, domSpatioFlow, domInfoFlow)
-            .data(dataset)
-            .defineInfoflowPane( )
-            .defineInfoflowArea( )
-            .defineTimelinePane( )
-            .defineTimeflowArea( )
-            .band("timeFlow", false)
-            .mainReference("timeFlow")
-            .xAxis("timeFlow")
-            .tooltips("timeFlow")
-            .defineBirdViewArea( )
-            .band("birdView", true)
-            .xAxis("birdView")
-            .labels("timeFlow")
-            .labels("birdView")
-            .brush("birdView", ["timeFlow", "infoFlow"])
-            .band("infoFlow", false)
-            .vScroll( )
-//            .defineVerticalScrollArea( )
-            .redraw();
-
-    });
-*/
-// d3.select(".infoFlow").append("p").html("testing");
 </script>
 
 <!--<div class="container-fluid" style="background-color:#a2c3c3">-->
@@ -386,7 +348,6 @@
 
 <div class="tabcontent" id="Log">
 </div>
-
     <div class="alert alert-success">
       <span class="pficon pficon-topology"></span>
       <strong>A spatio-temporal data exploration application.</strong>
