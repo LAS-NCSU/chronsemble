@@ -99,7 +99,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           };
 
  //showItems();
-        if (items[0].loc === undefined) spatioFlow = false;
+        if (items[0].loc === undefined) hasSpatioFlow = false;
+        else hasSpatioFlow = true;
+        
  //("loc" in items[0]) ? console.log("SpatioFow") : spatioFlow = false;
 
         function compareAscending(item1, item2) {
@@ -422,7 +424,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     timeline.defineInfoflowPane = function( ) {
       // Create svg element to contain all of the timeline elements
         svgInfo.attr("class", "svg")
-           .attr("id", "svg")
+           .attr("id", "svgInfoFlow")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
              timelineGeometry.flowHeight("infoFlow", true));
@@ -439,7 +441,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     timeline.defineTimelinePane = function( ) {
       // Create svg element to contain all of the timeline elements
         svgTime.attr("class", "svg")
-           .attr("id", "svg")
+           .attr("id", "svgTimeline")
            .attr("width", timelineGeometry.maxWidth)
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
              timelineGeometry.flowHeight("timeFlow", true) +
@@ -842,7 +844,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                   (maxProximity - Math.abs(referenceValue - endDateOfEvent))));
               }
               // Is location unique? If not, do max hold on proximity.
-              if (spatioFlow) {
+              if (hasSpatioFlow) {
                 eventsWithinScruber.forEach(function(eventItem) {
                 if (value.loc === eventItem.loc) {
                   var eventProximity = parseFloat(eventItem.proximity);
@@ -909,7 +911,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
   //      var centre = displayInfoFlow(eventsWithinScruber, referenceEvent[referenceEvent.length-1]);
 //        console.log(referenceEvent);
-        var locations = (spatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
+        var locations = (hasSpatioFlow) ? updateSpatioFlow(eventsWithinScruber, colorGradientIndex(maxProximity)) : null;
     }
 
     function displayInfoFlow(eventsWithinScruber, referenceEvent) {

@@ -123,7 +123,7 @@ var infoFlowCards = 5,      // number of cards visible in info pane.
 var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
                            "loc", "Initiator", "Outcome", "SideADeaths",
                            "SideBDeaths"]);
-var spatioFlow = true;
+var hasSpatioFlow = true;
 
 function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
@@ -132,8 +132,9 @@ function isString (obj) {
 var processFileData = function (dataObject, aFile) {
   //console.log(csvObject);
   fileData=d3.csv.parse(dataObject);
-  setTabState(event, 'tabVisualization', 'enabled');
-  setTabState(event, 'tabSettings', 'enabled');
+  setElementState(event, 'tabVisualization', 'enabled');
+  setElementState(event, 'tabSettings', 'enabled');
+  setElementState(event, 'menuItemCloseFile', 'enabled');
 
   //console.log("File: " + aFile.name + " read complete!", fileData);
   timelineStatusBar(domStatusBar, aFile.name);
@@ -160,8 +161,20 @@ var processFileData = function (dataObject, aFile) {
 //            .defineVerticalScrollArea( )
       .redraw();
 
-}
+};
 
+function closeVisualization(event, aFile) {
+  //document.getElementsByClassName('tooltip').remove();
+  d3.selectAll('.tooltip').remove();
+  d3.selectAll('svg').remove();
+  fileList=[];
+  fileData=null;
+  setElementState(event, 'tabVisualization', 'disabled');
+  setElementState(event, 'tabSettings', 'disabled');
+  setElementState(event, 'menuItemCloseFile', 'disabled');
+  console.log("Closing visualization");
+  closeTab(event);
+}
 // fcn to return the width (in pixels) of a string to be rendered on canvas.
 // This fcn is used to help provide "pretty" tracks with fully readable labels
 // at some prescribed zoom level.
@@ -204,7 +217,7 @@ function handleFileSelect(evt) {
   var d = new Date();
 
   document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
-  setTabState(event, 'tabLog', 'enabled');
+  setElementState(event, 'tabLog', 'enabled');
 
   var reader = new FileReader();
 
@@ -300,12 +313,29 @@ function openTab(evt, tabName) {
 
   // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementById(tabName).style.display = "block";
-  console.log(evt.currentTarget.parentElement);
+//  console.log(evt.currentTarget.parentElement);
   evt.currentTarget.parentElement.className += "active";
 }
 
-function setTabState(evt, tabName, tabState) {
-  document.getElementById(tabName).disabled=((tabState === "disabled") ? true : false);
+function closeTab(evt) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].parentElement.className = tablinks[i].parentElement.className.replace("active", "");
+  }
+}
+
+function setElementState(evt, elementName, elementState) {
+  document.getElementById(elementName).disabled=((elementState === "disabled") ? true : false);
 }
 
 function saveFile(strData, strFileName, strMimeType) {
