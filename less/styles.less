@@ -73,8 +73,14 @@ input[type="file"] {
     clear: both;
     font-weight: normal;
     line-height: 1.66666667;
+    opacity: 1;
     color: #363636;
     white-space: nowrap;
+}
+
+.dropdown-menu > li > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .dropdown-menu > li > button:hover, .dropdown-menu > li > button:focus {
