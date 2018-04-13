@@ -131,6 +131,8 @@ function isString (obj) {
 
 var processFileData = function (dataObject, aFile) {
   //console.log(csvObject);
+  timelineGeometry.maxWidth = Math.max(window.innerWidth || document.documentElement.clientWidth ||
+            document.body.clientWidth, 767) - 30;
   fileData=d3.csv.parse(dataObject);
   setElementState(event, 'tabVisualization', 'enabled');
   setElementState(event, 'tabSettings', 'enabled');
@@ -174,6 +176,7 @@ function closeVisualization(event, aFile) {
   setElementState(event, 'menuItemCloseFile', 'disabled');
   console.log("Closing visualization");
   closeTab(event);
+  clearFileInput(document.getElementById("file-read"));
 }
 // fcn to return the width (in pixels) of a string to be rendered on canvas.
 // This fcn is used to help provide "pretty" tracks with fully readable labels
@@ -374,4 +377,13 @@ setTimeout(function() {
     docReference.body.removeChild(iframeElement);
 }, 333);
 return true;
+}
+
+function clearFileInput(ctrl) {
+  try {
+    ctrl.value = null;
+  } catch(ex) { }
+  if (ctrl.value) {
+    ctrl.parentNode.replaceChild(ctrl.cloneNode(true), ctrl);
+  }
 }
