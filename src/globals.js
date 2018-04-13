@@ -22,7 +22,6 @@ var symbolsUnicode = {
   heavyHorizontal: '\u2501',
   lightDashedHorizontal: '\u2508',
   heavyDashedHorizontal: '\u2509',
-
 }
 
 var statusFieldSeparator = " " + symbolsUnicode.lightDashedHorizontal + symbolsUnicode.lightDashedHorizontal + " ";
@@ -123,7 +122,7 @@ var infoFlowCards = 5,      // number of cards visible in info pane.
 var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
                            "loc", "Initiator", "Outcome", "SideADeaths",
                            "SideBDeaths"]);
-var hasSpatioFlow = true;
+var hasSpatioFlow = null;
 
 function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
@@ -138,9 +137,12 @@ var processFileData = function (dataObject, aFile) {
   setElementState(event, 'tabSettings', 'enabled');
   setElementState(event, 'menuItemCloseFile', 'enabled');
 
+  if (fileData[0].loc === undefined) hasSpatioFlow = false;
+  else hasSpatioFlow = true;
+
   //console.log("File: " + aFile.name + " read complete!", fileData);
   timelineStatusBar(domStatusBar, aFile.name);
-  spatioFlow(domSpatioFlow);
+  if (hasSpatioFlow) spatioFlow(domSpatioFlow);
 
   timeline(domTimeline, domSpatioFlow, domInfoFlow)
       .data(fileData)
@@ -212,8 +214,6 @@ function handleFileSelect(evt) {
           f.size, ' bytes, last modified: ',
           f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
           );
-
-
   }
 //  var statusFilenameElement = document.getElementById('Filename');
 //  statusFilenameElement.textContent = output.join('');

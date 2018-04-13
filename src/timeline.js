@@ -99,9 +99,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           };
 
  //showItems();
-        if (items[0].loc === undefined) hasSpatioFlow = false;
-        else hasSpatioFlow = true;
-        
+//        if (items[0].loc === undefined) hasSpatioFlow = false;
+//        else hasSpatioFlow = true;
+
  //("loc" in items[0]) ? console.log("SpatioFow") : spatioFlow = false;
 
         function compareAscending(item1, item2) {

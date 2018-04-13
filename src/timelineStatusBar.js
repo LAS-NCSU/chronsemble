@@ -35,7 +35,7 @@ function timelineStatusBar(domElement, dataFilename) {
       .attr("class", "textStatusBar")
       .attr("id", "SpatioFlowButton")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
-      .text(statusFieldSeparator + symbolsUnicode.pushButtonOn);
+      .text(statusFieldSeparator + ((hasSpatioFlow)? symbolsUnicode.pushButtonOn:symbolsUnicode.pushButtonOff));
 
     textLabel = d3.select(domElement).select("g").append("text")
       .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 40) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
