@@ -132,7 +132,14 @@ var processFileData = function (dataObject, aFile) {
   //console.log(csvObject);
   timelineGeometry.maxWidth = Math.max(window.innerWidth || document.documentElement.clientWidth ||
             document.body.clientWidth, 767) - 30;
-  fileData=d3.csv.parse(dataObject);
+  if (aFile.type === 'text/csv') {
+    fileData=d3.csv.parse(dataObject);
+  } else if (aFile.type === 'text/json' || aFile.type === 'application/json') {
+    fileData=JSON.parse(dataObject);
+  } else {
+    console.log("ERROR: bad file type: " + aFile.type);
+  }
+
   setElementState(event, 'tabVisualization', 'enabled');
   setElementState(event, 'tabSettings', 'enabled');
   setElementState(event, 'menuItemCloseFile', 'enabled');
