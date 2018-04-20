@@ -9,6 +9,7 @@ var pwlTrackDomains = [];
 var pwlTrackRanges = [];
 var fileList = [];
 var fileData = null;
+var confiData = [];
 
 var symbolsUnicode = {
   diamond: '\u2666',
@@ -23,6 +24,14 @@ var symbolsUnicode = {
   lightDashedHorizontal: '\u2508',
   heavyDashedHorizontal: '\u2509',
 }
+
+var translationTable = {
+  headings: [{key: "dataField", title: "Data Field"},
+             {key: "sampleTyp", title: "Sample A"},
+             {key: "sampleATyp", title: "Sample B"},
+             {key: "format", title: "Type"},
+             {key: "accuracy", title: "Accuracy"}]
+};
 
 var statusFieldSeparator = " " + symbolsUnicode.lightDashedHorizontal + symbolsUnicode.lightDashedHorizontal + " ";
 
@@ -140,6 +149,10 @@ var processFileData = function (dataObject, aFile) {
     console.log("ERROR: bad file type: " + aFile.type);
   }
 
+  confiData = d3.keys(fileData[0]);
+  console.log(confiData);
+  //$('#table1').DataTable().column(1).header().textContent='Hello World';
+  //console.log($('#table1').DataTable().column(1).header());
   setElementState(event, 'tabVisualization', 'enabled');
   setElementState(event, 'tabSettings', 'enabled');
   setElementState(event, 'menuItemCloseFile', 'enabled');

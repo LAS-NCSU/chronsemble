@@ -400,7 +400,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
       buildInfoFlowScales(data.items);
 
   //    saveFile(JSON.stringify(d3.keys(data.items[1])), 'filename.txt', 'text/plain');
-        var confiData = infoFlowConfigObject(d3.keys(data.items[1]));
+  //      var confiData = infoFlowConfigObject(d3.keys(data.items[1]));
 
         data.nTracks = tracks.length;
   //      data.minDate = d3.min(data.items, function (d) { return d.start; });
@@ -429,15 +429,17 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
            .attr("height", timelineGeometry.margin.top + timelineGeometry.margin.bottom +
              timelineGeometry.flowHeight("infoFlow", true));
 
+/* The following fcn loads an icon on the canvas.
              d3.xml("data/img/edit.svg").mimeType("image/svg+xml").get(function(error, xml) {
    if (error) throw error;
    svgInfo.append("g")
           .attr("transform", "translate(900,3)").node()
                   .appendChild(xml.documentElement);
 });
+*/
+
         return timeline;
     }
-
     timeline.defineTimelinePane = function( ) {
       // Create svg element to contain all of the timeline elements
         svgTime.attr("class", "svg")
