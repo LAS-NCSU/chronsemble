@@ -88,6 +88,7 @@
 <script src="src/timelineStatusBar.js"></script>
 <script src="src/timeline.js"></script>
 <script src="src/spatioFlow.js"></script>
+<script src="src/settings.js"></script>
 
 <script src="node_modules/d3-geo-projection/d3.geo.projection.min.js"></script>
 <script src="node_modules/d3-geomap/src/js/utils.js"></script>
@@ -267,7 +268,7 @@
         <li><a class="dropdown-item disabled" href="#0">Open Location</a></li>
         <li role="presentation" class="divider"></li>
         <li><button id="menuItemCloseFile" onclick="closeVisualization(event,'Splash')" disabled>Close File</button></li>
-          <!--<a id="menuItemCloseFile" class="dropdown-item disabled" href="#0">Close File</a></li>-->
+        <!--<li><a id="menuItemCloseFile" class="dropdown-item disabled" href="#0" onclick="closeVisualization(event,'Splash')">Close File</a></li>-->
       </ul>
     </li>
     <!--
@@ -287,6 +288,7 @@
 =============================================================================-->
 
           <li>
+            <!--<a href="#0" class="tablinks disabled" id="tabSettings" onclick="openTab(event, 'Settings')">Settings</a>-->
             <button class="tablinks" id="tabSettings" onclick="openTab(event, 'Settings')" disabled>Settings</button>
           </li>
           <li>
@@ -315,6 +317,7 @@
     var domStatusBar = "#divTimelineStatusBar";
     var domInfoFlow = ".infoFlow";
     var domSpatioFlow = ".spatioFlow";
+    var domTabSettings = "#Settings";
 
     // Check for the various File API support.
     if (!(window.File) || !(window.FileReader) || !(window.FileList) ||
@@ -325,6 +328,17 @@
     //d3.csv(sourceFile, function(dataset) {
     //d3.json(sourceFile, function(dataset) {
 </script>
+
+<!--============================================================================
+
+        ##    #####    ####   #    #   #####
+       #  #   #    #  #    #  #    #     #
+      #    #  #####   #    #  #    #     #
+      ######  #    #  #    #  #    #     #
+      #    #  #    #  #    #  #    #     #
+      #    #  #####    ####    ####      #
+
+=============================================================================-->
 
 <!--<div class="container-fluid" style="background-color:#a2c3c3">-->
   <div class="container-fluid">
@@ -340,7 +354,7 @@
      </p>
      <p>Chronsemble includes modifications to the <a href="https://github.com/rengel-de/timeline">timeline</a> example developed by <a href="https://github.com/rengel-de">Reinhard Engel</a>.
      </p>
-     <p class="version wow fadeIn" data-wow-delay="1500ms"><strong>format: </strong>0.0.0<br>
+     <p class="version wow fadeIn" data-wow-delay="1500ms"><strong>Version: </strong>0.0.0<br>
      <strong>License: </strong><a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a></p>
    </div>
    <div class="column-splash">
@@ -386,13 +400,6 @@
               <li><a href="#" id="filter3">Platform(s)</a></li>
               <li><a href="#" id="filter4">Engine Version</a></li>
               <li><a href="#" id="filter5">CSS Grade</a></li>
-            <!--
-              <li><a href="#" id="filter1">Data Field</a></li>
-              <li><a href="#" id="filter2">Data Sample A</a></li>
-              <li><a href="#" id="filter3">Data Sample B</a></li>
-              <li><a href="#" id="filter4">Data Sample C</a></li>
-              <li><a href="#" id="filter5">Type</a></li>
-            -->
             </ul>
           </div>
           <input type="text" class="form-control" placeholder="Filter By Rendering Engine..." autocomplete="off" id="filterInput">
@@ -459,19 +466,12 @@
   <thead>
     <tr>
       <th><label class="sr-only" for="selectAll">Select all rows</label><input type="checkbox" id="selectAll" name="selectAll"></th>
-      <!--
-      <th>Rendering Engine</th>
-      <th>Browser</th>
-      <th>Platform(s)</th>
-      <th>Engine Version</th>
-      <th>CSS Grade</th>
-    -->
       <th>heading1</th>
       <th>heading2</th>
       <th>heading3</th>
       <th>heading4</th>
       <th>heading5</th>
-      <th colspan="2">Field Interpretation</th>
+      <th colspan="2">Event Assignments</th>
     </tr>
   </thead>
 </table>
@@ -497,7 +497,7 @@
     <input class="pagination-pf-page" type="text" value="1" id="pagination1-page"/>
     <span>of <span class="pagination-pf-pages">5</span></span>
     <ul class="pagination pagination-pf-forward">
-      <li><a href="#" title="Next Page"><span class="i fa fa-angle-right"></span></a></li>
+      <li><a href="#" title="Next Page" id="next" onclick="nextTablePage()"><span class="i fa fa-angle-right"></span></a></li>
       <li><a href="#" title="Last Page"><span class="i fa fa-angle-double-right"></span></a></li>
     </ul>
   </div>
@@ -527,353 +527,7 @@
 </div>
 
 <script>
-$(document).ready(function() {
-
-// JSON data for Table View
-var dataSet = [{
-  dataField: "Trident",
-  sampleTyp: "Internet Explorer 4.0",
-  sampleATyp: "Win 95+",
-  format: "4",
-  accuracy: "X"
-},{
-  dataField: "Trident",
-  sampleTyp: "Internet Explorer 5.0",
-  sampleATyp: "Win 95+",
-  format: "5",
-  accuracy: "C"
-}, {
-  dataField: "Trident",
-  sampleTyp: "Internet Explorer 5.5",
-  sampleATyp: "Win 95+",
-  format: "5.5",
-  accuracy: "A"
-}, {
-  dataField: "Trident",
-  sampleTyp: "Internet Explorer 6",
-  sampleATyp: "Win 98+",
-  format: "6",
-  accuracy: "A"
-}, {
-  dataField: "Trident",
-  sampleTyp: "Internet Explorer 7",
-  sampleATyp: "Win XP SP2+",
-  format: "7",
-  accuracy: "A"
-}, {
-  dataField: "Trident",
-  sampleTyp: "AOL browser (AOL desktop)",
-  sampleATyp: "Win XP",
-  format: "6",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Firefox 1.0",
-  sampleATyp: "Win 98+ / OSX.2+",
-  format: "1.7",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Firefox 1.5",
-  sampleATyp: "Win 98+ / OSX.2+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Firefox 2.0",
-  sampleATyp: "Win 98+ / OSX.2+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Firefox 3.0",
-  sampleATyp: "Win 2k+ / OSX.3+",
-  format: "1.9",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Camino 1.0",
-  sampleATyp: "OSX.2+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Camino 1.5",
-  sampleATyp: "OSX.3+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Netscape 7.2",
-  sampleATyp: "Win 95+ / Mac OS 8.6-9.2",
-  format: "1.7",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Netscape Browser 8",
-  sampleATyp: "Win 98SE+",
-  format: "1.7",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Netscape Navigator 9",
-  sampleATyp: "Win 98+ / OSX.2+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.0",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.1",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.1",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.2",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.2",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.3",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.3",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.4",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.4",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.5",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.5",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.6",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "1.6",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.7",
-  sampleATyp: "Win 98+ / OSX.1+",
-  format: "1.7",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Mozilla 1.8",
-  sampleATyp: "Win 98+ / OSX.1+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Seamonkey 1.1",
-  sampleATyp: "Win 98+ / OSX.2+",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Gecko",
-  sampleTyp: "Epiphany 2.20",
-  sampleATyp: "Gnome",
-  format: "1.8",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "Safari 1.2",
-  sampleATyp: "OSX.3",
-  format: "125.5",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "Safari 1.3",
-  sampleATyp: "OSX.3",
-  format: "312.8",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "Safari 2.0",
-  sampleATyp: "OSX.4+",
-  format: "419.3",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "Safari 3.0",
-  sampleATyp: "OSX.4+",
-  format: "522.1",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "OmniWeb 5.5",
-  sampleATyp: "OSX.4+",
-  format: "420",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "iPod Touch / iPhone",
-  sampleATyp: "iPod",
-  format: "420.1",
-  accuracy: "A"
-}, {
-  dataField: "Webkit",
-  sampleTyp: "S60",
-  sampleATyp: "S60",
-  format: "413",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 7.0",
-  sampleATyp: "Win 95+ / OSX.1+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 7.5",
-  sampleATyp: "Win 95+ / OSX.2+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 8.0",
-  sampleATyp: "Win 95+ / OSX.2+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 8.5",
-  sampleATyp: "Win 95+ / OSX.2+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 9.0",
-  sampleATyp: "Win 95+ / OSX.3+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 9.2",
-  sampleATyp: "Win 88+ / OSX.3+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera 9.5",
-  sampleATyp: "Win 88+ / OSX.3+",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Opera for Wii",
-  sampleATyp: "Wii",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Nokia N800",
-  sampleATyp: "N800",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Presto",
-  sampleTyp: "Nintendo DS browser",
-  sampleATyp: "Nintendo DS",
-  format: "8.5",
-  accuracy: "C/A<sup>1</sup>"
-}, {
-  dataField: "KHTML",
-  sampleTyp: "Konqureror 3.1",
-  sampleATyp: "KDE 3.1",
-  format: "3.1",
-  accuracy: "C"
-}, {
-  dataField: "KHTML",
-  sampleTyp: "Konqureror 3.3",
-  sampleATyp: "KDE 3.3",
-  format: "3.3",
-  accuracy: "A"
-}, {
-  dataField: "KHTML",
-  sampleTyp: "Konqureror 3.5",
-  sampleATyp: "KDE 3.5",
-  format: "3.5",
-  accuracy: "A"
-}, {
-  dataField: "Tasman",
-  sampleTyp: "Internet Explorer 4.5",
-  sampleATyp: "Mac OS 8-9",
-  format: "-",
-  accuracy: "X"
-}, {
-  dataField: "Tasman",
-  sampleTyp: "Internet Explorer 5.1",
-  sampleATyp: "Mac OS 7.6-9",
-  format: "1",
-  accuracy: "C"
-}, {
-  dataField: "Tasman",
-  sampleTyp: "Internet Explorer 5.2",
-  sampleATyp: "Mac OS 8-X",
-  format: "1",
-  accuracy: "C"
-}, {
-  dataField: "Misc",
-  sampleTyp: "NetFront 3.1",
-  sampleATyp: "Embedded devices",
-  format: "-",
-  accuracy: "C"
-}, {
-  dataField: "Misc",
-  sampleTyp: "NetFront 3.4",
-  sampleATyp: "Embedded devices",
-  format: "-",
-  accuracy: "A"
-}, {
-  dataField: "Misc",
-  sampleTyp: "Dillo 0.8",
-  sampleATyp: "Embedded devices",
-  format: "-",
-  accuracy: "X"
-}, {
-  dataField: "Misc",
-  sampleTyp: "Links",
-  sampleATyp: "Text only",
-  format: "-",
-  accuracy: "X"
-}, {
-  dataField: "Misc",
-  sampleTyp: "Lynx",
-  sampleATyp: "Text only",
-  format: "-",
-  accuracy: "X"
-}, {
-  dataField: "Misc",
-  sampleTyp: "IE Mobile",
-  sampleATyp: "Windows Mobile 6",
-  format: "-",
-  accuracy: "C"
-}, {
-  dataField: "Misc",
-  sampleTyp: "PSP browser",
-  sampleATyp: "PSP",
-  format: "-",
-  accuracy: "C"
-}, {
-  dataField: "Other browsers",
-  sampleTyp: "All others",
-  sampleATyp: "-",
-  format: "-",
-  accuracy: "U"
-}];
-
+/*
 // DataTable Config
 $("#table1").DataTable({
   columns: [
@@ -923,7 +577,8 @@ $("#table1").DataTable({
       }
     }
   ],
-  data: dataSet,
+  //data: dataSet,
+  data: tabSettings.tableRows,
   dom: "t",
   language: {
     zeroRecords: "No records found"
@@ -972,6 +627,7 @@ $("#table1").DataTable({
  * @param {string} config.restoreRowsSelector - Selector for restore rows control
  * @param {string} config.tableSelector - Selector for the HTML table
  */
+ /*
 var emptyTableViewUtil = function (config) {
   var self = this;
 
@@ -999,7 +655,8 @@ var emptyTableViewUtil = function (config) {
 
 // Initialize empty Table View util
 new emptyTableViewUtil({
-  data: dataSet,
+  //data: dataSet,
+  data: tabSettings.tableRows,
   deleteRowsSelector: "#deleteRows1",
   restoreRowsSelector: "#restoreRows1",
   tableSelector: "#table1"
@@ -1008,6 +665,7 @@ new emptyTableViewUtil({
 /**
  * Utility to find items in Table View
  */
+ /*
 var findTableViewUtil = function (config) {
   // Upon clicking the find button, show the find dropdown content
   $(".btn-find").click(function () {
@@ -1024,13 +682,14 @@ var findTableViewUtil = function (config) {
 new findTableViewUtil();
 
 });
+*/
 </script>
-
 <script>
 // Initialize Datatables
+/*
 $(document).ready(function() {
 $('.datatable').dataTable();
-});
+});*/
 </script>
 
 </div>

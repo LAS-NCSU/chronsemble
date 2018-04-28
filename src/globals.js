@@ -32,7 +32,7 @@ var translationTable = {
              {key: "format", title: "Type"},
              {key: "accuracy", title: "Accuracy"}]
 };
-
+var tabSettings = {};
 var statusFieldSeparator = " " + symbolsUnicode.lightDashedHorizontal + symbolsUnicode.lightDashedHorizontal + " ";
 
 var timelineGeometry = {
@@ -137,6 +137,8 @@ function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
 }
 
+
+
 var processFileData = function (dataObject, aFile) {
   //console.log(csvObject);
   timelineGeometry.maxWidth = Math.max(window.innerWidth || document.documentElement.clientWidth ||
@@ -149,10 +151,17 @@ var processFileData = function (dataObject, aFile) {
     console.log("ERROR: bad file type: " + aFile.type);
   }
 
-  confiData = d3.keys(fileData[0]);
-  console.log(confiData);
+  //confiData = d3.keys(fileData[0]);
+  //console.log(confiData);
   //$('#table1').DataTable().column(1).header().textContent='Hello World';
   //console.log($('#table1').DataTable().column(1).header());
+
+  tabSettings = new Settings('Settings', fileData);
+  //console.log(tabSettings[translationTable.headings[0].key]); //dataField
+  //console.log(tabSettings[translationTable.headings[1].key]); //sampleA
+  //console.log(tabSettings[translationTable.headings[2].key]); //sampleB
+  //console.log(tabSettings.tableRows);
+
   setElementState(event, 'tabVisualization', 'enabled');
   setElementState(event, 'tabSettings', 'enabled');
   setElementState(event, 'menuItemCloseFile', 'enabled');
