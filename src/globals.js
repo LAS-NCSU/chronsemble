@@ -207,6 +207,7 @@ function closeVisualization(event, aFile) {
   setElementState(event, 'menuItemCloseFile', 'disabled');
   console.log("Closing visualization");
   closeTab(event);
+  closeSettings( );
   clearFileInput(document.getElementById("file-read"));
 }
 // fcn to return the width (in pixels) of a string to be rendered on canvas.
@@ -347,6 +348,10 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
 //  console.log(evt.currentTarget.parentElement);
   evt.currentTarget.parentElement.className += "active";
+
+//  if (tabName === 'Settings') {
+//  }
+
 }
 
 function closeTab(evt) {
