@@ -17,10 +17,24 @@ var translationTable = {
 */
 var table1 = null;
 var table2 = null;
+var infoCardLayout = [];
+var selectionOrder = [];
+var tableRows = [];
 
-function Settings(tabSettingsID, fileData) {
+function Settings(tabID, fileData) {
 
   function buildTable(elementID) {
+
+/*==============================================================================
+
+#####   ####    ####   #       #####     ##    #####
+  #    #    #  #    #  #       #    #   #  #   #    #
+  #    #    #  #    #  #       #####   #    #  #    #
+  #    #    #  #    #  #       #    #  ######  #####
+  #    #    #  #    #  #       #    #  #    #  #   #
+  #     ####    ####   ######  #####   #    #  #    #
+
+==============================================================================*/
 
     function buildTableToolbar(fragment) {
 
@@ -149,6 +163,10 @@ function Settings(tabSettingsID, fileData) {
       settingsTBarGroupBtn2.className = 'btn btn-default';
       settingsTBarGroupBtn2.id = 'includeInfoData';
       settingsTBarGroupBtn2.innerHTML = '<span class="i fa fa-plus">&nbsp</span>Info Card';
+      settingsTBarGroupBtn2.setAttribute('disabled','true');
+
+    //  settingsTBarGroupBtn1.onclick = 'addToInfocard()';
+    //  settingsTBarGroupBtn1.setAttribute('onclick','addToInfocard()');
       settingsTBarGroupBtn2 = settingsTBarGroup.appendChild(document.createElement("button"));
       settingsTBarGroupBtn2.type = 'button';
       settingsTBarGroupBtn2.className = 'btn btn-default';
@@ -220,6 +238,17 @@ function Settings(tabSettingsID, fileData) {
     //  settingsTab.appendChild(tmpSettingsTab);
     }
 
+/*==============================================================================
+
+ #####    ####   #####    #   #
+ #    #  #    #  #    #    # #
+ #####   #    #  #    #     #
+ #    #  #    #  #    #     #
+ #    #  #    #  #    #     #
+ #####    ####   #####      #
+
+==============================================================================*/
+
     function buildTableBody(fragment) {
     //  var tmpTableBody = document.createDocumentFragment();
       var tableBody = fragment.appendChild(document.createElement("table"));
@@ -235,6 +264,7 @@ function Settings(tabSettingsID, fileData) {
       '<th>heading3</th>' +
       '<th>heading4</th>' +
       '<th>heading5</th>' +
+      '<th>heading6</th>' +
       '<th colspan="2">Event Assignments</th>';
 
       return fragment;
@@ -244,6 +274,16 @@ function Settings(tabSettingsID, fileData) {
 
     }
 
+/*==============================================================================
+
+ ######   ####    ####    #####  ######  #####
+ #       #    #  #    #     #    #       #    #
+ #####   #    #  #    #     #    #####   #    #
+ #       #    #  #    #     #    #       #####
+ #       #    #  #    #     #    #       #   #
+ #        ####    ####      #    ######  #    #
+
+==============================================================================*/
 
     function buildTableFooter(fragment) {
     //  var tmpTableFooter = document.createDocumentFragment();
@@ -308,6 +348,16 @@ function Settings(tabSettingsID, fileData) {
 
 }
 
+/*==============================================================================
+
+ #####   #         ##    #    #  #    #
+ #    #  #        #  #   ##   #  #   #
+ #####   #       #    #  # #  #  ####
+ #    #  #       ######  #  # #  #  #
+ #    #  #       #    #  #   ##  #   #
+ #####   ######  #    #  #    #  #    #
+
+==============================================================================*/
     function buildTableBlank(fragment) {
     //  var tmpTableBlank = document.createDocumentFragment();
 
@@ -357,7 +407,8 @@ function Settings(tabSettingsID, fileData) {
 
   }
 
-  var tableRows = [];
+  //var Settings = {};
+  this.tableRows = tableRows;
 
   var eEvent = {
     LABEL: 1,
@@ -383,6 +434,7 @@ function Settings(tabSettingsID, fileData) {
   this[translationTable.headings[2].key] = [];
   this[translationTable.headings[3].key] = [];
   this[translationTable.headings[4].key] = [];
+  this[translationTable.headings[5].key] = [];
   var fileKeys = d3.keys(fileData[0]);
   //this[translationTable.headings[0].key] = d3.keys(fileData[0]);
   //console.log(this[translationTable.headings[0].key][0]);
@@ -393,11 +445,12 @@ function Settings(tabSettingsID, fileData) {
   //this[translationTable.headings[4].key] = '';
   var count = 0;
   fileKeys.forEach(function(fileKey){
-    tableRows.push({[translationTable.headings[0].key]: fileKeys[count++],
-        [translationTable.headings[1].key]: fileData[1][fileKey],
-        [translationTable.headings[2].key]: fileData[2][fileKey],
-        [translationTable.headings[3].key]: '',
-        [translationTable.headings[4].key]: '' });
+    this.tableRows.push({[translationTable.headings[0].key]: fileKeys[count++],
+        [translationTable.headings[1].key]: null,
+        [translationTable.headings[2].key]: fileData[1][fileKey],
+        [translationTable.headings[3].key]: fileData[2][fileKey],
+        [translationTable.headings[4].key]: '',
+        [translationTable.headings[5].key]: '' });
   });
   /*
   for (var i in fileData[0]) {
@@ -424,8 +477,7 @@ function Settings(tabSettingsID, fileData) {
   //this.sampleA = fileData[]
 
 
-buildTable(tabSettingsID);
-
+buildTable(tabID);
 //$('.applauncher-pf .dropdown-toggle').eq(0).click();
 
 // Initialize find util
@@ -436,7 +488,9 @@ new emptyTableViewUtil({
   data: tabSettings.tableRows,
   deleteRowsSelector: "#deleteRows1",
   restoreRowsSelector: "#restoreRows1",
-  tableSelector: "#table1"
+  tableSelector: "#table1",
+  includeInfoDataSelector: '#includeInfoData',
+  removeInfoDataSelector: '#removeInfoData'
 });
 
 /*
@@ -465,11 +519,18 @@ table2 = $("#table2").DataTable({
       },
       sortable: false
     },
-    { data: translationTable.headings[0].key, title: translationTable.headings[0].title },
-    { data: translationTable.headings[1].key, title: translationTable.headings[1].title },
-    { data: translationTable.headings[2].key, title: translationTable.headings[2].title },
-    { data: translationTable.headings[3].key, title: translationTable.headings[3].title },
-    { data: translationTable.headings[4].key, title: translationTable.headings[4].title },
+    { data: translationTable.headings[0].key, name: translationTable.headings[0].key,
+      title: translationTable.headings[0].title },
+    { data: translationTable.headings[1].key, name: translationTable.headings[1].key,
+      title: translationTable.headings[1].title },
+    { data: translationTable.headings[2].key, name: translationTable.headings[2].key,
+      title: translationTable.headings[2].title },
+    { data: translationTable.headings[3].key, name: translationTable.headings[3].key,
+      title: translationTable.headings[3].title },
+    { data: translationTable.headings[4].key, name: translationTable.headings[4].key,
+      title: translationTable.headings[4].title },
+    { data: translationTable.headings[5].key, name: translationTable.headings[5].key,
+      title: translationTable.headings[5].title },
     { data: null,
       className: "table-view-pf-actions",
       render: function (data, type, full, meta) {
@@ -502,7 +563,7 @@ table2 = $("#table2").DataTable({
     }
   ],
   //data: dataSet,
-  data: tableRows,
+  data: this.tableRows,
   dom: "t",
   language: {
     zeroRecords: "No records found"
@@ -553,6 +614,42 @@ $('.datatable').dataTable({
 //     "paging": true
 }
 );
+
+
+table2
+    .on( 'select', function ( e, dt, type, indexes ) {
+        var rowData = table2.rows( indexes ).data().toArray();
+        console.log( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+        console.log(indexes, rowData);
+        if (rowData[0].infocard != null) {
+          $('#removeInfoData').removeAttr('disabled');
+        } else {
+          $('#includeInfoData').removeAttr('disabled');
+          selectionOrder.push(indexes[0]);
+        }
+    } )
+    .on( 'deselect', function ( e, dt, type, indexes ) {
+      // Cases: 1) the deselected item was a null (able to be included)
+      //        2) the deselected item was a number (able to be removed)
+      //        3) there are no more selected items
+      //        4) there are additional null selections
+      //        5) there are additional numbered selections
+      
+      selectionOrder.splice(selectionOrder.indexOf(indexes[0]), 1);
+      if (selectionOrder.indexOf(indexes[0]) === -1) {
+
+      }
+        var rowData = table2.rows( indexes ).data().toArray();
+        console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+        if (selectionOrder.length === 0) {
+          $('#includeInfoData').attr('disabled');
+          $('#removeInfoData').attr('disabled');
+        }
+        //if (table2.rows({ selected: true})[0].length === 0) {
+
+
+    } );
+
 //table2.page( 'first' ).draw( 'page' );
 
 }
@@ -574,6 +671,8 @@ var emptyTableViewUtil = function (config) {
   this.dt = $(config.tableSelector).DataTable(); // DataTable
   this.deleteRows = $(config.deleteRowsSelector); // Delete rows control
   this.restoreRows = $(config.restoreRowsSelector); // Restore rows control
+  this.includeInfoData = $(config.includeInfoDataSelector);
+  this.removeInfoData = $(config.removeInfoDataSelector);
 
   // Handle click on delete rows control
   this.deleteRows.on('click', function() {
@@ -585,6 +684,30 @@ var emptyTableViewUtil = function (config) {
   this.restoreRows.on('click', function() {
     self.dt.rows.add(config.data).draw();
     $(this).prop("disabled", true);
+  });
+
+  this.includeInfoData.on('click', function() {
+  //  console.log("includeInfoData");
+  //  console.log(table2.rows({ selected: true})[0]);
+    //console.log(table2.rows({ selected: true}).data());
+//    table2.rows({ selected: true})[0].forEach(function(row){
+    selectionOrder.forEach(function(row){
+      //if (infoCardLayout.indexOf(table2.rows({ selected: true})[0][infoCardLayout.length]) === -1) {
+      if (infoCardLayout.indexOf(row) === -1) {
+        infoCardLayout.push(row);
+        table2.cell(row, translationTable.headings[1].key + ":name").data(infoCardLayout.length);
+      }
+      table2.row(row).deselect().draw();
+  //    console.log(table2.cell(row, translationTable.headings[1].key + ":name").data());
+    })
+    $('#includeInfoData').attr('disabled','true');
+    $('#removeInfoData').attr('disabled','true');
+    selectionOrder = [];
+    console.log(infoCardLayout);
+  });
+
+  this.removeInfoData.on('click', function() {
+    console.log("includeInfoData");
   });
 
   // Initialize restore rows
@@ -626,3 +749,7 @@ function nextTablePage(){
   table2.page( 'next' ).draw( 'page' );
 };
 */
+
+function addToInfocard() {
+  console.log("+ Infocard",table2.rows({ selected: true} ));
+}
