@@ -18,7 +18,8 @@ var translationTable = {
 var table1 = null;
 var table2 = null;
 var infoCardLayout = [];
-var selectionOrder = [];
+var selectionOrder = [];  // temporarily holds only rows that have not previously
+                          // been added to infoCardLayout layout list.
 var tableRows = [];
 
 function Settings(tabID, fileData) {
@@ -115,12 +116,13 @@ function Settings(tabID, fileData) {
       settingsTBarGroupBtn1.type = 'button';
       settingsTBarGroupBtn1.className = 'btn btn-default';
       settingsTBarGroupBtn1.id = 'hideRowsB';
-      settingsTBarGroupBtn1.innerHTML = 'Hide Rows';
+      settingsTBarGroupBtn1.innerHTML = 'Hide';
+      settingsTBarGroupBtn1.setAttribute('disabled','true');
       settingsTBarGroupBtn1 = settingsTBarGroup.appendChild(document.createElement("button"));
       settingsTBarGroupBtn1.type = 'button';
       settingsTBarGroupBtn1.className = 'btn btn-default';
       settingsTBarGroupBtn1.id = 'unhideRowsB';
-      settingsTBarGroupBtn1.innerHTML = 'Unhide Rows';
+      settingsTBarGroupBtn1.innerHTML = 'Unhide';
       settingsTBarGroupBtn1.setAttribute('disabled','true');
       settingsTBarGroupBtn1 = settingsTBarGroup.appendChild(document.createElement("div"));
       settingsTBarGroupBtn1.className = 'dropdown btn-group dropdown-kebab-pf';
@@ -618,6 +620,8 @@ $('.datatable').dataTable({
 
 table2
     .on( 'select', function ( e, dt, type, indexes ) {
+      // Must be able to process all indexes passed - for instance if the
+      // selectAll box is ckicked.
         var rowData = table2.rows( indexes ).data().toArray();
         console.log( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
         console.log(indexes, rowData);
@@ -630,23 +634,60 @@ table2
     } )
     .on( 'deselect', function ( e, dt, type, indexes ) {
       // Cases: 1) the deselected item was a null (able to be included)
+      //           a. are there any other selections?
+      //              yes: are they all null?
+      //                 yes: disable "- Info Card" button
+      //                  no: are they all assigned to card?
+      //                    yes: disable "+ Info Card" button
+      //                     no: continue
+      //              no: disable both Info Card buttons
       //        2) the deselected item was a number (able to be removed)
-      //        3) there are no more selected items
-      //        4) there are additional null selections
-      //        5) there are additional numbered selections
-      
-      selectionOrder.splice(selectionOrder.indexOf(indexes[0]), 1);
-      if (selectionOrder.indexOf(indexes[0]) === -1) {
+      //           a. are there any other selections?
+      //              yes: are they all null?
+      //                 yes: disable "- Info Card" button
+      //                  no: are they all assigned to card?
+      //                    yes: disable "+ Info Card" button
+      //                     no: continue
+      //              no: disable both Info Card buttons
+      if ($('#includeInfoData').attr('value') === 'on' ||
+          $('#removeInfoData').attr('value') === 'on') {
+        // This is a programmatic deselection due to the user pressing the
+        // "+ Info Card" button - do not update data references as a result.
+        // FIXME - it would be nice if there were a better way to flag this
+        // other than setting the value attribute but didn't see any obvious
+        // better solution.
+      } else {
 
-      }
-        var rowData = table2.rows( indexes ).data().toArray();
-        console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
-        if (selectionOrder.length === 0) {
-          $('#includeInfoData').attr('disabled');
-          $('#removeInfoData').attr('disabled');
+        console.log("e:", e, "dt:", dt, "type:", type, "indexes:", indexes, "------");
+        // if this row is in the selectionOrder, remove it.
+        selectionOrder.splice(selectionOrder.indexOf(indexes[0]), 1);
+        // In order to determine how to update the buttons, we must determine if
+        // there are any other selected rows.
+        //console.log("selected rows:", table2.rows({ selected: true})[0].length);
+        if (table2.rows({ selected: true})[0].length > 0) {
+          console.log("selectionOrder.length=",selectionOrder.length);
+          if (selectionOrder.length === 0) {
+            // rows selected with none that can be added to InfoCard
+            $('#includeInfoData').attr('disabled', 'true');
+          } else if (selectionOrder.length === table2.rows({ selected: true})[0].length) {
+            // rows selected are all able to be added to InfoCard
+            $('#removeInfoData').attr('disabled', 'true');
+          }
+        } else {
+          // no more rows selected
+          $('#includeInfoData').attr('disabled', 'true');
+          $('#removeInfoData').attr('disabled', 'true');
         }
-        //if (table2.rows({ selected: true})[0].length === 0) {
 
+        table2.rows({ selected: true})[0].forEach(function(row) {
+          console.log("still selected:", row);
+        });
+//        if (selectionOrder.indexOf(indexes[0]) === -1) {
+//
+//        }
+          var rowData = table2.rows( indexes ).data().toArray();
+          console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+      }
 
     } );
 
@@ -686,28 +727,73 @@ var emptyTableViewUtil = function (config) {
     $(this).prop("disabled", true);
   });
 
+/*==============================================================================
+
+  #        #    #    #  ######   ####    ####     ##    #####   #####
+  #        #    ##   #  #       #    #  #    #   #  #   #    #  #    #
+#####      #    # #  #  #####   #    #  #       #    #  #    #  #    #
+  #        #    #  # #  #       #    #  #       ######  #####   #    #
+  #        #    #   ##  #       #    #  #    #  #    #  #   #   #    #
+           #    #    #  #        ####    ####   #    #  #    #  #####
+
+==============================================================================*/
+
   this.includeInfoData.on('click', function() {
+    $('#includeInfoData').attr('value', 'on');
   //  console.log("includeInfoData");
   //  console.log(table2.rows({ selected: true})[0]);
-    //console.log(table2.rows({ selected: true}).data());
+  //console.log(table2.rows({ selected: true}).data());
 //    table2.rows({ selected: true})[0].forEach(function(row){
-    selectionOrder.forEach(function(row){
+    selectionOrder.forEach(function(row) {
       //if (infoCardLayout.indexOf(table2.rows({ selected: true})[0][infoCardLayout.length]) === -1) {
       if (infoCardLayout.indexOf(row) === -1) {
         infoCardLayout.push(row);
         table2.cell(row, translationTable.headings[1].key + ":name").data(infoCardLayout.length);
       }
       table2.row(row).deselect().draw();
-  //    console.log(table2.cell(row, translationTable.headings[1].key + ":name").data());
+  //  console.log(table2.cell(row, translationTable.headings[1].key + ":name").data());
     })
     $('#includeInfoData').attr('disabled','true');
+    $('#includeInfoData').attr('value', 'off');
     $('#removeInfoData').attr('disabled','true');
     selectionOrder = [];
     console.log(infoCardLayout);
   });
 
+
+/*==============================================================================
+
+           #    #    #  ######   ####    ####     ##    #####   #####
+           #    ##   #  #       #    #  #    #   #  #   #    #  #    #
+#####      #    # #  #  #####   #    #  #       #    #  #    #  #    #
+           #    #  # #  #       #    #  #       ######  #####   #    #
+           #    #   ##  #       #    #  #    #  #    #  #   #   #    #
+           #    #    #  #        ####    ####   #    #  #    #  #####
+
+==============================================================================*/
   this.removeInfoData.on('click', function() {
-    console.log("includeInfoData");
+    $('#removeInfoData').attr('value', 'on');
+
+    table2.rows({ selected: true})[0].forEach(function(row) {
+      // only process rows that were previously selected
+      var layoutIndex = infoCardLayout.indexOf(row);
+      if (layoutIndex != -1) {
+        console.log("splicing:", row);
+        infoCardLayout.splice(layoutIndex,1);
+        console.log("infoCardLayout:", infoCardLayout);
+        table2.cell(row, translationTable.headings[1].key + ":name").data(null);
+        table2.row(row).deselect().draw();
+      }
+
+      for (var i = 0; i < infoCardLayout.length; i++) {
+        table2.cell(infoCardLayout[i], translationTable.headings[1].key + ":name").data(i+1).draw();
+      }
+    });
+
+    $('#removeInfoData').attr('value', 'off');
+    $('#removeInfoData').attr('disabled','true');
+
+    console.log("removeInfoData");
   });
 
   // Initialize restore rows
