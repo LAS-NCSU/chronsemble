@@ -622,6 +622,19 @@ table2
     .on( 'select', function ( e, dt, type, indexes ) {
       // Must be able to process all indexes passed - for instance if the
       // selectAll box is ckicked.
+        indexes.forEach(function(index) {
+          if (table2.cell(index, translationTable.headings[1].key + ":name").data() === null) {
+          //  console.log("index:", index, " is null");
+          //  $('#includeInfoData').removeAttr('disabled');
+            selectionOrder.push(index);
+          } else {
+            $('#removeInfoData').removeAttr('disabled');
+          }
+        });
+        if (selectionOrder.length > 0) {
+          $('#includeInfoData').removeAttr('disabled');
+        }
+/*
         var rowData = table2.rows( indexes ).data().toArray();
         console.log( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
         console.log(indexes, rowData);
@@ -631,6 +644,7 @@ table2
           $('#includeInfoData').removeAttr('disabled');
           selectionOrder.push(indexes[0]);
         }
+        */
     } )
     .on( 'deselect', function ( e, dt, type, indexes ) {
       // Cases: 1) the deselected item was a null (able to be included)
@@ -657,13 +671,20 @@ table2
         // other than setting the value attribute but didn't see any obvious
         // better solution.
       } else {
-
+        indexes.forEach(function(index) {
+        //  if (table2.cell(index, translationTable.headings[1].key + ":name").data() != null) {
+          if (selectionOrder.indexOf(index) != -1) {
+            selectionOrder.splice(selectionOrder.indexOf(index), 1);
+          }
+        } )
+/*
         console.log("e:", e, "dt:", dt, "type:", type, "indexes:", indexes, "------");
         // if this row is in the selectionOrder, remove it.
         selectionOrder.splice(selectionOrder.indexOf(indexes[0]), 1);
         // In order to determine how to update the buttons, we must determine if
         // there are any other selected rows.
         //console.log("selected rows:", table2.rows({ selected: true})[0].length);
+        */
         if (table2.rows({ selected: true})[0].length > 0) {
           console.log("selectionOrder.length=",selectionOrder.length);
           if (selectionOrder.length === 0) {
@@ -685,8 +706,8 @@ table2
 //        if (selectionOrder.indexOf(indexes[0]) === -1) {
 //
 //        }
-          var rowData = table2.rows( indexes ).data().toArray();
-          console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+  //        var rowData = table2.rows( indexes ).data().toArray();
+  //        console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
       }
 
     } );
