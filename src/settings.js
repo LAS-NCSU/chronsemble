@@ -17,9 +17,17 @@ var translationTable = {
 */
 var table1 = null;
 var table2 = null;
-var infoCardLayout = [];
-var selectionOrder = [];  // temporarily holds only rows that have not previously
-                          // been added to infoCardLayout layout list.
+var infoCardLayout = {};
+var selectionOrder = [];  // FIFO that temporarily holds only the ordinal index
+                          // of rows that have not previously been added to
+                          // infoCardLayout layout list. These are added in the
+                          // order that they are selected as they are selected.
+                          // Once the user clicks the "+ Info Card" button, the
+                          // values are transfered to the infoCardLayout
+                          // structure. Ordinal indices represent the column/heading
+                          // order in a typical csv file with the first column/heading
+                          // assigned to ordinal 0, second column/heading assigned
+                          // to ordinal 1, and so forth.
 var tableRows = [];
 
 function Settings(tabID, fileData) {
@@ -109,7 +117,7 @@ function Settings(tabID, fileData) {
       settingsTBarGroupLabelDivInput.id = 'filterInputB';
       settingsTBarGroupLabelDivInput.setAttribute('placeholder','Filter By ...');
       settingsTBarGroupLabelDivInput.setAttribute('autocomplete','off');
-
+/*
       settingsTBarGroup = settingsTBarForm.appendChild(document.createElement("div"));
       settingsTBarGroup.className = 'form-group';
       var settingsTBarGroupBtn1 = settingsTBarGroup.appendChild(document.createElement("button"));
@@ -157,6 +165,18 @@ function Settings(tabID, fileData) {
       settingsTBarGroupBtn1KBLiA = settingsTBarGroupBtn1KBLi.appendChild(document.createElement("a"));
       settingsTBarGroupBtn1KBLiA.href = '#';
       settingsTBarGroupBtn1KBLiA.innerHTML = 'Separated Link';
+*/
+
+/*==============================================================================
+
+#    #    #  ######   ####   #####    #####  #    #   ####
+#    ##   #  #       #    #  #    #     #    ##   #  #
+#    # #  #  #####   #    #  #####      #    # #  #   ####
+#    #  # #  #       #    #  #    #     #    #  # #       #
+#    #   ##  #       #    #  #    #     #    #   ##  #    #
+#    #    #  #        ####   #####      #    #    #   ####
+
+==============================================================================*/
 
       settingsTBarGroup = settingsTBarForm.appendChild(document.createElement("div"));
       settingsTBarGroup.className = 'form-group';
@@ -175,6 +195,64 @@ function Settings(tabID, fileData) {
       settingsTBarGroupBtn2.id = 'removeInfoData';
       settingsTBarGroupBtn2.innerHTML = '<span class="i fa fa-minus">&nbsp</span>Info Card';
       settingsTBarGroupBtn2.setAttribute('disabled','true');
+
+  //    settingsTBarGroup = settingsTBarForm.appendChild(document.createElement("div"));
+  //    settingsTBarGroup.className = 'form-group';
+      settingsTBarGroupBtn2 = settingsTBarGroup.appendChild(document.createElement("button"));
+      settingsTBarGroupBtn2.type = 'button';
+      settingsTBarGroupBtn2.className = 'btn btn-default';
+      settingsTBarGroupBtn2.id = 'shiftUp';
+      settingsTBarGroupBtn2.innerHTML = '<span class="i glyphicon glyphicon-arrow-up"></span>';
+      settingsTBarGroupBtn2.setAttribute('disabled','true');
+
+    //  settingsTBarGroupBtn1.onclick = 'addToInfocard()';
+    //  settingsTBarGroupBtn1.setAttribute('onclick','addToInfocard()');
+      settingsTBarGroupBtn2 = settingsTBarGroup.appendChild(document.createElement("button"));
+      settingsTBarGroupBtn2.type = 'button';
+      settingsTBarGroupBtn2.className = 'btn btn-default';
+      settingsTBarGroupBtn2.id = 'shiftDown';
+      settingsTBarGroupBtn2.innerHTML = '<span class="i glyphicon glyphicon-arrow-down"></span>';
+      settingsTBarGroupBtn2.setAttribute('disabled','true');
+
+/*==============================================================================
+
+                                             #
+#####   #    #     #    #       #####       #    ####     ##    #    #  ######
+#    #  #    #     #    #       #    #     #    #        #  #   #    #  #
+#####   #    #     #    #       #    #    #      ####   #    #  #    #  #####
+#    #  #    #     #    #       #    #   #           #  ######  #    #  #
+#    #  #    #     #    #       #    #  #       #    #  #    #   #  #   #
+#####    ####      #    ######  #####  #         ####   #    #    ##    ######
+
+==============================================================================*/
+
+      settingsTBarGroup = settingsTBarForm.appendChild(document.createElement("div"));
+      settingsTBarGroup.className = 'form-group';
+      var settingsTBarGroupBtn3 = settingsTBarGroup.appendChild(document.createElement("button"));
+      settingsTBarGroupBtn3.type = 'button';
+      settingsTBarGroupBtn3.className = 'btn btn-default';
+      settingsTBarGroupBtn3.id = 'buildViz';
+      settingsTBarGroupBtn3.innerHTML = '<span class="i glyphicon glyphicon-refresh"></span>';
+
+    //  settingsTBarGroupBtn1.onclick = 'addToInfocard()';
+    //  settingsTBarGroupBtn1.setAttribute('onclick','addToInfocard()');
+      settingsTBarGroupBtn3 = settingsTBarGroup.appendChild(document.createElement("button"));
+      settingsTBarGroupBtn3.type = 'button';
+      settingsTBarGroupBtn3.className = 'btn btn-default';
+      settingsTBarGroupBtn3.id = 'saveSettings';
+      settingsTBarGroupBtn3.innerHTML = '<span class="i fa pficon-save"></span>';
+      settingsTBarGroupBtn3.setAttribute('disabled','true');
+
+/*==============================================================================
+
+      ####   ######    ##    #####    ####   #    #
+     #       #        #  #   #    #  #    #  #    #
+      ####   #####   #    #  #    #  #       ######
+          #  #       ######  #####   #       #    #
+     #    #  #       #    #  #   #   #    #  #    #
+      ####   ######  #    #  #    #   ####   #    #
+
+==============================================================================*/
 
       settingsTBarGroup = settingsTBarForm.appendChild(document.createElement("div"));
       settingsTBarGroup.className = 'toolbar-pf-action-right';
@@ -410,7 +488,10 @@ function Settings(tabID, fileData) {
   }
 
   //var Settings = {};
+  tableRows = [];
   this.tableRows = tableRows;
+  infoCardLayout.row = [];
+  infoCardLayout.fieldName = [];
 
   var eEvent = {
     LABEL: 1,
@@ -492,7 +573,8 @@ new emptyTableViewUtil({
   restoreRowsSelector: "#restoreRows1",
   tableSelector: "#table1",
   includeInfoDataSelector: '#includeInfoData',
-  removeInfoDataSelector: '#removeInfoData'
+  removeInfoDataSelector: '#removeInfoData',
+  buildVizSelector: '#buildViz'
 });
 
 /*
@@ -537,7 +619,7 @@ table2 = $("#table2").DataTable({
       className: "table-view-pf-actions",
       render: function (data, type, full, meta) {
         // Inline action button renderer
-        return '<div class="table-view-pf-btn"><button class="btn btn-default" type="button">Actions</button></div>';
+        return '<div class="table-view-pf-btn"><button class="btn btn-default" type="button">...</button></div>';
       }
     }, {
       data: null,
@@ -629,6 +711,8 @@ table2
             selectionOrder.push(index);
           } else {
             $('#removeInfoData').removeAttr('disabled');
+            $('#shiftUp').removeAttr('disabled');
+            $('#shiftDown').removeAttr('disabled');
           }
         });
         if (selectionOrder.length > 0) {
@@ -693,11 +777,15 @@ table2
           } else if (selectionOrder.length === table2.rows({ selected: true})[0].length) {
             // rows selected are all able to be added to InfoCard
             $('#removeInfoData').attr('disabled', 'true');
+            $('#shiftUp').attr('disabled', 'true');
+            $('#shiftDown').attr('disabled', 'true');
           }
         } else {
           // no more rows selected
           $('#includeInfoData').attr('disabled', 'true');
           $('#removeInfoData').attr('disabled', 'true');
+          $('#shiftUp').attr('disabled', 'true');
+          $('#shiftDown').attr('disabled', 'true');
         }
 
         table2.rows({ selected: true})[0].forEach(function(row) {
@@ -735,6 +823,7 @@ var emptyTableViewUtil = function (config) {
   this.restoreRows = $(config.restoreRowsSelector); // Restore rows control
   this.includeInfoData = $(config.includeInfoDataSelector);
   this.removeInfoData = $(config.removeInfoDataSelector);
+  this.buildViz = $(config.buildVizSelector);
 
   // Handle click on delete rows control
   this.deleteRows.on('click', function() {
@@ -767,20 +856,24 @@ var emptyTableViewUtil = function (config) {
 //    table2.rows({ selected: true})[0].forEach(function(row){
     selectionOrder.forEach(function(row) {
       //if (infoCardLayout.indexOf(table2.rows({ selected: true})[0][infoCardLayout.length]) === -1) {
-      if (infoCardLayout.indexOf(row) === -1) {
-        infoCardLayout.push(row);
-        table2.cell(row, translationTable.headings[1].key + ":name").data(infoCardLayout.length);
+      if (infoCardLayout.row.indexOf(row) === -1) {
+        infoCardLayout.row.push(row);
+        infoCardLayout.fieldName.push(table2.cell(row, translationTable.headings[0].key + ":name").data());
+        table2.cell(row, translationTable.headings[1].key + ":name").data(infoCardLayout.row.length);
+        var cardObj = {'field': row, 'string':table2.cell(row, translationTable.headings[0].key + ":name").data()};
+        console.log(cardObj);
       }
       table2.row(row).deselect().draw();
   //  console.log(table2.cell(row, translationTable.headings[1].key + ":name").data());
     })
     $('#includeInfoData').attr('disabled','true');
     $('#includeInfoData').attr('value', 'off');
-    $('#removeInfoData').attr('disabled','true');
+    if (table2.rows({ selected: true})[0].length === 0 ) {
+      $('#removeInfoData').attr('disabled','true');
+    }
     selectionOrder = [];
     console.log(infoCardLayout);
   });
-
 
 /*==============================================================================
 
@@ -797,17 +890,18 @@ var emptyTableViewUtil = function (config) {
 
     table2.rows({ selected: true})[0].forEach(function(row) {
       // only process rows that were previously selected
-      var layoutIndex = infoCardLayout.indexOf(row);
+      var layoutIndex = infoCardLayout.row.indexOf(row);
       if (layoutIndex != -1) {
         console.log("splicing:", row);
-        infoCardLayout.splice(layoutIndex,1);
+        infoCardLayout.row.splice(layoutIndex,1);
+        infoCardLayout.fieldName.splice(layoutIndex,1);
         console.log("infoCardLayout:", infoCardLayout);
         table2.cell(row, translationTable.headings[1].key + ":name").data(null);
         table2.row(row).deselect().draw();
       }
 
-      for (var i = 0; i < infoCardLayout.length; i++) {
-        table2.cell(infoCardLayout[i], translationTable.headings[1].key + ":name").data(i+1).draw();
+      for (var i = 0; i < infoCardLayout.row.length; i++) {
+        table2.cell(infoCardLayout.row[i], translationTable.headings[1].key + ":name").data(i+1).draw();
       }
     });
 
@@ -816,6 +910,26 @@ var emptyTableViewUtil = function (config) {
 
     console.log("removeInfoData");
   });
+
+  /*==============================================================================
+
+  #####   #    #     #    #       #####
+  #    #  #    #     #    #       #    #
+  #####   #    #     #    #       #    #
+  #    #  #    #     #    #       #    #
+  #    #  #    #     #    #       #    #
+  #####    ####      #    ######  #####
+
+  ==============================================================================*/
+  this.buildViz.on('click', function() {
+    if (!getElementState('tabVisualization')) {
+      console.log(getElementState('tabVisualization'), 'close previous session ...');
+      refreshVisualization();
+    }
+    console.log("buildViz");
+    buildVisualization(fileData);
+  });
+
 
   // Initialize restore rows
   if (this.dt.data().length === 0) {
@@ -839,6 +953,7 @@ var findTableViewUtil = function (config) {
 };
 
 function closeSettings(){
+  table2.clear();
   var elem = document.getElementById("emptyState2");
   elem.parentNode.removeChild(elem);
   elem = document.getElementById("pagination2");

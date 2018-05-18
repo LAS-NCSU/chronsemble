@@ -62,7 +62,6 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 //            instantOffset = 100 * yearMillis, // 100 year gap after an instant event
             instantOffset = dayMillis, // 1 day gap after an instant event
             timeRange = [];
-
         timelineGeometry.infoFlow.card.width =
           Math.floor((timelineGeometry.maxWidth - timelineGeometry.margin.left -
           timelineGeometry.margin.right -
@@ -569,6 +568,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     timeline.band = function (bandName, subBand) {
 //      console.log("Building band:" + bandName, "Geometry:", timelineGeometry[bandName]);
       console.log("Building band:" + bandName);
+//      console.log(infoCardLayout,infoCardLayout.forEach(function(d){return data.items[0].);
 //      console.log(itemsPerTrack);
 
         var band = {};
@@ -692,6 +692,16 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             .attr("width", "100%")
             .attr("height", "100%");
 
+          var lineNumber = 1;
+
+          infoCardLayout.fieldName.forEach(function(key){
+            infoCards.select("g").append("text")
+              .attr("x", "1")
+              .attr("y", 10*lineNumber++)
+              .attr("class", "infoFlowCardData")
+              .text(function (d) { return key + ": " + d[key]; });
+          })
+          /*
           infoCards.select("g").append("text")
             .attr("x", "1")
     //        .attr("y", function (d) { return band.yTrackPos(d.track) + 10; })
@@ -700,6 +710,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
   //          .attr("y", timelineGeometry.timeFlow.track.height/2 + timelineGeometry.timeFlow.track.space)
             .text(function (d) { return d.label; });
 //            console.log(d.label, d.track, d.trackPos);
+*/
         }
 
         band.addActions = function(actions) {
@@ -974,16 +985,16 @@ count++;
 
     }
 
-    //--------------------------------------------------------------------------
-    //
-    //   ####   #####     ##     #####     #     ####   ######  #        ####   #    #
-    //  #       #    #   #  #      #       #    #    #  #       #       #    #  #    #
-    //   ####   #    #  #    #     #       #    #    #  #####   #       #    #  #    #
-    //       #  #####   ######     #       #    #    #  #       #       #    #  # ## #
-    //  #    #  #       #    #     #       #    #    #  #       #       #    #  ##  ##
-    //   ####   #       #    #     #       #     ####   #       ######   ####   #    #
-    //
-    //--------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
+
+   ####   #####     ##     #####     #     ####   ######  #        ####   #    #
+  #       #    #   #  #      #       #    #    #  #       #       #    #  #    #
+   ####   #    #  #    #     #       #    #    #  #####   #       #    #  #    #
+       #  #####   ######     #       #    #    #  #       #       #    #  # ## #
+  #    #  #       #    #     #       #    #    #  #       #       #    #  ##  ##
+   ####   #       #    #     #       #     ####   #       ######   ####   #    #
+
+------------------------------------------------------------------------------*/
 
     function updateSpatioFlow(eventLocations, maxGradient) {
 
@@ -1278,7 +1289,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
                     bands[d].xScale.domain(domain);
   //                  xBrushWidth = d3.select(".extent").attr("width");
   //                  if (xBrushWidth != savedXbrushWidth) {
-                      bands[d].redraw();
+                    bands[d].redraw();
   //                  } else {
   //                    console.log(bands[d]);
   //                    timeline.hScroll();
@@ -1430,13 +1441,14 @@ console.log("band.y:", band.y, "band.h:", band.h);
         // A dateString of '0' will be converted to '1 BC'.
         // Because JavaScript can't define AD years between 0..99,
         // these years require a special treatment.
+        if (moment(dateString, moment.ISO_8601, true).isValid()) return new Date(dateString);
         var formatString = aFormatString || "%Y-%m-%d";
 //        console.log(formatString);
 //        var format = d3.time.format("%Y-%m-%d"),
         var format = d3.time.format.utc(formatString),
             date,
             year;
-
+//console.log(dateString, moment(dateString, moment.ISO_8601, true).isValid(), formatString);
         date = format.parse(dateString);
         if (date !== null) return date;
 //console.log("date null first pass");
