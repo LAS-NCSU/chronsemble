@@ -163,10 +163,10 @@ var processFileData = function (dataObject, aFile) {
   //console.log(tabSettings[translationTable.headings[2].key]); //sampleB
   //console.log(tabSettings.tableRows);
 
-  setElementState(event, 'tabVisualization', 'enabled');
+//  setElementState(event, 'tabVisualization', 'enabled');
   setElementState(event, 'tabSettings', 'enabled');
   setElementState(event, 'menuItemCloseFile', 'enabled');
-
+/*
   if (fileData[0].loc === undefined) hasSpatioFlow = false;
   else hasSpatioFlow = true;
 
@@ -194,8 +194,44 @@ var processFileData = function (dataObject, aFile) {
       .vScroll( )
 //            .defineVerticalScrollArea( )
       .redraw();
+*/
+      return fileData;
 
 };
+
+function buildVisualization(fileData) {
+  setElementState(event, 'tabVisualization', 'enabled');
+
+  if (fileData[0].loc === undefined) hasSpatioFlow = false;
+  else hasSpatioFlow = true;
+
+  //console.log("File: " + aFile.name + " read complete!", fileData);
+  timelineStatusBar(domStatusBar, fileList[0].name);
+  if (hasSpatioFlow) spatioFlow(domSpatioFlow);
+
+  timeline(domTimeline, domSpatioFlow, domInfoFlow)
+      .data(fileData)
+      .defineInfoflowPane( )
+      .defineInfoflowArea( )
+      .defineTimelinePane( )
+      .defineTimeflowArea( )
+      .band("timeFlow", false)
+      .mainReference("timeFlow")
+      .xAxis("timeFlow")
+      .tooltips("timeFlow")
+      .defineBirdViewArea( )
+      .band("birdView", true)
+      .xAxis("birdView")
+      .labels("timeFlow")
+      .labels("birdView")
+      .brush("birdView", ["timeFlow", "infoFlow"])
+      .band("infoFlow", false)
+      .vScroll( )
+//            .defineVerticalScrollArea( )
+      .redraw();
+
+      return fileData;
+}
 
 function closeVisualization(event, aFile) {
   //document.getElementsByClassName('tooltip').remove();
@@ -211,6 +247,14 @@ function closeVisualization(event, aFile) {
   closeSettings( );
   clearFileInput(document.getElementById("file-read"));
 }
+
+function refreshVisualization( ) {
+  //document.getElementsByClassName('tooltip').remove();
+  d3.selectAll('.tooltip').remove();
+  d3.selectAll('svg').remove();
+
+}
+
 // fcn to return the width (in pixels) of a string to be rendered on canvas.
 // This fcn is used to help provide "pretty" tracks with fully readable labels
 // at some prescribed zoom level.
@@ -374,6 +418,11 @@ function closeTab(evt) {
 
 function setElementState(evt, elementName, elementState) {
   document.getElementById(elementName).disabled=((elementState === "disabled") ? true : false);
+}
+
+function getElementState(elementName) {
+  var thisElement = document.getElementById(elementName);
+  return thisElement.disabled;
 }
 
 function saveFile(strData, strFileName, strMimeType) {
