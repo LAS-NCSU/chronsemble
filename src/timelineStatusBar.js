@@ -33,17 +33,45 @@ function timelineStatusBar(domElement, dataFilename) {
     textLabel = d3.select(domElement).select("g").append("text")
       .attr("transform", "translate(" + timelineGeometry.maxWidth/2 + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
       .attr("class", "textStatusBar")
+      .attr("id", "InfoFlowButton")
+//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
+      .text(statusFieldSeparator + ((hasInfoFlow)? symbolsUnicode.pushButtonOn:symbolsUnicode.pushButtonOff));
+
+    textLabel = d3.select(domElement).select("g").append("text")
+      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 40) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
+      .attr("class", "textStatusBar")
+      .attr("id", "InfoFlowButtonLabel")
+//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
+      .text("Info-flow");
+
+    textLabel = d3.select(domElement).select("g").append("text")
+      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 90) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
+      .attr("class", "textStatusBar")
+      .attr("id", "TemporalFlowButton")
+//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
+      .text(statusFieldSeparator + ((true)? symbolsUnicode.pushButtonOn:symbolsUnicode.pushButtonOff));
+
+    textLabel = d3.select(domElement).select("g").append("text")
+      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 130) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
+      .attr("class", "textStatusBar")
+      .attr("id", "TemporalFlowButtonLabel")
+//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
+      .text("Temporal flow");
+
+    textLabel = d3.select(domElement).select("g").append("text")
+      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 205) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
+      .attr("class", "textStatusBar")
       .attr("id", "SpatioFlowButton")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
       .text(statusFieldSeparator + ((hasSpatioFlow)? symbolsUnicode.pushButtonOn:symbolsUnicode.pushButtonOff));
 
     textLabel = d3.select(domElement).select("g").append("text")
-      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 40) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
+      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 245) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
       .attr("class", "textStatusBar")
       .attr("id", "SpatioFlowButtonLabel")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
       .text("Spatio flow");
-
+/*
     textLabel = d3.select(domElement).select("g").append("text")
       .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 110) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
       .attr("class", "textStatusBar")
@@ -57,5 +85,5 @@ function timelineStatusBar(domElement, dataFilename) {
       .attr("id", "NodeLinkButtonLabel")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
       .text("Node-link");
-
+*/
 }
