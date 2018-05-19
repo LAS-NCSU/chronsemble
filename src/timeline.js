@@ -26,7 +26,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     var lastEvent = null;
 
     var svgTime = d3.select(domTimelineElement).append("svg");
-    var svgInfo = d3.select(domInfoFlowElement).append("svg");
+    if (hasInfoFlow) {
+      var svgInfo = d3.select(domInfoFlowElement).append("svg");
+    }
 //            .append("svg").append("g");
 
     var timelineElement = svgTime;
@@ -396,7 +398,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
         }
       }
 
-      buildInfoFlowScales(data.items);
+      if (hasInfoFlow) buildInfoFlowScales(data.items);
 
   //    saveFile(JSON.stringify(d3.keys(data.items[1])), 'filename.txt', 'text/plain');
   //      var confiData = infoFlowConfigObject(d3.keys(data.items[1]));
@@ -422,6 +424,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     timeline.defineInfoflowPane = function( ) {
       // Create svg element to contain all of the timeline elements
+      if (!hasInfoFlow) return timeline;
         svgInfo.attr("class", "svg")
            .attr("id", "svgInfoFlow")
            .attr("width", timelineGeometry.maxWidth)
@@ -453,6 +456,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
     }
 
     timeline.defineInfoflowArea = function( ) {
+      if (!hasInfoFlow) return timeline;
        svgInfo.append("g")
           .attr("transform", "translate(" + timelineGeometry.margin.left + "," +
             timelineGeometry.margin.top + ")")
@@ -567,6 +571,8 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
 
     timeline.band = function (bandName, subBand) {
 //      console.log("Building band:" + bandName, "Geometry:", timelineGeometry[bandName]);
+      if (bandName === 'infoFlow' && !hasInfoFlow) return timeline;
+
       console.log("Building band:" + bandName);
 //      console.log(infoCardLayout,infoCardLayout.forEach(function(d){return data.items[0].);
 //      console.log(itemsPerTrack);

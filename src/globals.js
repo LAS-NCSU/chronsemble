@@ -133,6 +133,7 @@ var topKeys = d3.set(["label", "SideA", "SideB", "start", "end", "whereFought",
                            "loc", "Initiator", "Outcome", "SideADeaths",
                            "SideBDeaths"]);
 var hasSpatioFlow = null;
+var hasInfoFlow = null;
 
 function isString (obj) {
  return (Object.prototype.toString.call(obj) === '[object String]');
@@ -201,9 +202,14 @@ var processFileData = function (dataObject, aFile) {
 
 function buildVisualization(fileData) {
   setElementState(event, 'tabVisualization', 'enabled');
-
+  var targetNames = ['timeFlow'];
   if (fileData[0].loc === undefined) hasSpatioFlow = false;
   else hasSpatioFlow = true;
+
+  if (infoCardLayout.row.length > 0) {
+    hasInfoFlow = true;
+    targetNames.push('infoFlow');
+  } else hasInfoFlow = false;
 
   //console.log("File: " + aFile.name + " read complete!", fileData);
   timelineStatusBar(domStatusBar, fileList[0].name);
@@ -224,7 +230,7 @@ function buildVisualization(fileData) {
       .xAxis("birdView")
       .labels("timeFlow")
       .labels("birdView")
-      .brush("birdView", ["timeFlow", "infoFlow"])
+      .brush("birdView", targetNames)
       .band("infoFlow", false)
       .vScroll( )
 //            .defineVerticalScrollArea( )
