@@ -313,9 +313,6 @@ function Settings(tabID, fileData) {
       settingsResultsCol.innerHTML = '<strong>0</strong> of <strong>0</strong> selected';
 
       return fragment;
-
-    //  var settingsTab = document.getElementById(elementID);
-    //  settingsTab.appendChild(tmpSettingsTab);
     }
 
 /*==============================================================================
@@ -348,9 +345,6 @@ function Settings(tabID, fileData) {
       '<th colspan="2">Event Assignments</th>';
 
       return fragment;
-
-  //    var settingsTab = document.getElementById(elementID);
-  //    settingsTab.appendChild(tmpTableBody);
 
     }
 
@@ -423,9 +417,6 @@ function Settings(tabID, fileData) {
                                   '<li><a href="#" title="Last Page"><span class="i fa fa-angle-double-right"></span></a></li>';
 
       return fragment;
-  //    var settingsTab = document.getElementById(elementID);
-  //    settingsTab.appendChild(tmpTableFooter);
-
 }
 
 /*==============================================================================
@@ -535,33 +526,8 @@ function Settings(tabID, fileData) {
         [translationTable.headings[4].key]: '',
         [translationTable.headings[5].key]: '' });
   });
-  /*
-  for (var i in fileData[0]) {
-    this.tableRow.push(function(i) {
-      return {[translationTable.headings[0].key]: fileKeys[count++],
-        [translationTable.headings[1].key]: fileData[1][i],
-        [translationTable.headings[2].key]: fileData[2][i],
-        [translationTable.headings[3].key]: '',
-        [translationTable.headings[4].key]: '' }
-    });
-    */
-    /*
-    this[translationTable.headings[1].key].push(fileData[1][i]);
-    this[translationTable.headings[2].key].push(fileData[2][i]);
-    this[translationTable.headings[3].key].push('');
-    this[translationTable.headings[4].key].push('');
-    */
-//  }
-
-  //console.log(this[translationTable.headings[1].key]);
-  //console.log(this[translationTable.headings[2].key]);
-  //console.log(this[translationTable.headings[3].key]);
-  //console.log(this[translationTable.headings[4].key]);
-  //this.sampleA = fileData[]
-
 
 buildTable(tabID);
-//$('.applauncher-pf .dropdown-toggle').eq(0).click();
 
 // Initialize find util
 new findTableViewUtil();
@@ -574,7 +540,8 @@ new emptyTableViewUtil({
   tableSelector: "#table1",
   includeInfoDataSelector: '#includeInfoData',
   removeInfoDataSelector: '#removeInfoData',
-  buildVizSelector: '#buildViz'
+  buildVizSelector: '#buildViz',
+  shiftUpSelector: '#shiftUp'
 });
 
 /*
@@ -703,32 +670,37 @@ $('.datatable').dataTable({
 table2
     .on( 'select', function ( e, dt, type, indexes ) {
       // Must be able to process all indexes passed - for instance if the
-      // selectAll box is ckicked.
+      // selectAll box is checked.
         indexes.forEach(function(index) {
-          if (table2.cell(index, translationTable.headings[1].key + ":name").data() === null) {
+          if (table2.cell(index, translationTable.headings[1].key + ":name").data() === null &&
+              selectionOrder.indexOf(index) === -1) {
           //  console.log("index:", index, " is null");
           //  $('#includeInfoData').removeAttr('disabled');
+          console.log("pushing:", index);
             selectionOrder.push(index);
           } else {
             $('#removeInfoData').removeAttr('disabled');
-            $('#shiftUp').removeAttr('disabled');
-            $('#shiftDown').removeAttr('disabled');
+
+            if (table2.rows({ selected: true})[0].length === 1) {
+    //          console.log("One selected");
+              if (infoCardLayout.row[0] !== table2.rows({ selected: true})[0][0]) {
+                $('#shiftUp').removeAttr('disabled');
+      //          console.log("no more shift up");
+              } else if (table2.rows({ selected: true})[0][0] !== infoCardLayout.row[infoCardLayout.row.length-1]) {
+                $('#shiftDown').removeAttr('disabled');
+        //        console.log("no more shift down");
+              }
+            } else {
+              $('#shiftUp').removeAttr('disabled');
+              $('#shiftDown').removeAttr('disabled');
+            }
           }
         });
         if (selectionOrder.length > 0) {
           $('#includeInfoData').removeAttr('disabled');
         }
-/*
-        var rowData = table2.rows( indexes ).data().toArray();
-        console.log( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
-        console.log(indexes, rowData);
-        if (rowData[0].infocard != null) {
-          $('#removeInfoData').removeAttr('disabled');
-        } else {
-          $('#includeInfoData').removeAttr('disabled');
-          selectionOrder.push(indexes[0]);
-        }
-        */
+    //    var rowData = table2.rows( indexes ).data().toArray();
+    //    console.log( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
     } )
     .on( 'deselect', function ( e, dt, type, indexes ) {
       // Cases: 1) the deselected item was a null (able to be included)
@@ -757,20 +729,34 @@ table2
       } else {
         indexes.forEach(function(index) {
         //  if (table2.cell(index, translationTable.headings[1].key + ":name").data() != null) {
+        // if this row is in the selectionOrder, remove it.
           if (selectionOrder.indexOf(index) != -1) {
+            console.log("splicing:", index);
             selectionOrder.splice(selectionOrder.indexOf(index), 1);
           }
         } )
-/*
-        console.log("e:", e, "dt:", dt, "type:", type, "indexes:", indexes, "------");
-        // if this row is in the selectionOrder, remove it.
-        selectionOrder.splice(selectionOrder.indexOf(indexes[0]), 1);
+
+      //  console.log("e:", e, "dt:", dt, "type:", type, "indexes:", indexes, "------");
         // In order to determine how to update the buttons, we must determine if
         // there are any other selected rows.
         //console.log("selected rows:", table2.rows({ selected: true})[0].length);
-        */
+
         if (table2.rows({ selected: true})[0].length > 0) {
-          console.log("selectionOrder.length=",selectionOrder.length);
+//console.log("selectionOrder.length=",selectionOrder.length);
+          // corner cases to deactivate the shift up and down buttons when the
+          // only selection is either the first or last line of the info-card
+          // respectively.
+          if (table2.rows({ selected: true})[0].length === 1) {
+  //          console.log("One selected");
+            if (infoCardLayout.row[0] === table2.rows({ selected: true})[0][0]) {
+              $('#shiftUp').attr('disabled', 'true');
+    //          console.log("no more shift up");
+            } else if (table2.rows({ selected: true})[0][0] === infoCardLayout.row[infoCardLayout.row.length-1]) {
+              $('#shiftDown').attr('disabled', 'true');
+      //        console.log("no more shift down");
+            }
+          }
+
           if (selectionOrder.length === 0) {
             // rows selected with none that can be added to InfoCard
             $('#includeInfoData').attr('disabled', 'true');
@@ -791,11 +777,6 @@ table2
         table2.rows({ selected: true})[0].forEach(function(row) {
           console.log("still selected:", row);
         });
-//        if (selectionOrder.indexOf(indexes[0]) === -1) {
-//
-//        }
-  //        var rowData = table2.rows( indexes ).data().toArray();
-  //        console.log( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
       }
 
     } );
@@ -824,6 +805,7 @@ var emptyTableViewUtil = function (config) {
   this.includeInfoData = $(config.includeInfoDataSelector);
   this.removeInfoData = $(config.removeInfoDataSelector);
   this.buildViz = $(config.buildVizSelector);
+  this.shiftUp = $(config.shiftUpSelector);
 
   // Handle click on delete rows control
   this.deleteRows.on('click', function() {
@@ -911,6 +893,97 @@ var emptyTableViewUtil = function (config) {
     console.log("removeInfoData");
   });
 
+/*==============================================================================
+
+    ####   #    #     #    ######   #####  #    #  #####
+   #       #    #     #    #          #    #    #  #    #
+    ####   ######     #    #####      #    #    #  #    #
+        #  #    #     #    #          #    #    #  #####
+   #    #  #    #     #    #          #    #    #  #
+    ####   #    #     #    #          #     ####   #
+
+==============================================================================*/
+  this.shiftUp.on('click', function() {
+    console.log("shiftUp");
+//      $('#shiftUp').attr('value', 'on');
+    var shiftedRows = 0;
+    var layoutIndex = -1;
+    var selectedRows = table2.rows({ selected: true})[0];
+
+    infoCardLayout.row.forEach(function(row) {
+      // only process selected rows
+      layoutIndex++;
+      if (layoutIndex === 0) return;
+      if (selectedRows.indexOf(row) !== -1) {
+        shiftedRows++;
+        var layoutName = infoCardLayout.fieldName[layoutIndex];
+        var swapRow = infoCardLayout.row[layoutIndex-1];
+        var swapName = infoCardLayout.fieldName[layoutIndex-1];
+        console.log("shiftup:", row, " shiftdn:", swapRow);
+        console.log("shiftup:", layoutName, " shiftdn:", swapName);
+        infoCardLayout.row[layoutIndex-1] = row;
+        infoCardLayout.fieldName[layoutIndex-1] = layoutName;
+        infoCardLayout.row[layoutIndex] = swapRow;
+        infoCardLayout.fieldName[layoutIndex] = swapName;
+        console.log("infoCardLayout:", infoCardLayout);
+        table2.cell(row, translationTable.headings[1].key + ":name").data(layoutIndex).draw();
+        table2.cell(swapRow, translationTable.headings[1].key + ":name").data(layoutIndex+1).draw();
+      }
+    });
+    if (layoutIndex === 1 && shiftedRows === 1) {
+      $('#shiftUp').attr('disabled','true');
+    }
+//      $('#shiftUp').attr('value', 'off');
+
+  });
+
+
+/*==============================================================================
+
+ ####   #    #     #    ######   #####  #####   #    #
+#       #    #     #    #          #    #    #  ##   #
+ ####   ######     #    #####      #    #    #  # #  #
+     #  #    #     #    #          #    #    #  #  # #
+#    #  #    #     #    #          #    #    #  #   ##
+ ####   #    #     #    #          #    #####   #    #
+
+==============================================================================*/
+/*
+    this.shiftDown.on('click', function() {
+      console.log("shiftDown");
+//      $('#shiftUp').attr('value', 'on');
+      var shiftedRows = 0;
+      var layoutIndex = null;
+
+      table2.rows({ selected: true})[0].forEach(function(row) {
+        // only process rows that were previously selected
+        layoutIndex = infoCardLayout.row.indexOf(row);
+        if (layoutIndex === infoCardLayout.length-1) return;
+        var layoutName = infoCardLayout.fieldName[layoutIndex];
+        if (layoutIndex != -1) {
+          shiftedRows++;
+          var swapRow = infoCardLayout.row[layoutIndex-1];
+          var swapName = infoCardLayout.fieldName[layoutIndex-1];
+          console.log("shiftup:", row, " shiftdn:", swapRow);
+          console.log("shiftup:", layoutName, " shiftdn:", swapName);
+          infoCardLayout.row[layoutIndex-1] = row;
+          infoCardLayout.fieldName[layoutIndex-1] = layoutName;
+          infoCardLayout.row[layoutIndex] = swapRow;
+          infoCardLayout.fieldName[layoutIndex] = swapName;
+          console.log("infoCardLayout:", infoCardLayout);
+          table2.cell(row, translationTable.headings[1].key + ":name").data(layoutIndex).draw();
+          table2.cell(swapRow, translationTable.headings[1].key + ":name").data(layoutIndex+1).draw();
+    //      table2.row(row).draw();
+    //      table2.row(swapRow).draw();
+        }
+
+      });
+      if (layoutIndex === 1 && shiftedRows === 1) {
+        $('#shiftUp').attr('disabled','true');
+      }
+//      $('#shiftUp').attr('value', 'off');
+    });
+*/
   /*==============================================================================
 
   #####   #    #     #    #       #####
@@ -929,7 +1002,6 @@ var emptyTableViewUtil = function (config) {
     console.log("buildViz");
     buildVisualization(fileData);
   });
-
 
   // Initialize restore rows
   if (this.dt.data().length === 0) {
