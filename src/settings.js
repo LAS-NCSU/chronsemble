@@ -541,7 +541,8 @@ new emptyTableViewUtil({
   includeInfoDataSelector: '#includeInfoData',
   removeInfoDataSelector: '#removeInfoData',
   buildVizSelector: '#buildViz',
-  shiftUpSelector: '#shiftUp'
+  shiftUpSelector: '#shiftUp',
+  shiftDownSelector: '#shiftDown'
 });
 
 /*
@@ -686,7 +687,8 @@ table2
               if (infoCardLayout.row[0] !== table2.rows({ selected: true})[0][0]) {
                 $('#shiftUp').removeAttr('disabled');
       //          console.log("no more shift up");
-              } else if (table2.rows({ selected: true})[0][0] !== infoCardLayout.row[infoCardLayout.row.length-1]) {
+              }
+              if (table2.rows({ selected: true})[0][0] !== infoCardLayout.row[infoCardLayout.row.length-1]) {
                 $('#shiftDown').removeAttr('disabled');
         //        console.log("no more shift down");
               }
@@ -806,6 +808,7 @@ var emptyTableViewUtil = function (config) {
   this.removeInfoData = $(config.removeInfoDataSelector);
   this.buildViz = $(config.buildVizSelector);
   this.shiftUp = $(config.shiftUpSelector);
+  this.shiftDown = $(config.shiftDownSelector);
 
   // Handle click on delete rows control
   this.deleteRows.on('click', function() {
@@ -906,10 +909,12 @@ var emptyTableViewUtil = function (config) {
   this.shiftUp.on('click', function() {
     console.log("shiftUp");
 //      $('#shiftUp').attr('value', 'on');
-    var shiftedRows = 0;
-    var layoutIndex = -1;
+//    var shiftedRows = 0;
+//    var layoutIndex = -1;
     var selectedRows = table2.rows({ selected: true})[0];
-
+    var shiftResults = shiftInfoData(selectedRows);
+    console.log(shiftResults);
+/*
     infoCardLayout.row.forEach(function(row) {
       // only process selected rows
       layoutIndex++;
@@ -930,10 +935,11 @@ var emptyTableViewUtil = function (config) {
         table2.cell(swapRow, translationTable.headings[1].key + ":name").data(layoutIndex+1).draw();
       }
     });
-    if (layoutIndex === 1 && shiftedRows === 1) {
+    */
+    if (shiftResults.priorIndex === 1 && shiftResults.shiftedRows === 1) {
       $('#shiftUp').attr('disabled','true');
     }
-//      $('#shiftUp').attr('value', 'off');
+    $('#shiftDown').removeAttr('disabled');
 
   });
 
@@ -948,52 +954,40 @@ var emptyTableViewUtil = function (config) {
  ####   #    #     #    #          #    #####   #    #
 
 ==============================================================================*/
-/*
-    this.shiftDown.on('click', function() {
-      console.log("shiftDown");
+
+  this.shiftDown.on('click', function() {
+    console.log("shiftDown");
 //      $('#shiftUp').attr('value', 'on');
-      var shiftedRows = 0;
-      var layoutIndex = null;
-
-      table2.rows({ selected: true})[0].forEach(function(row) {
-        // only process rows that were previously selected
-        layoutIndex = infoCardLayout.row.indexOf(row);
-        if (layoutIndex === infoCardLayout.length-1) return;
-        var layoutName = infoCardLayout.fieldName[layoutIndex];
-        if (layoutIndex != -1) {
-          shiftedRows++;
-          var swapRow = infoCardLayout.row[layoutIndex-1];
-          var swapName = infoCardLayout.fieldName[layoutIndex-1];
-          console.log("shiftup:", row, " shiftdn:", swapRow);
-          console.log("shiftup:", layoutName, " shiftdn:", swapName);
-          infoCardLayout.row[layoutIndex-1] = row;
-          infoCardLayout.fieldName[layoutIndex-1] = layoutName;
-          infoCardLayout.row[layoutIndex] = swapRow;
-          infoCardLayout.fieldName[layoutIndex] = swapName;
-          console.log("infoCardLayout:", infoCardLayout);
-          table2.cell(row, translationTable.headings[1].key + ":name").data(layoutIndex).draw();
-          table2.cell(swapRow, translationTable.headings[1].key + ":name").data(layoutIndex+1).draw();
-    //      table2.row(row).draw();
-    //      table2.row(swapRow).draw();
-        }
-
-      });
-      if (layoutIndex === 1 && shiftedRows === 1) {
-        $('#shiftUp').attr('disabled','true');
+    var selectedRows = [];
+    var i = 1;
+    infoCardLayout.row.forEach(function(row) {
+      console.log("checking row:", row);
+      if (i < infoCardLayout.row.length &&
+          table2.rows({ selected: true})[0].indexOf(row) !== -1) {
+          selectedRows.push(infoCardLayout.row[i]);
       }
-//      $('#shiftUp').attr('value', 'off');
+      i++;
     });
-*/
-  /*==============================================================================
+    console.log("up shift:", selectedRows);
+    var shiftResults = shiftInfoData(selectedRows);
+    console.log("shift results:", shiftResults);
+    if (selectedRows.length === 1 && selectedRows[0] === infoCardLayout.row[infoCardLayout.row.length-2]) {
+      $('#shiftDown').attr('disabled','true');
+    }
+    $('#shiftUp').removeAttr('disabled');
+});
 
-  #####   #    #     #    #       #####
-  #    #  #    #     #    #       #    #
-  #####   #    #     #    #       #    #
-  #    #  #    #     #    #       #    #
-  #    #  #    #     #    #       #    #
-  #####    ####      #    ######  #####
 
-  ==============================================================================*/
+/*==============================================================================
+
+#####   #    #     #    #       #####
+#    #  #    #     #    #       #    #
+#####   #    #     #    #       #    #
+#    #  #    #     #    #       #    #
+#    #  #    #     #    #       #    #
+#####    ####      #    ######  #####
+
+==============================================================================*/
   this.buildViz.on('click', function() {
     if (!getElementState('tabVisualization')) {
       console.log(getElementState('tabVisualization'), 'close previous session ...');
@@ -1008,6 +1002,35 @@ var emptyTableViewUtil = function (config) {
     $(this.restoreRows).prop("disabled", false);
   }
 };
+
+function shiftInfoData(selectedRows) {
+  var shiftedRows = 0;
+  var layoutIndex = -1;
+  var priorIndex = null;
+
+  infoCardLayout.row.forEach(function(row) {
+    // only process selected rows
+    layoutIndex++;
+    if (layoutIndex === 0) return;
+    if (selectedRows.indexOf(row) !== -1) {
+      shiftedRows++;
+      priorIndex = layoutIndex;
+      var layoutName = infoCardLayout.fieldName[layoutIndex];
+      var swapRow = infoCardLayout.row[layoutIndex-1];
+      var swapName = infoCardLayout.fieldName[layoutIndex-1];
+      console.log("shiftup:", row, " shiftdn:", swapRow);
+      console.log("shiftup:", layoutName, " shiftdn:", swapName);
+      infoCardLayout.row[layoutIndex-1] = row;
+      infoCardLayout.fieldName[layoutIndex-1] = layoutName;
+      infoCardLayout.row[layoutIndex] = swapRow;
+      infoCardLayout.fieldName[layoutIndex] = swapName;
+      console.log("infoCardLayout:", infoCardLayout);
+      table2.cell(row, translationTable.headings[1].key + ":name").data(layoutIndex).draw();
+      table2.cell(swapRow, translationTable.headings[1].key + ":name").data(layoutIndex+1).draw();
+    }
+  });
+return { priorIndex, shiftedRows };
+}
 
 /**
  * Utility to find items in Table View
