@@ -28,6 +28,7 @@ var symbolsUnicode = {
 var translationTable = {
   headings: [{key: "dataField", title: "Data Field"},
              {key: "infocard", title: '<span class="i fa pficon-info"></span>'},
+             //{key: "infocard", title: "+ Info Card"},
              {key: "sampleTyp", title: "Sample A"},
              {key: "sampleATyp", title: "Sample B"},
              {key: "format", title: "Type"},

@@ -80,11 +80,11 @@ function Settings(tabID, fileData) {
       var settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
       settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB1';
-      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = '&nbsp';
+      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = 'Data Field';
       settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
       settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
-      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB2';
+      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB6';
       settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = 'Event Assignments';
       settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
       settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
@@ -104,8 +104,8 @@ function Settings(tabID, fileData) {
       settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
       settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
-      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB6';
-      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = '+ InfoCard';
+      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB2';
+      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = '+ Info Card';
       settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
       settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
@@ -629,25 +629,41 @@ table2 = $("#table2").DataTable({
       {
         default: true,
         optionSelector: "#filterB1",
-        placeholder: '&nbsp'
-      }, {
-        optionSelector: "#filterB2",
-        placeholder: "Event Assignments"
-      }, {
-        optionSelector: "#filterB3",
-        placeholder: "Temporal Data"
-      }, {
-        optionSelector: "#filterB4",
-        placeholder: "Spatial Data"
-      }, {
-        optionSelector: "#filterB5",
-        placeholder: "Hidden Rows"
+        placeholder: 'Data Field',
+        columnNum: 1
       }, {
         optionSelector: "#filterB6",
-        placeholder: "+ Info Card"
+        placeholder: "Event Assignments",
+        columnNum: 7,
+        useCustomFilter: function searchEvent(dtSettings,searchData,index,rawData,counter){}
+      }, {
+        optionSelector: "#filterB3",
+        placeholder: "Temporal Data",
+        columnNum: 7,
+        useCustomFilter: function searchTime(dtSettings,searchData,index,rawData,counter){}
+      }, {
+        optionSelector: "#filterB4",
+        placeholder: "Spatial Data",
+        columnNum: 7,
+        useCustomFilter: function searchSpace(dtSettings,searchData,index,rawData,counter){}
+      }, {
+        optionSelector: "#filterB2",
+        placeholder: "+ Info Card",
+        columnNum: 2,
+        filterOnSelect: true,
+        useCustomFilter: function searchInfo(dtSettings,searchData,index,rawData,counter){
+          return (searchData[2] !== "");
+        }
+        //autoFilter: true
+        //placeholder: translationTable.headings[1].title
       }, {
         optionSelector: "#filterB7",
-        placeholder: "- Info Card"
+        placeholder: "- Info Card",
+        columnNum: 2,
+        filterOnSelect: true,
+        useCustomFilter: function searchNotInfo(dtSettings,searchData,index,rawData,counter){
+          return (searchData[2] === "");
+        }
       }
     ],
     paginationSelector: "#pagination2",
@@ -956,6 +972,9 @@ var emptyTableViewUtil = function (config) {
 ==============================================================================*/
 
   this.shiftDown.on('click', function() {
+  // Let sn be the nth selected info-card data field. In order to execute a
+  // shift down, we notice that a shift of [s0], [s1],..., [sn] down is equivalent to
+  // a shift of [s0+1], [s1+1],..., [sn+1] up.
     console.log("shiftDown");
 //      $('#shiftUp').attr('value', 'on');
     var selectedRows = [];
@@ -1004,6 +1023,10 @@ var emptyTableViewUtil = function (config) {
 };
 
 function shiftInfoData(selectedRows) {
+// All shifts are treated as a shift from position n to position n-1. Therefore
+// The selectedRows passed to this fcn are expected to be sorted from smallest
+// to largesdt and processed in the sam order.
+
   var shiftedRows = 0;
   var layoutIndex = -1;
   var priorIndex = null;
