@@ -96,11 +96,11 @@ function Settings(tabID, fileData) {
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
       settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB4';
       settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = 'Spatial Data';
-      settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
-      settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
-      settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
-      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB5';
-      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = 'Hidden Rows';
+//      settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
+//      settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
+//      settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
+//      settingsTBarGroupLabelDivDivBtnUlLiA.id = 'filterB5';
+//      settingsTBarGroupLabelDivDivBtnUlLiA.innerHTML = 'Hidden Rows';
       settingsTBarGroupLabelDivDivBtnUlLi = settingsTBarGroupLabelDivDivBtnUl.appendChild(document.createElement("li"));
       settingsTBarGroupLabelDivDivBtnUlLiA = settingsTBarGroupLabelDivDivBtnUlLi.appendChild(document.createElement("a"));
       settingsTBarGroupLabelDivDivBtnUlLiA.href = '#';
