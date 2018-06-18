@@ -348,15 +348,14 @@
             name: ctx._pfFilter.filterName,
             value: this.value,
             onSelect: false,
-            customFilter: ((ctx._pfFilter.filterOnSelect) ? null : ctx._pfFilter.filterFunction)
+            // If filterOnSelect is true, the custom filter will have already been
+            // added to the filter stack so we set it to null here. If the defined
+            // function is wrong type, set the function to simple all pass.
+            customFilter: ctx._pfFilter.filterFunction
           };
 
           if (addFilter(dt, newFilter)) {
-            if (newFilter.customFilter) {
-              $.fn.dataTable.ext.search.push(newFilter.customFilter);
-            } else {
-              $.fn.dataTable.ext.search.push(function () {return true;})
-            }
+            $.fn.dataTable.ext.search.push(newFilter.customFilter);
             dt.draw();
             addActiveFilterControl(dt, newFilter);
             updateFilterResults(dt);
@@ -397,9 +396,13 @@
       //ctx._pfFilter.filterColumn = i; // Save filter column when applying filter
       ctx._pfFilter.filterColumn = ctx._pfFilter.filterCols[i].columnNum; // Save filter column when applying filter
       ctx._pfFilter.filterOnSelect = ctx._pfFilter.filterCols[i].filterOnSelect; // Save applying filter behavior
-      ctx._pfFilter.filterFunction = ctx._pfFilter.filterCols[i].useCustomFilter; // Save custom filter function when applying filter
+      // Save custom filter function when applying filter; if problem with function
+      // type, define all-pass fileter.
+      ctx._pfFilter.filterFunction = ($.isFunction(ctx._pfFilter.filterCols[i].useCustomFilter) ?
+          ctx._pfFilter.filterCols[i].useCustomFilter : function allPass() {
+            console.warn('WARNING: custom filter function for option: \"', ctx._pfFilter.filterCols[i].placeholder,'\" set to non-function type; using all-pass filter instead.');
+            return true });
       ctx._pfFilter.filterName = $(this).text(); // Save filter name for active filter control
-
       if (ctx._pfFilter.filterOnSelect) {
         var newFilter = {
           column: ctx._pfFilter.filterColumn,
@@ -410,11 +413,7 @@
         };
 
         if (addFilter(dt, newFilter)) {
-          if (ctx._pfFilter.filterFunction) {
-            $.fn.dataTable.ext.search.push(ctx._pfFilter.filterFunction);
-          } else {
-            $.fn.dataTable.ext.search.push(function () {return true;})
-          }
+          $.fn.dataTable.ext.search.push(newFilter.customFilter);
           dt.draw();
           addActiveFilterControl(dt, newFilter);
           updateFilterResults(dt);
