@@ -222,6 +222,8 @@
    * @param {string} filter.column - Column associated with DataTable
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
+   * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
+   * @param {function} filter.customFilter - function for custom filtering
    * @private
    */
   function addActiveFilterControl (dt, filter) {
@@ -270,7 +272,7 @@
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
    * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
-   * @param {function} filter.value - function for custom filtering
+   * @param {function} filter.customFilter - function for custom filtering
    * @private
    */
   function addFilter (dt, filter) {
@@ -350,6 +352,11 @@
           };
 
           if (addFilter(dt, newFilter)) {
+            if (newFilter.customFilter) {
+              $.fn.dataTable.ext.search.push(newFilter.customFilter);
+            } else {
+              $.fn.dataTable.ext.search.push(function () {return true;})
+            }
             dt.draw();
             addActiveFilterControl(dt, newFilter);
             updateFilterResults(dt);
@@ -405,6 +412,8 @@
         if (addFilter(dt, newFilter)) {
           if (ctx._pfFilter.filterFunction) {
             $.fn.dataTable.ext.search.push(ctx._pfFilter.filterFunction);
+          } else {
+            $.fn.dataTable.ext.search.push(function () {return true;})
           }
           dt.draw();
           addActiveFilterControl(dt, newFilter);
@@ -444,8 +453,8 @@
    * @param {string} filter.column - Column associated with DataTable
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
-   * @param {boolean} filter.onSelect - true causes filter to take effect when selected
-   * @param {function} filter.value - function for custom filtering
+   * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
+   * @param {function} filter.customFilter - function for custom filtering
    */
   DataTable.Api.register("pfFilter.addFilter()", function (filter) {
     return this.iterator("table", function (ctx) {
