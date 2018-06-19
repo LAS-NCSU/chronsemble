@@ -161,6 +161,7 @@
     ctx._pfFilter.results = $(RESULTS_SELECTOR, opts.toolbarSelector); // Toolbar results row
     ctx._pfFilter.filterCaseInsensitive = opts.filterCaseInsensitive; // Filter filter case insensitive
     ctx._pfFilter.filterResults = $(FILTER_RESULTS_SELECTOR, opts.toolbarSelector); // Toolbar filter results
+    ctx._pfFilter.filterOnSelect = false; // Set applying filter behavior
     ctx._pfFilter.filterFunction = null; // Filter function placeholder
 
     if (ctx._pfFilter.filterCols === undefined) {
@@ -351,11 +352,11 @@
             // If filterOnSelect is true, the custom filter will have already been
             // added to the filter stack so we set it to null here. If the defined
             // function is wrong type, set the function to simple all pass.
-            customFilter: ctx._pfFilter.filterFunction
+            customFilter: (ctx._pfFilter.filterOnSelect) ? null : ctx._pfFilter.filterFunction
           };
 
           if (addFilter(dt, newFilter)) {
-            $.fn.dataTable.ext.search.push(newFilter.customFilter);
+            if (newFilter.customFilter) $.fn.dataTable.ext.search.push(newFilter.customFilter);
             dt.draw();
             addActiveFilterControl(dt, newFilter);
             updateFilterResults(dt);
@@ -398,11 +399,14 @@
       ctx._pfFilter.filterOnSelect = ctx._pfFilter.filterCols[i].filterOnSelect; // Save applying filter behavior
       // Save custom filter function when applying filter; if problem with function
       // type, define all-pass fileter.
-      ctx._pfFilter.filterFunction = ($.isFunction(ctx._pfFilter.filterCols[i].useCustomFilter) ?
+      ctx._pfFilter.filterFunction = (ctx._pfFilter.filterCols[i].useCustomFilter) ?
+        (($.isFunction(ctx._pfFilter.filterCols[i].useCustomFilter) ?
           ctx._pfFilter.filterCols[i].useCustomFilter : function allPass() {
             console.warn('WARNING: custom filter function for option: \"', ctx._pfFilter.filterCols[i].placeholder,'\" set to non-function type; using all-pass filter instead.');
-            return true });
+            return true }))
+        : null;
       ctx._pfFilter.filterName = $(this).text(); // Save filter name for active filter control
+
       if (ctx._pfFilter.filterOnSelect) {
         var newFilter = {
           column: ctx._pfFilter.filterColumn,
@@ -413,7 +417,7 @@
         };
 
         if (addFilter(dt, newFilter)) {
-          $.fn.dataTable.ext.search.push(newFilter.customFilter);
+          if (newFilter.customFilter) $.fn.dataTable.ext.search.push(newFilter.customFilter);
           dt.draw();
           addActiveFilterControl(dt, newFilter);
           updateFilterResults(dt);
