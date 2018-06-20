@@ -394,8 +394,11 @@
       if (ctx._pfFilter.filterButton !== undefined && ctx._pfFilter.filterButton.length !== 0) {
         ctx._pfFilter.filterButton.html($(this).text() + ' <span class="caret"></span>');
       }
-      //ctx._pfFilter.filterColumn = i; // Save filter column when applying filter
-      ctx._pfFilter.filterColumn = ctx._pfFilter.filterCols[i].columnNum; // Save filter column when applying filter
+      // Save filter column when applying filter; maintain backwards compatibility
+      // with behavior prior to columnNum field.
+      ctx._pfFilter.filterColumn =
+        (ctx._pfFilter.filterCols[i].columnNum > 0 && ctx._pfFilter.filterCols[i].columnNum < ctx._pfFilter.filterCols.length) ?
+        ctx._pfFilter.filterCols[i].columnNum : i; // Save filter column when applying filter
       ctx._pfFilter.filterOnSelect = ctx._pfFilter.filterCols[i].filterOnSelect; // Save applying filter behavior
       // Save custom filter function when applying filter; if problem with function
       // type, define all-pass fileter.
