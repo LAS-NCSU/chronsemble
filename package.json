@@ -15,7 +15,8 @@
     "paths_assets": "ln -s data assets",
     "less": "sh -c 'cd less && lessc styles.less ../css/styles.css'",
     "clean": "rm -rf node_modules css/geomap.css css/styles.css less/node_modules && rm assets",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "docker rmi local/patternfly && docker build --rm -t local/patternfly test",
+    "notest": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
