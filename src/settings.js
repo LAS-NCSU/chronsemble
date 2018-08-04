@@ -645,7 +645,6 @@ table2 = $("#table2").DataTable({
         optionSelector: "#filterB4",
         placeholder: "Spatial Data",
         columnNum: 7,
-        useCustomFilter: function searchSpace(dtSettings,searchData,index,rawData,counter){}
       }, {
         optionSelector: "#filterB2",
         placeholder: "+ Info Card",
