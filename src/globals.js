@@ -31,7 +31,7 @@ var translationTable = {
              //{key: "infocard", title: "+ Info Card"},
              {key: "sampleTyp", title: "Sample A"},
              {key: "sampleATyp", title: "Sample B"},
-             {key: "format", title: "Type"},
+             {key: "format", title: "Kind"},
              {key: "accuracy", title: "Accuracy"}]
 };
 var tabSettings = {};
