@@ -3,8 +3,24 @@
  * @description A collection of API methods providing simple filter functionality for DataTables. This ensures
  * DataTables meets the Patternfly design pattern with a toolbar.
  *
- * To apply a filter, the user must press enter in the given filter input. The user may apply a filter to a different
- * column via the given filter drop down. After a filter has been applied, the filter results text, active filter
+ * There are two types of filters: (1) search string driven, and (2) immediate with
+ * option to refine using search string. Filters of the first type allow the user to
+ * choose the column heading from the filter pull-down menu and then enter a string
+ * into the filter input field that is used as the search term for that column.
+ * Filters of this type are not applied until the user enters a search term in the
+ * filter input field.
+ *
+ * Filters of the second type typically act immediately upon selectionfrom the filter
+ * pull-down menu (based on boolean variable 'filterOnSelect'). For an immediate
+ * filter, a custom filter function should to be defined in the pfConfig.filtercols
+ * array of the .dataTables config object. This custom filter should return a boolean
+ * based on whether the table row should be rendered or not for the given filter.
+ * Custom filters can be defined over multiple columns and/or over one or more value
+ * ranges, etc. In addition, an immediate filter can be further refined by entering
+ * a search string in the filter input field. This search term will be applied to the
+ * column defined in the pfConfig.filtercols array.
+ *
+ * After a filter has been applied, the filter results text, active filter
  * controls, and a clear all control are shown.
  *
  * The toolbar and empty state layouts are expected to contain the classes as shown in the example below.
@@ -23,6 +39,7 @@
  *             <ul class="dropdown-menu">
  *               <li><a href="#" id="filter1">Rendering Engine</a></li>
  *               <li><a href="#" id="filter2">Browser</a></li>
+ *               <li><a href="#" id="filter7">Apple Platforms</a></li>
  *             </ul>
  *           </div>
  *           <input type="text" class="form-control" placeholder="Filter By Rendering Engine..." autocomplete="off" id="filterInput">
@@ -74,13 +91,21 @@
  *       filterCaseInsensitive: true,
  *       filterCols: [
  *         null,
- *         {
+ *         { // filter type 1
  *           default: true,
  *           optionSelector: "#filter1",
  *           placeholder: "Filter By Rendering Engine..."
- *         }, {
+ *         }, { // filter type 1
  *           optionSelector: "#filter2",
  *           placeholder: "Filter By Browser..."
+ *         }, ...
+ *            { // filter type 2
+ *           optionSelector: "#filter7",
+ *           placeholder: "Filter By Apple Platforms...",
+ *           columnNum: 3,
+ *           filterOnSelect: true,
+ *           useCustomFilter: function platformTest(dtSettings,searchData,index,rawData,counter){
+ *           return (searchData[3].search("OSX") != -1 || searchData[3].search("Mac") != -1 || searchData[3].search("iPod") != -1);}
  *         }
  *       ],
  *       toolbarSelector: "#toolbar1"
@@ -197,7 +222,9 @@
       // Must match all filters
       if (ctx._pfFilter) {
         $.each(ctx._pfFilter.filters, function (index, filter) {
-          if (filter.customFilter) return true;
+          if (filter.customFilter) {
+            return true;
+          }
           if (ctx._pfFilter.filterCaseInsensitive !== undefined && ctx._pfFilter.filterCaseInsensitive === true) {
             if (data[filter.column].toLowerCase().indexOf(filter.value.toLowerCase()) === -1) {
               showThisRow = false;
@@ -207,6 +234,7 @@
               showThisRow = false;
             }
           }
+          return showThisRow;
         });
       }
       return showThisRow;
@@ -242,7 +270,7 @@
         if (filter.customFilter) {
           if (ctx._pfFilter.filters[i].name === filter.name) {
             ctx._pfFilter.filters.splice(i, 1);
-            $.fn.dataTable.ext.search.splice(i+1, 1);
+            $.fn.dataTable.ext.search.splice(i + 1, 1);
             $(this).parents("li").remove();
             break;
           }
@@ -292,7 +320,9 @@
     });
 
     // Add new filter
-    if (!found) ctx._pfFilter.filters.push(filter);
+    if (!found) {
+      ctx._pfFilter.filters.push(filter);
+    }
 
     return !found;
   }
@@ -329,6 +359,17 @@
   }
 
   /**
+   * Provide function to prevent configuration errors from hard fail. this
+   * function will not filter any rows.
+   *
+   * @private
+   */
+  function allPass () {
+    // console.warn('WARNING: custom filter function for option: \"', ctx._pfFilter.filterCols[i].placeholder,'\" set to non-function type; using all-pass filter instead.');
+    return true;
+  }
+
+  /**
    * Handle actions when enter is pressed within filter input
    *
    * @param {DataTable.Api} dt DataTable
@@ -341,22 +382,23 @@
     }
     ctx._pfFilter.filterInput.on("keypress", function (e) {
       var keycode = (e.keyCode ? e.keyCode : e.which);
+      var newFilter = {
+        column: ctx._pfFilter.filterColumn,
+        name: ctx._pfFilter.filterName,
+        value: this.value,
+        onSelect: false,
+        // If filterOnSelect is true, the custom filter will have already been
+        // added to the filter stack so we set it to null here.
+        customFilter: (ctx._pfFilter.filterOnSelect) ? null : ctx._pfFilter.filterFunction
+      };
+
       if (keycode === 13) {
         e.preventDefault();
         if (this.value.trim().length > 0) {
-          var newFilter = {
-            column: ctx._pfFilter.filterColumn,
-            name: ctx._pfFilter.filterName,
-            value: this.value,
-            onSelect: false,
-            // If filterOnSelect is true, the custom filter will have already been
-            // added to the filter stack so we set it to null here. If the defined
-            // function is wrong type, set the function to simple all pass.
-            customFilter: (ctx._pfFilter.filterOnSelect) ? null : ctx._pfFilter.filterFunction
-          };
-
           if (addFilter(dt, newFilter)) {
-            if (newFilter.customFilter) $.fn.dataTable.ext.search.push(newFilter.customFilter);
+            if (newFilter.customFilter) {
+              $.fn.dataTable.ext.search.push(newFilter.customFilter);
+            }
             dt.draw();
             addActiveFilterControl(dt, newFilter);
             updateFilterResults(dt);
@@ -378,10 +420,13 @@
    */
   function handleFilterOption (dt, i) {
     var ctx = dt.settings()[0];
+
     if (ctx._pfFilter.filterCols[i] === null || ctx._pfFilter.filterCols[i].optionSelector === undefined) {
       return;
     }
     $(ctx._pfFilter.filterCols[i].optionSelector).on("click", function (e) {
+      var newFilter = new Object();
+
       // Set input placeholder
       if (ctx._pfFilter.filterInput !== undefined && ctx._pfFilter.filterInput.length !== 0) {
         ctx._pfFilter.filterInput.get(0).placeholder = ctx._pfFilter.filterCols[i].placeholder;
@@ -401,31 +446,30 @@
         ctx._pfFilter.filterCols[i].columnNum : i; // Save filter column when applying filter
       ctx._pfFilter.filterOnSelect = ctx._pfFilter.filterCols[i].filterOnSelect; // Save applying filter behavior
       // Save custom filter function when applying filter; if problem with function
-      // type, define all-pass fileter.
+      // type, define all-pass filter.
       ctx._pfFilter.filterFunction = (ctx._pfFilter.filterCols[i].useCustomFilter) ?
         (($.isFunction(ctx._pfFilter.filterCols[i].useCustomFilter) ?
-          ctx._pfFilter.filterCols[i].useCustomFilter : function allPass() {
-            console.warn('WARNING: custom filter function for option: \"', ctx._pfFilter.filterCols[i].placeholder,'\" set to non-function type; using all-pass filter instead.');
-            return true }))
-        : null;
+          ctx._pfFilter.filterCols[i].useCustomFilter : allPass))
+        : allPass;
       ctx._pfFilter.filterName = $(this).text(); // Save filter name for active filter control
 
       if (ctx._pfFilter.filterOnSelect) {
-        var newFilter = {
-          column: ctx._pfFilter.filterColumn,
-          name: ctx._pfFilter.filterName,
-          value: "",
-          onSelect: true,
-          customFilter: ctx._pfFilter.filterFunction
-        };
+        newFilter.column = ctx._pfFilter.filterColumn;
+        newFilter.name = ctx._pfFilter.filterName;
+        newFilter.value = "";
+        newFilter.onSelect = true;
+        newFilter.customFilter = ctx._pfFilter.filterFunction;
 
         if (addFilter(dt, newFilter)) {
-          if (newFilter.customFilter) $.fn.dataTable.ext.search.push(newFilter.customFilter);
+          if (newFilter.customFilter) {
+            $.fn.dataTable.ext.search.push(newFilter.customFilter);
+          }
           dt.draw();
           addActiveFilterControl(dt, newFilter);
           updateFilterResults(dt);
         }
       }
+      return true;
     });
   }
 
