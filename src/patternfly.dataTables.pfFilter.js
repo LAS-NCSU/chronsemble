@@ -160,6 +160,8 @@
   var FILTER_LABEL_SELECTOR = FILTER_SELECTOR + " label"; // Filter label
   var RESULTS_SELECTOR = ".toolbar-pf-results"; // Toolbar results row
   var FILTER_RESULTS_SELECTOR = RESULTS_SELECTOR + " h5"; // Toolbar filter results
+  var FILTER_INPUT_PLACEHOLDER = null; // document.getElementById("inputFilter").placeholder;
+  var FILTER_BUTTON_TEXT = null; // document.getElementById("filter").text;
 
   DataTable.pfFilter = {};
 
@@ -284,6 +286,9 @@
       }
       if (ctx._pfFilter.filters.length === 0) {
         ctx._pfFilter.activeFilters.addClass("hidden"); // Hide
+        console.log("restoring placeholder:", FILTER_INPUT_PLACEHOLDER);
+        document.getElementById("filterInputB").placeholder = FILTER_INPUT_PLACEHOLDER;
+        document.getElementById("filterB").innerHTML = FILTER_BUTTON_TEXT;
       }
       dt.draw();
       updateFilterResults(dt);
@@ -321,6 +326,7 @@
 
     // Add new filter
     if (!found) {
+      console.log("adding filter:", filter);
       ctx._pfFilter.filters.push(filter);
     }
 
@@ -339,6 +345,9 @@
     $.fn.dataTable.ext.search.length = 1; // Remove all but simple filter from DataTable
     ctx._pfFilter.activeFilterControls.html(""); // Remove active filter controls
     ctx._pfFilter.activeFilters.addClass("hidden"); // Hide active filters area
+    console.log("restoring placeholder:", FILTER_INPUT_PLACEHOLDER);
+    document.getElementById("filterInputB").placeholder = FILTER_INPUT_PLACEHOLDER;
+    document.getElementById("filterB").innerHTML = FILTER_BUTTON_TEXT;
     dt.draw();
   }
 
@@ -426,6 +435,13 @@
     }
     $(ctx._pfFilter.filterCols[i].optionSelector).on("click", function (e) {
       var newFilter = new Object();
+      if (FILTER_BUTTON_TEXT === null) {// Save off initial button and Placeholder
+                                        // text to restore when filters are cleared.
+        FILTER_INPUT_PLACEHOLDER = document.getElementById("filterInputB").placeholder;
+        FILTER_BUTTON_TEXT = document.getElementById("filterB").innerHTML;
+        console.log("saving placeholder:", FILTER_INPUT_PLACEHOLDER);
+        console.log("saving text:", FILTER_BUTTON_TEXT);
+      }
 
       // Set input placeholder
       if (ctx._pfFilter.filterInput !== undefined && ctx._pfFilter.filterInput.length !== 0) {
@@ -450,7 +466,7 @@
       ctx._pfFilter.filterFunction = (ctx._pfFilter.filterCols[i].useCustomFilter) ?
         (($.isFunction(ctx._pfFilter.filterCols[i].useCustomFilter) ?
           ctx._pfFilter.filterCols[i].useCustomFilter : allPass))
-        : allPass;
+        : null;
       ctx._pfFilter.filterName = $(this).text(); // Save filter name for active filter control
 
       if (ctx._pfFilter.filterOnSelect) {
