@@ -9,7 +9,7 @@ var pwlTrackDomains = [];
 var pwlTrackRanges = [];
 var fileList = [];
 var fileData = null;
-var confiData = [];
+var configData = [];
 
 var symbolsUnicode = {
   diamond: '\u2666',
@@ -152,6 +152,8 @@ var processFileData = function (dataObject, aFile) {
     fileData=JSON.parse(dataObject);
   } else {
     console.log("ERROR: bad file type: " + aFile.type);
+    clearFileInput(document.getElementById("file-read"));
+    return;
   }
 
   //confiData = d3.keys(fileData[0]);
@@ -287,7 +289,13 @@ function updateCurrentCursorTrack(track) {
 }
 
 function handleFileSelect(evt) {
-  fileList=evt.target.files; // FileList object
+  //console.log(evt);
+  if (evt.target.files.length > 0) {
+    fileList=evt.target.files; // FileList object
+  } else {
+    // event cancelled
+    return;
+  }
 
   var output = [];
 
