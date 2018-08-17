@@ -30,6 +30,27 @@ var selectionOrder = [];  // FIFO that temporarily holds only the ordinal index
                           // to ordinal 1, and so forth.
 var tableRows = [];
 
+/*==============================================================================
+
+ ######  #    #  ######  #    #   #####    ##     ####    ####   #    #
+ #       #    #  #       ##   #     #     #  #   #       #    #  ##   #
+ #####   #    #  #####   # #  #     #    #    #   ####   #       # #  #
+ #       #    #  #       #  # #     #    ######       #  #  ###  #  # #
+ #        #  #   #       #   ##     #    #    #  #    #  #    #  #   ##
+ ######    ##    ######  #    #     #    #    #   ####    ####   #    #
+
+==============================================================================*/
+
+function handleEventAssignment(event) {
+  var row = event.path[5]._DT_RowIndex;
+  var assignment = event.path[0].innerText;
+  console.log("event selected:", event);
+  console.log("event selected:", event.path[0].id, "row:", event.path[5].rowIndex, "DT row:", event.path[5]._DT_RowIndex);
+  console.log(table2.cell(row, "buttonAssignment:name").render("display"));
+  //table2.cell(row, "buttonAssignment:name").data('<span class="i fa pficon-close"></span> test').draw();
+  table2.cell(row, "buttonAssignment:name").data(assignment).draw();
+}
+
 function Settings(tabID, fileData) {
 
   function buildTable(elementID) {
@@ -510,6 +531,7 @@ function Settings(tabID, fileData) {
   this[translationTable.headings[4].key] = [];
   this[translationTable.headings[5].key] = [];
   var fileKeys = d3.keys(fileData[0]);
+  console.log(fileKeys);
   //this[translationTable.headings[0].key] = d3.keys(fileData[0]);
   //console.log(this[translationTable.headings[0].key][0]);
   //console.log(fileData[1][this[translationTable.headings[0].key][0]]);
@@ -519,12 +541,14 @@ function Settings(tabID, fileData) {
   //this[translationTable.headings[4].key] = '';
   var count = 0;
   fileKeys.forEach(function(fileKey){
+    configData[count] = {[translationTable.headings[4].key]: "", [translationTable.headings[5].key]: "", eventAssignment: null };
     this.tableRows.push({[translationTable.headings[0].key]: fileKeys[count++],
         [translationTable.headings[1].key]: null,
         [translationTable.headings[2].key]: fileData[1][fileKey],
         [translationTable.headings[3].key]: fileData[2][fileKey],
         [translationTable.headings[4].key]: '',
-        [translationTable.headings[5].key]: '' });
+        [translationTable.headings[5].key]: '',
+        buttonAssignment: "..." });
   });
 
 buildTable(tabID);
@@ -583,11 +607,11 @@ table2 = $("#table2").DataTable({
       title: translationTable.headings[4].title },
     { data: translationTable.headings[5].key, name: translationTable.headings[5].key,
       title: translationTable.headings[5].title },
-    { data: null,
+    { data: "buttonAssignment", name: "buttonAssignment",
       className: "table-view-pf-actions",
       render: function (data, type, full, meta) {
         // Inline action button renderer
-        return '<div class="table-view-pf-btn"><button class="btn btn-default" type="button">...</button></div>';
+        return '<div class="table-view-pf-btn"><button class="btn btn-default" type="button">' + data + '</button></div>';
       }
     }, {
       data: null,
@@ -600,15 +624,15 @@ table2 = $("#table2").DataTable({
           '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">' +
           '<li><a href="#"><i>none</i></a></li>' +
           '<li role="separator" class="divider"></li>' +
-          '<li><a href="#">Event Label</a></li>' +
-          '<li><a href="#">Event Instant</a></li>' +
-          '<li><a href="#">Event Start</a></li>' +
-          '<li><a href="#">Event End</a></li>' +
-          '<li><a href="#">Event Location</a></li>' +
-          '<li><a href="#">Temporal Accuracy</a></li>' +
-          '<li><a href="#">Spatial Accuracy</a></li>' +
+          '<li><button id="menuEventLabel" onclick="handleEventAssignment(event)" enabled>Event Label</button></li>' +
+          '<li><button id="menuEventInstant" onclick="handleEventAssignment(event)" enabled>Event Instant</button></li>' +
+          '<li><button id="menuEventStart" onclick="handleEventAssignment(event)" enabled>Event Start</button></li>' +
+          '<li><button id="menuEventEnd" onclick="handleEventAssignment(event)" enabled>Event End</button></li>' +
+          '<li><button id="menuEventLocation" onclick="handleEventAssignment(event)" enabled>Event Location</button></li>' +
+          '<li><button id="menuTemporalAccuracy" onclick="handleEventAssignment(event)" enabled>Temporal Accuracy</button></li>' +
+          '<li><button id="menuSpatialAccuracy" onclick="handleEventAssignment(event)" enabled>Spatial Accuracy</button></li>' +
           '<li role="separator" class="divider"></li>' +
-          '<li><a href="#">Temporal Context</a></li></ul></div>';
+          '<li><button id="menuTemporalContetxt" onclick="handleEventAssignment(event)" enabled>Temporal Context</button></li></ul></div>';
           //'<li role="separator" class="divider"></li>' +
           //'<li><a href="#">Separated link</a></li></ul></div>';
       }
