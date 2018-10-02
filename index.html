@@ -26,6 +26,12 @@
 <!--<script src="node_modules/patternfly/node_modules/jquery/dist/jquery.js"></script>-->
 <!--<script src="node_modules/patternfly/node_modules/bootstrap/dist/js/bootstrap.js"></script>-->
 
+<!-- console-log-html -->
+<script src="node_modules/console-log-html/console-log-html.js"></script>
+
+<!-- lodash -->
+<script src="node_modules/lodash/lodash.min.js"></script>
+
 <!-- jQuery -->
 <script src="node_modules/patternfly/node_modules/jquery/dist/jquery.min.js"></script>
 
@@ -367,10 +373,11 @@
      <!--<div class="column-splash" style="background-color:#d8e5f3">-->
      <h2>Credits</h2>
      <p><strong>Developer: </strong><a href="https://github.com/johnnyNcsu">John Harkins</a><br>
-       <strong>Timeline design: </strong><a href="https://github.com/rengel-de">Reinhard Engel</a><br>
-       <strong>SVG library: </strong><a href="https://d3js.org">D3.js</a> Version 3<br>
-       <strong>UXD library: </strong><a href="https://www.patternfly.org">PatternFly</a><br>
-       <strong>Settings table library: </strong><a href="https://datatables.net">DataTables</a></p>
+       <strong>Timeline design: </strong><a href="https://github.com/rengel-de">Reinhard Engel</a><strong>; License: </strong><a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a><br>
+       <strong>SVG library: </strong><a href="https://d3js.org">D3.js</a> Version 3<strong>; License: </strong><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a><br>
+       <strong>UXD library: </strong><a href="https://www.patternfly.org">PatternFly</a><strong>; License: </strong><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0</a><br>
+       <strong>&nbsp;&nbsp;&nbsp;&nbsp;(Table library: </strong><a href="https://datatables.net">DataTables</a><strong>; License: </strong><a href="https://spdx.org/licenses/MIT">MIT)</a></br>
+       <strong>Utility library: </strong><a href="https://lodash.com">Lodash</a><strong>; License: </strong><a href="https://spdx.org/licenses/MIT">MIT</a></p>
    </div>
  </div>
 </div>
@@ -422,6 +429,7 @@
 =============================================================================-->
 
 <div class="tabcontent" id="Log">
+  <ul class="list-unstyled" id="myULLogContainer"></ul> <!-- I will hold the log messages -->
 </div>
 
 

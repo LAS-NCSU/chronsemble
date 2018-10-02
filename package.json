@@ -34,8 +34,10 @@
   },
   "homepage": "https://github.com/LAS-NCSU/chronsemble#readme",
   "dependencies": {
+    "console-log-html": "^2.0.2",
     "d3": "^3.5.17",
     "d3-geomap": "^1.0.2",
+    "lodash": "^4.17.10",
     "patternfly": "^3.41.6"
   }
 }

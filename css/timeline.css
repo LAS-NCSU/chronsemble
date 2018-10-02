@@ -203,3 +203,14 @@
    stroke-width: 1px;
    stroke: grey;
 }
+
+.csblSansserifLog {
+  font-family: "Courier New", Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+}
+
+.csblSansserifWarn {
+  font-family: "Courier New", Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color:red;
+}
