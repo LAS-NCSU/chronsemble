@@ -10,6 +10,8 @@ var pwlTrackRanges = [];
 var fileList = [];
 var fileData = null;
 var configData = [];
+var csblLogString = null;
+var csblFileKeys = null;
 
 var symbolsUnicode = {
   diamond: '\u2666',
@@ -121,8 +123,9 @@ var timelineGeometry = {
   }
 }
 
+
 if (timelineGeometry.birdView.maxTracks > timelineGeometry.timeFlow.maxTracks)
-  console.log("WARNING: timeline geometry value out of range: Bird's eye view maxTracks should be less than or equal to timeFlow maxTracks!!!");
+  console.warn("WARNING: timeline geometry value out of range: Bird's eye view maxTracks should be less than or equal to timeFlow maxTracks!!!");
 /*
 var infoFlowCards = 5,      // number of cards visible in info pane.
     cardLateralMargin = 5,  // number of pixels between cards.
@@ -143,6 +146,7 @@ function isString (obj) {
 
 
 var processFileData = function (dataObject, aFile) {
+  var tempSize = 0;
   //console.log(csvObject);
   timelineGeometry.maxWidth = Math.max(window.innerWidth || document.documentElement.clientWidth ||
             document.body.clientWidth, 767) - 30;
@@ -151,7 +155,7 @@ var processFileData = function (dataObject, aFile) {
   } else if (aFile.type === 'text/json' || aFile.type === 'application/json') {
     fileData=JSON.parse(dataObject);
   } else {
-    console.log("ERROR: bad file type: " + aFile.type);
+    console.warn("ERROR: bad file type: " + aFile.type);
     clearFileInput(document.getElementById("file-read"));
     return;
   }
@@ -199,6 +203,17 @@ var processFileData = function (dataObject, aFile) {
 //            .defineVerticalScrollArea( )
       .redraw();
 */
+/* Here might go algorithm to do statistical inference of data to locate
+   temporal and spatial features. For now - rely on manual assignment only.
+
+      fileData.forEach(function(fileRow) {
+        fileRow.forEach(function(fileColumn){
+          tempSize += fileColumn.length;
+        })
+        console.log(fileRow);
+      })
+
+      */
       return fileData;
 
 };
@@ -242,6 +257,14 @@ function buildVisualization(fileData) {
       return fileData;
 }
 
+function openVisualization( ) {
+  ConsoleLogHTML.DEFAULTS.log = "sansserifLog";
+  ConsoleLogHTML.DEFAULTS.info = "sansserifLog";
+  ConsoleLogHTML.DEFAULTS.warn = "sansserifWarn";
+  ConsoleLogHTML.connect(document.getElementById("myULLogContainer")); // Redirect log messages
+  return;
+}
+
 function closeVisualization(event, aFile) {
   //document.getElementsByClassName('tooltip').remove();
   d3.selectAll('.tooltip').remove();
@@ -255,6 +278,7 @@ function closeVisualization(event, aFile) {
   closeTab(event);
   closeSettings( );
   clearFileInput(document.getElementById("file-read"));
+  ConsoleLogHTML.disconnect(); // Stop redirecting
 }
 
 function refreshVisualization( ) {
@@ -297,19 +321,24 @@ function handleFileSelect(evt) {
     return;
   }
 
+  openVisualization();
+
   var output = [];
 
   for (var i = 0, f; f = fileList[i]; i++) {
-    output.push('Filename: ', escape(f.name), ' (', f.type || 'n/a', '), ',
-          f.size, ' bytes, last modified: ',
-          f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
-          );
+    output.push('• Filename: ' + escape(f.name) + ' (' + (f.type || 'n/a') + '), ' +
+          f.size + ' bytes, last modified: ' +
+          (f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
+        ));
   }
 //  var statusFilenameElement = document.getElementById('Filename');
 //  statusFilenameElement.textContent = output.join('');
   var d = new Date();
 
-  document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
+  csblLogString = 'Opening file(s):\n' + output.join('\n');
+  console.log(csblLogString);
+
+  //document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
   setElementState(event, 'tabLog', 'enabled');
 
   var reader = new FileReader();
