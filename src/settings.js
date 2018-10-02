@@ -30,6 +30,58 @@ var selectionOrder = [];  // FIFO that temporarily holds only the ordinal index
                           // to ordinal 1, and so forth.
 var tableRows = [];
 
+var eEvent = {
+  LABEL: 1,
+  INSTANT: 2,
+  BEGIN: 3,
+  END: 4,
+  LOCATION: 5,
+  ACCURACY_T: 6,
+  ACCURACY_S: 7,
+  CONTEXT_T: 8,
+  properties: {
+    1:{title: "Event Label", limitAssignments: 1, kind: {}, validate: {}},
+    2:{title: "Event Instant", limitAssignments: 6, kind: {}, validate: {}},
+    3:{title: "Event Begin", limitAssignments: 6, kind: {}, validate: {}},
+    4:{title: "Event End", limitAssignments: 6, kind: {}, validate: {}},
+    5:{title: "Event Location", limitAssignments: 2, kind: {}, validate: {}},
+    6:{title: "Temporal Accuracy", limitAssignments: 1, kind: {}, validate: {}},
+    7:{title: "Spatial Accuracy", limitAssignments: 1, kind: {}, validate: {}},
+    8:{title: "Temporal Context", limitAssigments: 1, kind: {}, validate: {}}}
+};
+
+var eTime = {
+  iso8601: {
+    dateAtoms: {
+      year: {format: "YYYY", label: "Year"},
+      extendedYear: {format: "SYYYYY", label: "Extended Year"},
+      month:{format: "MM", label: "Month"},
+      week: {format: "Www", label: "Week"},
+      day:  {format: "DD", label: "Day"},
+      oDay: {format: "DDD", label: "Ordinal Day"}
+    },
+    dateDelimiters: {0: "", 1: "-"},
+    dates: {
+      ordinalDate: {format: "YYYY-DDD", label: "Ordinal Date", atoms: {0: "year", 1: "oDay"}},
+    }
+
+    },
+
+    TZD: 1,    // Time Zone Designator
+    fs: 2,    // Fractional Second
+    ss: 3,    // Second
+    mm: 4,    // Minute
+    hh: 5,    // Hour
+    DD: 6,    // Day
+    MM: 7,    // Month
+    YYYY: 8,  // Year
+    YYYYMM: 9, // Year+Month
+    YYYYMMDD: 10, // Year+Month+Day
+    YYYYMMDDThhmmTZD: 11, // Year+Month+Day+Hour+Minute+TimeZone
+    YYYYMMDDThhmmssTZD: 12, // Year+Month+Day+Hour+Minute+Second+TimeZone
+    YYYYMMDDThhmmssfsTZD: 13, // Year+Month+Day+Hour+Minute+Second+FractionalSecond+TimeZone
+};
+
 /*==============================================================================
 
  ######  #    #  ######  #    #   #####    ##     ####    ####   #    #
@@ -42,13 +94,155 @@ var tableRows = [];
 ==============================================================================*/
 
 function handleEventAssignment(event) {
-  var row = event.path[5]._DT_RowIndex;
+// Rules for assigning events:
+//
+// Labels: only one feature can be assigned as the event label.
+// Instant: only one feature can be assigned as the event instant; however,
+//         we should be able to overlap an instant with the beginning of
+//         an instant. In this case, if the end of the event is null, we can
+//         assume the event is an instant rather than a period.
+// Begin: there can be only one beginning of an event; however, there may be
+//        cases where the temporal components are declared as separate features
+//        within a data set. Therefore, we should allow for at least
+//        (YYYY-MM-DD HH:MM:SEC) six assignments of this type.
+// End:   Similar to above.
+// Location: as with the event beginning, the location of an event may be described
+//        in a single feature containing a lat,lon gps coordinate; two separate
+//        features, one with lat and the other lon; plus a third using ISO 3166-1
+//        alpha-3 country codes.
+// Accuracy: both temporal and spatial accuracy should be contained in single features.
+// Context: should be a single feature bu may overlap with any other assignments.
+//        The default context is by label.
+
+  var eventRow = event.path[5]._DT_RowIndex;
   var assignment = event.path[0].innerText;
-  console.log("event selected:", event);
-  console.log("event selected:", event.path[0].id, "row:", event.path[5].rowIndex, "DT row:", event.path[5]._DT_RowIndex);
-  console.log(table2.cell(row, "buttonAssignment:name").render("display"));
+  var eventAssignment = {row: event.path[5]._DT_RowIndex, assignment: event.path[0].innerText,
+        kind: ""};
+  var found = false;
+  var done = false;
+  var foundRow = null;
+  var count = 0;
+  var rowCount = 0;
+  var assignmentCount = 0;
+
+  //if (configData[row].eventAssignment === null) {
+  //  configData[row].eventAssignment = assignment;
+  //} else if (configData[row].eventAssignment === assignment) {
+
+  //} else {
+
+  //}
+
+  // Iterate through configData looking for a match of the new assignment. For
+  // single select events on the same row - there is no change. For single select
+  // events on different rows, the event must be removed from the previous row
+  // and assigned to the new row. For multi-select events, attempt to constrain
+  // assignments to the appropriate limits.
+  //
+  // Process by iterating through data; if the row is reached before locating a
+  // prior assignment, update configData with the new assignment. Continue
+  // iterating through remaining entries to address assignment limit constraints.
+  //
+  // If an event match is found before reaching the row, determine if there is a
+  // kind match. If there is a kind match as well, assume that the new assignment
+  // takes precedence and remove the former assignment.
+  // the assignment from this row (and row if no other assigments present) and
+  // continue iterating until the row is reached.
+  while (rowCount < configData.length && !done) {
+    if (configData[rowCount].row === eventAssignment.row) {
+      // found matching row
+      foundRow = configData[rowCount].row;
+
+    }
+
+    for (let currentAssignment of configData[rowCount].eventAssignment) {
+      if (currentAssignment === eventAssignment.assignment) {
+        // found assignment match
+        console.log("assignment match: ", configData[rowCount].row, ": ", eventAssignment.assignment);
+        found = true;
+        switch (eventAssignment.assignment) {
+          case eEvent.properties[eEvent.LABEL].title:
+            if (foundRow != eventRow) {
+              configData.splice(count,1);
+            }
+          break;
+
+          case eEvent.properties[eEvent.INSTANT].title:
+            if (foundRow != eventRow) {
+              configData.splice(count,1);
+            }
+          break;
+
+          default:
+          console.log("default");
+
+        }
+      }
+      rowCount++;
+    }
+  }
+
+
+  for (let setting of configData) {
+    if (setting.eventAssignment === assignment) {
+      foundRow = setting.row;
+      console.log("setting match: ", foundRow, ": ", assignment);
+      found = true;
+      switch (assignment) {
+        case eEvent.properties[eEvent.LABEL].title:
+          if (foundRow != eventRow) {
+            console.log("splicing label");
+            configData.splice(count,1);
+          }
+        break;
+
+        case eEvent.properties[eEvent.BEGIN].title:
+          if (foundRow != eventRow) {
+            console.log("splicing begin");
+            configData.splice(count,1);
+          }
+        break;
+
+        case eEvent.properties[eEvent.INSTANT].title:
+          if (foundRow != eventRow) {
+            console.log("splicing instant");
+            configData.splice(count,1);
+          }
+        break;
+
+        default:
+        console.log("default");
+
+      }
+    }
+    count++;
+  }
+
+if (!found) {
+    console.log("pushing: ", {row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
+    configData.push({row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
+    table2.cell(eventRow, "buttonAssignment:name").data(assignment).draw();
+} else {
+  if (foundRow != eventRow) {
+    configData.push({row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
+    table2.cell(foundRow, "buttonAssignment:name").data("...");
+    table2.cell(eventRow, "buttonAssignment:name").data(assignment).draw();
+  }
+}
+
+//  configData.forEach(function(setting) {
+//    if (setting.eventAssignment != null) {
+//      console.log(setting.eventAssignment);
+//    } else {
+//      setting.eventAssignment = assignment;
+//      break;
+//    }
+//  });
+//  console.log("event selected:", event);
+//  console.log("event selected:", event.path[0].id, "row:", event.path[5].rowIndex, "DT row:", event.path[5]._DT_RowIndex);
+//  console.log(table2.cell(row, "buttonAssignment:name").render("display"));
   //table2.cell(row, "buttonAssignment:name").data('<span class="i fa pficon-close"></span> test').draw();
-  table2.cell(row, "buttonAssignment:name").data(assignment).draw();
+//  table2.cell(row, "buttonAssignment:name").data(assignment).draw();
 }
 
 function Settings(tabID, fileData) {
@@ -505,33 +699,15 @@ function Settings(tabID, fileData) {
   infoCardLayout.row = [];
   infoCardLayout.fieldName = [];
 
-  var eEvent = {
-    LABEL: 1,
-    INSTANT: 2,
-    BEGIN: 3,
-    END: 4,
-    LOCATION: 5,
-    ACCURACY_T: 6,
-    ACCURACY_S: 7,
-    properties: {
-      1:{title: "Event Label", validate: {}},
-      2:{title: "Event Instant", validate: {}},
-      3:{title: "Event Begin", validate: {}},
-      4:{title: "Event End", validate: {}},
-      5:{title: "Event Location", validate: {}},
-      6:{title: "Temporal Accuracy", validate: {}},
-      7:{title: "Spatial Accuracy", validate: {}}
-    }
-  };
-
   //var data = {};
   this[translationTable.headings[1].key] = [];
   this[translationTable.headings[2].key] = [];
   this[translationTable.headings[3].key] = [];
   this[translationTable.headings[4].key] = [];
   this[translationTable.headings[5].key] = [];
-  var fileKeys = d3.keys(fileData[0]);
-  console.log(fileKeys);
+  csblFileKeys = d3.keys(fileData[0]);
+  console.log(csblFileKeys);
+  //console.log("Rows: ", fileData.length);
   //this[translationTable.headings[0].key] = d3.keys(fileData[0]);
   //console.log(this[translationTable.headings[0].key][0]);
   //console.log(fileData[1][this[translationTable.headings[0].key][0]]);
@@ -540,9 +716,9 @@ function Settings(tabID, fileData) {
   //this[translationTable.headings[3].key] = '';
   //this[translationTable.headings[4].key] = '';
   var count = 0;
-  fileKeys.forEach(function(fileKey){
-    configData[count] = {[translationTable.headings[4].key]: "", [translationTable.headings[5].key]: "", eventAssignment: null };
-    this.tableRows.push({[translationTable.headings[0].key]: fileKeys[count++],
+  csblFileKeys.forEach(function(fileKey){
+    //configData[count] = {[translationTable.headings[4].key]: "", [translationTable.headings[5].key]: "", eventAssignment: null };
+    this.tableRows.push({[translationTable.headings[0].key]: csblFileKeys[count++],
         [translationTable.headings[1].key]: null,
         [translationTable.headings[2].key]: fileData[1][fileKey],
         [translationTable.headings[3].key]: fileData[2][fileKey],
@@ -624,15 +800,15 @@ table2 = $("#table2").DataTable({
           '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">' +
           '<li><a href="#"><i>none</i></a></li>' +
           '<li role="separator" class="divider"></li>' +
-          '<li><button id="menuEventLabel" onclick="handleEventAssignment(event)" enabled>Event Label</button></li>' +
-          '<li><button id="menuEventInstant" onclick="handleEventAssignment(event)" enabled>Event Instant</button></li>' +
-          '<li><button id="menuEventStart" onclick="handleEventAssignment(event)" enabled>Event Start</button></li>' +
-          '<li><button id="menuEventEnd" onclick="handleEventAssignment(event)" enabled>Event End</button></li>' +
-          '<li><button id="menuEventLocation" onclick="handleEventAssignment(event)" enabled>Event Location</button></li>' +
-          '<li><button id="menuTemporalAccuracy" onclick="handleEventAssignment(event)" enabled>Temporal Accuracy</button></li>' +
-          '<li><button id="menuSpatialAccuracy" onclick="handleEventAssignment(event)" enabled>Spatial Accuracy</button></li>' +
+          '<li><button id="menuEventLabel" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.LABEL].title + '</button></li>' +
+          '<li><button id="menuEventInstant" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.INSTANT].title + '</button></li>' +
+          '<li><button id="menuEventStart" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.BEGIN].title + '</button></li>' +
+          '<li><button id="menuEventEnd" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.END].title + '</button></li>' +
+          '<li><button id="menuEventLocation" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.LOCATION].title + '</button></li>' +
+          '<li><button id="menuTemporalAccuracy" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.ACCURACY_T].title + '</button></li>' +
+          '<li><button id="menuSpatialAccuracy" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.ACCURACY_S].title + '</button></li>' +
           '<li role="separator" class="divider"></li>' +
-          '<li><button id="menuTemporalContetxt" onclick="handleEventAssignment(event)" enabled>Temporal Context</button></li></ul></div>';
+          '<li><button id="menuTemporalContetxt" onclick="handleEventAssignment(event)" enabled>' + eEvent.properties[eEvent.CONTEXT_T].title + '</button></li></ul></div>';
           //'<li role="separator" class="divider"></li>' +
           //'<li><a href="#">Separated link</a></li></ul></div>';
       }
@@ -1019,6 +1195,19 @@ var emptyTableViewUtil = function (config) {
     $('#shiftUp').removeAttr('disabled');
 });
 
+/*==============================================================================
+
+#    #    ##    #          #    #####     ##     #####  ######
+#    #   #  #   #          #    #    #   #  #      #    #
+#    #  #    #  #          #    #    #  #    #     #    #####
+#    #  ######  #          #    #    #  ######     #    #
+ #  #   #    #  #          #    #    #  #    #     #    #
+  ##    #    #  ######     #    #####   #    #     #    ######
+==============================================================================*/
+
+function validateSettings() {
+
+}
 
 /*==============================================================================
 
