@@ -41,9 +41,9 @@ var eEvent = {
   CONTEXT_T: 8,
   properties: {
     1:{title: "Event Label", limitAssignments: 1, kind: {}, validate: {}},
-    2:{title: "Event Instant", limitAssignments: 6, kind: {}, validate: {}},
-    3:{title: "Event Begin", limitAssignments: 6, kind: {}, validate: {}},
-    4:{title: "Event End", limitAssignments: 6, kind: {}, validate: {}},
+    2:{title: "Event Instant", limitAssignments: 7, kind: {}, validate: {}},
+    3:{title: "Event Begin", limitAssignments: 7, kind: {}, validate: {}},
+    4:{title: "Event End", limitAssignments: 7, kind: {}, validate: {}},
     5:{title: "Event Location", limitAssignments: 2, kind: {}, validate: {}},
     6:{title: "Temporal Accuracy", limitAssignments: 1, kind: {}, validate: {}},
     7:{title: "Spatial Accuracy", limitAssignments: 1, kind: {}, validate: {}},
@@ -53,16 +53,19 @@ var eEvent = {
 var eTime = {
   iso8601: {
     dateAtoms: {
-      year: {format: "YYYY", label: "Year"},
-      extendedYear: {format: "SYYYYY", label: "Extended Year"},
-      month:{format: "MM", label: "Month"},
-      week: {format: "Www", label: "Week"},
-      day:  {format: "DD", label: "Day"},
-      oDay: {format: "DDD", label: "Ordinal Day"}
+      year: {format: "YYYY", label: "Year"}, // where YYYY = [0000..9999] with 0000 = 1BC
+      extendedYear: {format: "SYYYYY", label: "Extended Year"}, // where S = [+,-] (required)
+                                            // with +0000 = 1BC; YYYYY is four or more digits (agreed upon)
+      month:{format: "MM", label: "Month"}, // where MM = [01..12]
+      week: {format: "Www", label: "Week"}, // where ww = [01..53]
+      day:  {format: "DD", label: "Day"},  // where DD = [01..31]
+      wDay: {format: "D", label: "Week Day"}, // where D = [1..7]
+      oDay: {format: "DDD", label: "Ordinal Day"} // where DDD = [001..366] (366 areleap years)
     },
     dateDelimiters: {0: "", 1: "-"},
     dates: {
       ordinalDate: {format: "YYYY-DDD", label: "Ordinal Date", atoms: {0: "year", 1: "oDay"}},
+      week: {format: "YYYY-ww", label: "Week of Year", atoms: {0: "year", }}
     }
 
     },
@@ -77,9 +80,12 @@ var eTime = {
     YYYY: 8,  // Year
     YYYYMM: 9, // Year+Month
     YYYYMMDD: 10, // Year+Month+Day
-    YYYYMMDDThhmmTZD: 11, // Year+Month+Day+Hour+Minute+TimeZone
-    YYYYMMDDThhmmssTZD: 12, // Year+Month+Day+Hour+Minute+Second+TimeZone
-    YYYYMMDDThhmmssfsTZD: 13, // Year+Month+Day+Hour+Minute+Second+FractionalSecond+TimeZone
+    YYYYMMDDThhmm: 11, // Year+Month+Day+Hour+Minute
+    YYYYMMDDThhmmss: 12, // Year+Month+Day+Hour+Minute+Second
+    YYYYMMDDThhmmssfs: 13, // Year+Month+Day+Hour+Minute+Second+FractionalSecond
+    YYYYMMDDThhmmTZD: 14, // Year+Month+Day+Hour+Minute+TimeZone
+    YYYYMMDDThhmmssTZD: 15, // Year+Month+Day+Hour+Minute+Second+TimeZone
+    YYYYMMDDThhmmssfsTZD: 16, // Year+Month+Day+Hour+Minute+Second+FractionalSecond+TimeZone
 };
 
 /*==============================================================================
@@ -94,6 +100,37 @@ var eTime = {
 ==============================================================================*/
 
 function handleEventAssignment(event) {
+// Event assignments are objects that map CHRONSEMBLE's data schema onto the input
+// data schema. To do this, the user selects the input data column and maps it
+// to one of the possible event assignments within CHRONSEMBLE's schema.
+//
+// Event assignments can be one of {label, instant, begin, end, location, accuracy, context}.
+// Assignments are categorized by kind as {text, temporal, spatial, context}.
+// Kinds are atomic {text: <label>, context: <context>} or composite {temporal, spatial}.
+// Composite kinds are defined as:
+//  temporal = {date, time} and spatial {latitude, longitude, region}; further,
+//  composites can have many forms that combine the supported atoms according
+//  to defined formats.
+//
+// For example, an assignment object might be composed as follows:
+// <event Assignment> ::= <inputSchema> <assignment part>
+// <inputSchema> ::= <key> <column>
+// <key> ::= text field supplied as column heading in a csv file
+// <column> ::= integer in the range [1..n] where n is number of columns in csv file
+//
+// <assignment part> ::= <assignment> | <assignment> <composite part>
+// <assignment> ::= "label" | "instant" | "begin" | "end" | "location" | "accuracy" | "context"
+// <composite part> ::= <atomic> | <composite>
+// <atomic> ::= <year> | <extended year> | <month> | <week> | <day> | <oday> | <hour> | <minute> |
+//              <second> | <fractional second> | < timezone designator> | <latitude> |
+//              <longitude> | <region>
+// <composite> ::= <date part> | <time part> | <date part>" "<time part> |
+//                 <date part>"T"<time part> | <spatial part>
+// <date part> ::= <ordinal date> | <calendar date> | <week date> | <basic full> |
+//                 <basic week-weekday> | <basic week> | <basic ordinal>
+// <time part> ::= <hour>":"<minute> | <hour>":"<minute>":"<second> |
+//                 <hour>":"<minute>":"<second>"."<fractional second> |
+//
 // Rules for assigning events:
 //
 // Labels: only one feature can be assigned as the event label.
@@ -104,7 +141,7 @@ function handleEventAssignment(event) {
 // Begin: there can be only one beginning of an event; however, there may be
 //        cases where the temporal components are declared as separate features
 //        within a data set. Therefore, we should allow for at least
-//        (YYYY-MM-DD HH:MM:SEC) six assignments of this type.
+//        (YYYY-MM-DD HH:MM:SEC TZD) seven assignments of this type.
 // End:   Similar to above.
 // Location: as with the event beginning, the location of an event may be described
 //        in a single feature containing a lat,lon gps coordinate; two separate
@@ -114,15 +151,15 @@ function handleEventAssignment(event) {
 // Context: should be a single feature bu may overlap with any other assignments.
 //        The default context is by label.
 
-  var eventRow = event.path[5]._DT_RowIndex;
+  var eventColumn = event.path[5]._DT_RowIndex;
   var assignment = event.path[0].innerText;
-  var eventAssignment = {row: event.path[5]._DT_RowIndex, assignment: event.path[0].innerText,
+  var eventAssignment = {column: event.path[5]._DT_RowIndex, assignment: event.path[0].innerText,
         kind: ""};
   var found = false;
   var done = false;
-  var foundRow = null;
+  var foundColumn = null;
   var count = 0;
-  var rowCount = 0;
+  var assignedCount = 0;
   var assignmentCount = 0;
 
   //if (configData[row].eventAssignment === null) {
@@ -134,41 +171,41 @@ function handleEventAssignment(event) {
   //}
 
   // Iterate through configData looking for a match of the new assignment. For
-  // single select events on the same row - there is no change. For single select
-  // events on different rows, the event must be removed from the previous row
-  // and assigned to the new row. For multi-select events, attempt to constrain
+  // single select events on the same column - there is no change. For single select
+  // events on different columns, the event must be removed from the previous column
+  // and assigned to the new column. For multi-select events, attempt to constrain
   // assignments to the appropriate limits.
   //
-  // Process by iterating through data; if the row is reached before locating a
+  // Process by iterating through data; if the column is reached before locating a
   // prior assignment, update configData with the new assignment. Continue
   // iterating through remaining entries to address assignment limit constraints.
   //
-  // If an event match is found before reaching the row, determine if there is a
+  // If an event match is found before reaching the column, determine if there is a
   // kind match. If there is a kind match as well, assume that the new assignment
   // takes precedence and remove the former assignment.
   // the assignment from this row (and row if no other assigments present) and
   // continue iterating until the row is reached.
-  while (rowCount < configData.length && !done) {
-    if (configData[rowCount].row === eventAssignment.row) {
-      // found matching row
-      foundRow = configData[rowCount].row;
+  while (assignedCount < configData.length && !done) {
+    if (configData[assignedCount].column === eventAssignment.column) {
+      // found matching column
+      foundColumn = configData[assignedCount].column;
 
     }
 
-    for (let currentAssignment of configData[rowCount].eventAssignment) {
+    for (let currentAssignment of configData[assignedCount].eventAssignment) {
       if (currentAssignment === eventAssignment.assignment) {
         // found assignment match
-        console.log("assignment match: ", configData[rowCount].row, ": ", eventAssignment.assignment);
+        console.log("assignment match: ", configData[assignedCount].column, ": ", eventAssignment.assignment);
         found = true;
         switch (eventAssignment.assignment) {
           case eEvent.properties[eEvent.LABEL].title:
-            if (foundRow != eventRow) {
+            if (foundColumn != eventColumn) {
               configData.splice(count,1);
             }
           break;
 
           case eEvent.properties[eEvent.INSTANT].title:
-            if (foundRow != eventRow) {
+            if (foundColumn != eventColumn) {
               configData.splice(count,1);
             }
           break;
@@ -178,33 +215,33 @@ function handleEventAssignment(event) {
 
         }
       }
-      rowCount++;
+      assignedCount++;
     }
   }
 
 
   for (let setting of configData) {
     if (setting.eventAssignment === assignment) {
-      foundRow = setting.row;
-      console.log("setting match: ", foundRow, ": ", assignment);
+      foundColumn = setting.column;
+      console.log("setting match: ", foundColumn, ": ", assignment);
       found = true;
       switch (assignment) {
         case eEvent.properties[eEvent.LABEL].title:
-          if (foundRow != eventRow) {
+          if (foundColumn != eventColumn) {
             console.log("splicing label");
             configData.splice(count,1);
           }
         break;
 
         case eEvent.properties[eEvent.BEGIN].title:
-          if (foundRow != eventRow) {
+          if (foundColumn != eventColumn) {
             console.log("splicing begin");
             configData.splice(count,1);
           }
         break;
 
         case eEvent.properties[eEvent.INSTANT].title:
-          if (foundRow != eventRow) {
+          if (foundColumn != eventColumn) {
             console.log("splicing instant");
             configData.splice(count,1);
           }
@@ -219,14 +256,15 @@ function handleEventAssignment(event) {
   }
 
 if (!found) {
-    console.log("pushing: ", {row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
-    configData.push({row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
-    table2.cell(eventRow, "buttonAssignment:name").data(assignment).draw();
+    console.log("pushing: ", {column: eventColumn, eventKey: csblFileKeys[eventColumn], eventAssignment: assignment});
+    configData.push({column: eventColumn, eventKey: csblFileKeys[eventColumn], eventAssignment: assignment});
+    table2.cell(eventColumn, "buttonAssignment:name").data(assignment).draw();
 } else {
-  if (foundRow != eventRow) {
-    configData.push({row: eventRow, eventKey: csblFileKeys[eventRow], eventAssignment: assignment});
-    table2.cell(foundRow, "buttonAssignment:name").data("...");
-    table2.cell(eventRow, "buttonAssignment:name").data(assignment).draw();
+  if (foundColumn != eventColumn) {
+    configData.push({column: eventColumn, eventKey: csblFileKeys[eventColumn], eventAssignment: assignment});
+    console.log("pushing: ", {column: eventColumn, eventKey: csblFileKeys[eventColumn], eventAssignment: assignment});
+    table2.cell(foundColumn, "buttonAssignment:name").data("...");
+    table2.cell(eventColumn, "buttonAssignment:name").data(assignment).draw();
   }
 }
 
@@ -718,13 +756,14 @@ function Settings(tabID, fileData) {
   var count = 0;
   csblFileKeys.forEach(function(fileKey){
     //configData[count] = {[translationTable.headings[4].key]: "", [translationTable.headings[5].key]: "", eventAssignment: null };
-    this.tableRows.push({[translationTable.headings[0].key]: csblFileKeys[count++],
-        [translationTable.headings[1].key]: null,
-        [translationTable.headings[2].key]: fileData[1][fileKey],
-        [translationTable.headings[3].key]: fileData[2][fileKey],
-        [translationTable.headings[4].key]: '',
-        [translationTable.headings[5].key]: '',
-        buttonAssignment: "..." });
+    //this.tableRows.push({[translationTable.headings[0].key]: csblFileKeys[count++],
+    this.tableRows.push({[translationTable.headings[0].key]: fileKey, // Data Field
+        [translationTable.headings[1].key]: null, // Info Card Assigned
+        [translationTable.headings[2].key]: fileData[1][fileKey], // Sample A
+        [translationTable.headings[3].key]: fileData[2][fileKey], // Sample B
+        [translationTable.headings[4].key]: '', // Kind
+        [translationTable.headings[5].key]: '', // Accuracy
+        buttonAssignment: "..." }); // Event Assignments
   });
 
 buildTable(tabID);

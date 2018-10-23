@@ -70,7 +70,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           (timelineGeometry.infoFlow.card.numberInPane - 1) * timelineGeometry.infoFlow.track.space) / timelineGeometry.infoFlow.card.numberInPane);
         console.log("Card width:", timelineGeometry.infoFlow.card.width);
 
-        data.items = items;
+        //data.items = items;
 
         function showItems(n) {
             var count = 0, n = n || 10;
@@ -165,6 +165,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           items.forEach(function(item) {
   //          var labelWidth = getTextWidth(item.label, "10px sans-serif") + ((item.instant) ? timelineGeometry.instantRadius + 2 : 1);
             var labelWidth = getTextWidth(item.label, "10px sans-serif");
+  //          var labelWidth = getTextWidth(item[configData.eventAssignment, "10px sans-serif");
             var durationWidth = zoom.xScale(item.end) - zoom.xScale(item.start);
   //          var eventInterval = (labelWidth > durationWidth) ? labelWidth : durationWidth;
             item.intervalBegin = item.start;
@@ -197,7 +198,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
             sortOrder = sortOrder || "descending"; // "ascending" or default to "descending"
             timeOrder = timeOrder || "backward";   // "forward" or default to "backward"
 
-            function sortBackward() {
+            function sortBackward(items) {
                 // recent events assigned to tracks before distant events.
             //    tracks[0] = items[0].start;
 
@@ -230,7 +231,7 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
                 return;
             }
 
-            function sortForward() {
+            function sortForward(items) {
                 // distant events assigned before recent events
                 tracks[0] = items[0].intervalEnd;
                 items[0].track = 0;
@@ -268,9 +269,9 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
   //          showItems(256);
 //console.log("====================================");
             if (timeOrder === "forward")
-                sortForward();
+                sortForward(data.items);
             else
-                sortBackward();
+                sortBackward(data.items);
         }
 
         function get2DArray(size) {
@@ -328,75 +329,129 @@ function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) 
           return infoFlowConfigObject;
         }
 
-        // Initialize the time range; time range is
-        timeRange = [parseDate(data.items[0].start), parseDate(data.items[0].end)];
-//        console.log("data.items:", data.items[0]);
-// console.log("timeRange:", timeRange[0], timeRange[1]);
-        // Convert yearStrings into dates
-        data.items.forEach(function (item){
-            item.start = parseDate(item.start);
-            if (item.start < timeRange[0]) timeRange[0] = item.start;
-            if (item.end == "") {
-                //console.log("1 item.start: " + item.start);
-                //console.log("2 item.end: " + item.end);
-                item.end = new Date(item.start.getTime() + instantOffset);
-                //console.log("3 item.end: " + item.end);
-                item.instant = true;
-            } else {
-                //console.log("4 item.end: " + item.end);
-                item.end = parseDate(item.end);
-                item.instant = false;
-            }
-            // The timeline never reaches into the future.
-            // This is an arbitrary decision.
-            // Comment out, if dates in the future should be allowed.
-            if (item.end > today) { item.end = today};
-  //          item.eventInterval = null;
-            if (item.end > timeRange[1]) timeRange[1] = item.end;
-        });
-  //   console.log("timeRange:", timeRange[0], timeRange[1]);
-     // Pad the start and end of timeline by 1/2 of the fitToScale value.
-     var timeRangeBuffer = (timeRange[1]-timeRange[0])*timelineGeometry.fitToScale*0.5;
-     timeRange = [timeRange[0].getTime() - timeRangeBuffer, timeRange[1].getTime() + timeRangeBuffer];
-     timeRange = [new Date(timeRange[0]), new Date(timeRange[1])];
-  //   console.log("fitToScale Range:", timeRange[0], timeRange[1]);
-     data.minDate = timeRange[0];
-     data.maxDate = timeRange[1];
-     timelineGeometry.brushExtent = timeRange;
-     timeRangeBuffer = timeRangeBuffer * 2;
-     var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
-//     console.log(zoomTarget);
+//------------------------------------------------------------------------------
+// ****   ****   ****   ****   ****   ****   ****   ****   ****   ****   ****
+//------------------------------------------------------------------------------
 
-     setEventIntervals(data.items, timeRange, zoomTarget);
-      // Show patterns
-      //calculateTracks(data.items, "ascending", "backward");
-      //calculateTracks(data.items, "descending", "forward");
-      // Show real data
-      // Calculate tracks in both directions to find the layout with fewest
-      // tracks.
-      calculateTracks(data.items, "ascending", "forward");
-      console.log("Sort forward total tracks: ", totalTracks);
-      timelineGeometry.totalTracks = totalTracks;
-      timelineGeometry.eventSortDirection = sortDirection.forward;
-      if (false) {
-        totalTracks = 0;
-        tracks = [];
-        itemsPerTrack = [];
-        calculateTracks(data.items, "descending", "backward");
-        console.log("Sort backward total tracks: ", totalTracks);
-        if (totalTracks <= timelineGeometry.totalTracks) {
-          timelineGeometry.totalTracks = totalTracks;
-          console.log("Using descending backward!");
-          timelineGeometry.eventSortDirection = sortDirection.reverse;
-        } else {
-          console.log("Using ascending forward!");
-          totalTracks = 0;
-          tracks = [];
-          itemsPerTrack = [];
-          calculateTracks(data.items, "ascending", "forward");
-          timelineGeometry.eventSortDirection = sortDirection.forward;
-        }
+// indexTemporalContext = -1 if not set otherwise will be index into configData of the Temporal Context field
+var indexTemporalContext = _.findIndex(configData, function(o) {return o.eventAssignment === "Temporal Context"});
+console.log("Index of temporal context: ", indexTemporalContext);
+// Check for the feature to use as the temporal context
+if (indexTemporalContext !== -1) {
+ if (configData[indexTemporalContext].eventKey === 'loc') {
+   //console.log("Things are going to get loco!!!");
+   // compute the total number of locations and sort by density: highest to lowest
+   // this will get us a histogram of #events per location
+   var histogramLoc = _.countBy(items, 'loc');
+   var histogramLocObj = [];
+   // Unfortunately, we need to convert the histogram object which looks
+   // like this: [{LOC:<value>}, ..., {LOC:<value>}] where LOC is string from
+   // the set of valid trigraph country codes and value is the number of events
+   // that occured in that location; into an array that looks like this:
+   // [{loc:"LOC", score:<value>}, ..., {loc:"LOC", score:<value>}] so that we
+   // can use the lodash orderBy method to sort (descending) the scores and
+   // (ascending) the country codes.
+   var tmpObject = {};
+   //console.log("Histogram of locations: ", histogramLoc);
+   _.forIn(histogramLoc, function(value,key) {
+   //  console.log("pair: [", key,":", value,"]");
+     tmpObject = {loc: key, score: value};
+   //  console.log(tmpObject);
+     histogramLocObj.push(tmpObject);
+     tmpObject = {};
+   })
+   //console.log("Histogram Obj:", histogramLocObj);
+   //var sortedHistogram = _.orderBy(Object.entries(histogramLoc), function(o) { return o }, ['asc', 'desc']);
+   var sortedHistogram = _.orderBy(histogramLocObj, ['score','loc'], ['desc','asc']);
+   //console.log("Sorted: ", sortedHistogram);
+   // grouBy
+   var itemsSortedByLocation = _.groupBy(items, function(o) { if (o.loc === sortedHistogram[0].loc) {
+     return 0; }
+     else {return;}
+   });
+   //itemsSortedByLocation = itemsSortedByLocation[0];
+   //console.log(itemsSortedByLocation);
+   data.items = itemsSortedByLocation["0"];
+   //data.items = itemsSortedByLocation;
+   console.log(data.items);
+ } else {
+   data.items = items;
+ }
+} else {
+  data.items = items;
+}
+
+    // Initialize the time range; time range is found by iterating through the
+    // data to find the min start time and max end time. These values are stored
+    // in the timeRange variable.
+    timeRange = [parseDate(data.items[0].start), parseDate(data.items[0].end)];
+    //        console.log("data.items:", data.items[0]);
+    // console.log("timeRange:", timeRange[0], timeRange[1]);
+    // Convert yearStrings into dates
+    data.items.forEach(function (item){
+      item.start = parseDate(item.start);
+      if (item.start < timeRange[0]) timeRange[0] = item.start;
+      if (item.end == "") {
+          //console.log("1 item.start: " + item.start);
+          //console.log("2 item.end: " + item.end);
+          item.end = new Date(item.start.getTime() + instantOffset);
+          //console.log("3 item.end: " + item.end);
+          item.instant = true;
+      } else {
+          //console.log("4 item.end: " + item.end);
+          item.end = parseDate(item.end);
+          item.instant = false;
       }
+      // The timeline never reaches into the future.
+      // This is an arbitrary decision.
+      // Comment out, if dates in the future should be allowed.
+      if (item.end > today) { item.end = today};
+//          item.eventInterval = null;
+      if (item.end > timeRange[1]) timeRange[1] = item.end;
+    });
+  //   console.log("timeRange:", timeRange[0], timeRange[1]);
+   // Pad the start and end of timeline by 1/2 of the fitToScale value.
+   var timeRangeBuffer = (timeRange[1]-timeRange[0])*timelineGeometry.fitToScale*0.5;
+   timeRange = [timeRange[0].getTime() - timeRangeBuffer, timeRange[1].getTime() + timeRangeBuffer];
+   timeRange = [new Date(timeRange[0]), new Date(timeRange[1])];
+//   console.log("fitToScale Range:", timeRange[0], timeRange[1]);
+   data.minDate = timeRange[0];
+   data.maxDate = timeRange[1];
+   timelineGeometry.brushExtent = timeRange;
+   timeRangeBuffer = timeRangeBuffer * 2;
+   var zoomTarget = [timeRange[0], new Date(timeRange[0].getTime() + timeRangeBuffer)];
+//     console.log(zoomTarget);
+   setEventIntervals(data.items, timeRange, zoomTarget);
+
+       // Show patterns
+       //calculateTracks(data.items, "ascending", "backward");
+       //calculateTracks(data.items, "descending", "forward");
+       // Show real data
+       // Calculate tracks in both directions to find the layout with fewest
+       // tracks.
+       calculateTracks(data.items, "ascending", "forward");
+       console.log("Sort forward total tracks: ", totalTracks);
+       timelineGeometry.totalTracks = totalTracks;
+       timelineGeometry.eventSortDirection = sortDirection.forward;
+       if (false) {
+         totalTracks = 0;
+         tracks = [];
+         itemsPerTrack = [];
+         calculateTracks(data.items, "descending", "backward");
+         console.log("Sort backward total tracks: ", totalTracks);
+         if (totalTracks <= timelineGeometry.totalTracks) {
+           timelineGeometry.totalTracks = totalTracks;
+           console.log("Using descending backward!");
+           timelineGeometry.eventSortDirection = sortDirection.reverse;
+         } else {
+           console.log("Using ascending forward!");
+           totalTracks = 0;
+           tracks = [];
+           itemsPerTrack = [];
+           calculateTracks(data.items, "ascending", "forward");
+           timelineGeometry.eventSortDirection = sortDirection.forward;
+         }
+       }
 
       if (hasInfoFlow) buildInfoFlowScales(data.items);
 
@@ -1447,6 +1502,7 @@ console.log("band.y:", band.y, "band.h:", band.h);
         // A dateString of '0' will be converted to '1 BC'.
         // Because JavaScript can't define AD years between 0..99,
         // these years require a special treatment.
+        //console.log("dateString:", dateString);
         if (moment(dateString, moment.ISO_8601, true).isValid()) return new Date(dateString);
         var formatString = aFormatString || "%Y-%m-%d";
 //        console.log(formatString);
