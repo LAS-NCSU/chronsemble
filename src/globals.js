@@ -274,6 +274,7 @@ function closeVisualization(event, aFile) {
   setElementState(event, 'tabVisualization', 'disabled');
   setElementState(event, 'tabSettings', 'disabled');
   setElementState(event, 'menuItemCloseFile', 'disabled');
+  configData=[];
   console.log("Closing visualization");
   closeTab(event);
   closeSettings( );
