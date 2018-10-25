@@ -338,6 +338,12 @@ var indexTemporalContext = _.findIndex(configData, function(o) {return o.eventAs
 console.log("Index of temporal context: ", indexTemporalContext);
 // Check for the feature to use as the temporal context
 if (indexTemporalContext !== -1) {
+  // We are rendering by location context. For this timeline, we wish to represent
+  // locations in the main timeline as swim lanes for each location. Within each
+  // swim lane, the bird's-eye-view representation for that location's timeline
+  // will be shown except for the location with current focus which will be shown
+  // in the expanded form. The initial focus will be determined by the finding the
+  // location with the most events.
  if (configData[indexTemporalContext].eventKey === 'loc') {
    //console.log("Things are going to get loco!!!");
    // compute the total number of locations and sort by density: highest to lowest
@@ -363,14 +369,15 @@ if (indexTemporalContext !== -1) {
    //console.log("Histogram Obj:", histogramLocObj);
    //var sortedHistogram = _.orderBy(Object.entries(histogramLoc), function(o) { return o }, ['asc', 'desc']);
    var sortedHistogram = _.orderBy(histogramLocObj, ['score','loc'], ['desc','asc']);
-   //console.log("Sorted: ", sortedHistogram);
+   console.log("Sorted: ", sortedHistogram);
    // grouBy
-   var itemsSortedByLocation = _.groupBy(items, function(o) { if (o.loc === sortedHistogram[0].loc) {
-     return 0; }
+   var itemsSortedByLocation = _.partition(items, function(o) { if (o.loc === sortedHistogram[0].loc) {
+   //var itemsSortedByLocation = _.groupBy(items, function(o) { console.log("o:", o);if (o.loc === sortedHistogram[0].loc) {
+     return o; }
      else {return;}
    });
    //itemsSortedByLocation = itemsSortedByLocation[0];
-   //console.log(itemsSortedByLocation);
+   console.log(itemsSortedByLocation);
    data.items = itemsSortedByLocation["0"];
    //data.items = itemsSortedByLocation;
    console.log(data.items);
