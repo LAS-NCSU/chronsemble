@@ -366,20 +366,30 @@ if (indexTemporalContext !== -1) {
      histogramLocObj.push(tmpObject);
      tmpObject = {};
    })
+   var locationCount = histogramLocObj.length;
    //console.log("Histogram Obj:", histogramLocObj);
    //var sortedHistogram = _.orderBy(Object.entries(histogramLoc), function(o) { return o }, ['asc', 'desc']);
    var sortedHistogram = _.orderBy(histogramLocObj, ['score','loc'], ['desc','asc']);
-   console.log("Sorted: ", sortedHistogram);
-   // grouBy
-   var itemsSortedByLocation = _.partition(items, function(o) { if (o.loc === sortedHistogram[0].loc) {
-   //var itemsSortedByLocation = _.groupBy(items, function(o) { console.log("o:", o);if (o.loc === sortedHistogram[0].loc) {
-     return o; }
-     else {return;}
-   });
-   //itemsSortedByLocation = itemsSortedByLocation[0];
-   console.log(itemsSortedByLocation);
+   //console.log("Sorted ", locationCount, " histograms: ", sortedHistogram);
+
+   // Organize data items according to their sorted regions.
+
+   var remainingItems = items;
+   var tempPartition = [];
+   var itemsSortedByLocation = [];
+   for (i = 0; i < sortedHistogram.length - 1; i++) {
+     tempPartition = _.partition(remainingItems, function(o) { if (o.loc === sortedHistogram[i].loc) {
+       return o; }
+       else {return;}
+     });
+     //console.log("Region: ", sortedHistogram[i].loc, " sort: ", tempPartition);
+     itemsSortedByLocation.push(tempPartition[0]);
+     remainingItems = tempPartition[1];
+   }
+   itemsSortedByLocation.push(remainingItems);
+   //console.log(itemsSortedByLocation);
+
    data.items = itemsSortedByLocation["0"];
-   //data.items = itemsSortedByLocation;
    console.log(data.items);
  } else {
    data.items = items;
