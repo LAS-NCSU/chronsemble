@@ -39,5 +39,9 @@
     "d3-geomap": "^1.0.2",
     "lodash": "^4.17.10",
     "patternfly": "^3.41.6"
+  },
+  "devDependencies": {
+    "less": "^3.8.1",
+    "sass": "^1.14.3"
   }
 }
