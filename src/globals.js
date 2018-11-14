@@ -172,8 +172,8 @@ var processFileData = function (dataObject, aFile) {
   //console.log(tabSettings.tableRows);
 
 //  setElementState(event, 'tabVisualization', 'enabled');
-  setElementState(event, 'tabSettings', 'enabled');
-  setElementState(event, 'menuItemCloseFile', 'enabled');
+  setElementState(null, 'tabSettings', 'enabled');
+  setElementState(null, 'menuItemCloseFile', 'enabled');
 /*
   if (fileData[0].loc === undefined) hasSpatioFlow = false;
   else hasSpatioFlow = true;
@@ -219,7 +219,7 @@ var processFileData = function (dataObject, aFile) {
 };
 
 function buildVisualization(fileData) {
-  setElementState(event, 'tabVisualization', 'enabled');
+  setElementState(null, 'tabVisualization', 'enabled');
   var targetNames = ['timeFlow'];
   if (fileData[0].loc === undefined) hasSpatioFlow = false;
   else hasSpatioFlow = true;
@@ -313,6 +313,12 @@ function updateCurrentCursorTrack(track) {
   return;
 }
 
+/*
+/ handleFileSelect
+/ This function
+/
+/
+*/
 function handleFileSelect(evt) {
   //console.log(evt);
   if (evt.target.files.length > 0) {
@@ -340,7 +346,7 @@ function handleFileSelect(evt) {
   console.log(csblLogString);
 
   //document.getElementById('Log').innerHTML = '<span><strong>' + d.toUTCString() + ":</strong>" + ' Open file(s):<br><ul>' + output.join('') + '</ul></span>';
-  setElementState(event, 'tabLog', 'enabled');
+  setElementState(evt, 'tabLog', 'enabled');
 
   var reader = new FileReader();
 
