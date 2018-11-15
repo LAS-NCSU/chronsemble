@@ -1131,7 +1131,12 @@ console.log("Labeling band:" + bandName);
         var band = bands[bandName],
             labelWidth = 46,
             labelHeight = 20,
-            tooltipTop = timelineGeometry.infoFlowHeight +
+            tooltipTop = timelineGeometry.uiMastheadHeight +
+              timelineGeometry.statusBar.margin.top +
+              timelineGeometry.statusBar.height +
+              timelineGeometry.statusBar.margin.bottom +
+    //          timelineGeometry.flowHeight("infoFlow", true) +
+              ((hasInfoFlow) ? timelineGeometry.infoFlowHeight : (-5)) +
               timelineGeometry.margin.top + timelineGeometry.margin.bottom +
               timelineGeometry.flowHeight("timeFlow", true) +
               timelineGeometry.flowHeight("birdView", true) +
@@ -1156,7 +1161,7 @@ console.log(band.y, band.h);
                 "Beginning of timeline", band.x + 90, tooltipTop],
             ["end", "bandBoundLabel", band.w - labelWidth, band.w - labelWidth / 4,
                 function(min, max) { return toYear(max); },
-                "Ending of timeline", band.x + band.w - 160, tooltipTop],
+                "Ending of timeline", band.x + band.w - 140, tooltipTop],
             ["range", "bandRangeLabel", (band.w - labelWidth) / 2, band.w / 2 - labelWidth / 4,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
                 "Range of timeline", band.x + band.w / 2 + 65, tooltipTop]] :
@@ -1165,7 +1170,7 @@ console.log(band.y, band.h);
             [["scrubWindow", "bandRangeLabel", 0, labelWidth / 3,
                 function(min, max) { return max.getUTCFullYear() - min.getUTCFullYear(); },
                 "Range of scrubber window", timelineGeometry.margin.left + labelWidth + 20,
-              timelineGeometry.infoFlowHeight + 5],
+              tooltipTop - timelineGeometry.flowHeight("timeFlow", true) - timelineGeometry.axisHeight( ) * 2 - 45],
               ["reference", "bandReferenceLabel", (band.w - labelWidth) / 2,
                  band.w / 2 - labelWidth / 3,
                  function(min, max) {
@@ -1174,8 +1179,8 @@ console.log(band.y, band.h);
 //                   return (((max.getUTCFullYear() + (max.getUTCMonth() + max.getUTCDate()/32)/12) -
 //                        (min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12))/2 +
 //                        min.getUTCFullYear() + (min.getUTCMonth() + min.getUTCDate()/32)/12);},
-                 "Reference Instant", timelineGeometry.maxWidth/2 + labelWidth,
-               timelineGeometry.infoFlowHeight + 5]
+                 "Reference Instant", timelineGeometry.maxWidth/2 - 2 * labelWidth - 25,
+                  tooltipTop - timelineGeometry.flowHeight("timeFlow", true) - timelineGeometry.axisHeight( ) * 2 - 45]
             ];
 
         var bandLabels = timelineElement.append("g")

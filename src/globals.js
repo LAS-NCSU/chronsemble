@@ -46,6 +46,7 @@ var timelineGeometry = {
   //maxWidth: 938,    // Maximum width of the timeflow and all other panes
   maxWidth: Math.max(window.innerWidth || document.documentElement.clientWidth ||
             document.body.clientWidth, 767) - 30,
+  uiMastheadHeight: 90,
   infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
 //  infoFlowCardWidth: 182,    // Width of infoflow cards
   // margin surrounding the three *flow panes
@@ -242,7 +243,7 @@ function buildVisualization(fileData) {
       .band("timeFlow", false)
       .mainReference("timeFlow")
       .xAxis("timeFlow")
-      .tooltips("timeFlow")
+//      .tooltips("timeFlow")
       .defineBirdViewArea( )
       .band("birdView", true)
       .xAxis("birdView")
