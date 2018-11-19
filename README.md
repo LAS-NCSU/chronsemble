@@ -1,6 +1,19 @@
 # chronsemble
 
-Installation:
+## Project
+### Team Members
+* Lead: @johnnyNcsu /jgharkin@ncsu.edu
+
+### Summary
+The goal of this project is to design a tool to help investigators discover evidence associated with human trafficking through spatio-temporal analysis.
+
+Our hypothesis is that the trafficking trade applies mechanisms of social, financial, and transportation networks in order to succeed and that the patterns associated with this endeavor may be distinct and observable when looked for.
+
+CHRONSEMBLE is a visulization tool that is designed to allow analysts to interactively examine data in three modes: (1) temporally using timelines, (2) spatially using maps, and (3) contextually by changing the temporal focus by which data is viewed. A mock-up of the temporal visualization is shown in figure 1. In this mock-up, data on the timeline can be viewed with greater detail in info-flow panes.
+
+![Figure 1.](https://github.com/LAS-NCSU/chronsemble/blob/master/doc/mockupInfoFlow.png Mock-up of the info-flow and timeline visualization mode.)
+
+## Installation
 
 1. Clone repository
 2. Install js dependencies
