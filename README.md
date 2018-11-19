@@ -11,7 +11,9 @@ Our hypothesis is that the trafficking trade applies mechanisms of social, finan
 
 CHRONSEMBLE is a visulization tool that is designed to allow analysts to interactively examine data in three modes: (1) temporally using timelines, (2) spatially using maps, and (3) contextually by changing the temporal focus by which data is viewed. A mock-up of the temporal visualization is shown in figure 1. In this mock-up, data on the timeline can be viewed with greater detail in info-flow panes.
 
-![Figure 1.](https://github.com/LAS-NCSU/chronsemble/blob/master/doc/mockupInfoFlow.png Mock-up of the info-flow and timeline visualization mode.)
+![Figure 1. Mock-up of the info-flow and timeline visualization mode.](data/img/mockupInfoFlow.png )
+
+** Figure 1. Mock-up of the info-flow and timeline visualization mode.**
 
 ## Installation
 
