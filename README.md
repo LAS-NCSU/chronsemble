@@ -6,7 +6,7 @@
 ## Summary
 The goal of this project is to design a visualization tool to help investigators discover evidence associated with human trafficking through spatio-temporal analysis. While the project has its roots in combating trafficking, the visualization should have application to many analytic problems.
 
-Our hypothesis is that the trafficking trade applies mechanisms of social, financial, and transportation networks in order to succeed and that the patterns associated with this endeavor may be distinct and observable when looked for.
+Our hypothesis is that the trafficking trade applies mechanisms of social, financial, and transportation networks and that the patterns associated with this criminal activity may be distinct and observable when looked for.
 
 Chronsemble is a visualization tool that is designed to allow analysts to interactively examine data in three modes: (1) temporally using timelines, (2) spatially using maps, and (3) contextually by changing the temporal focus to view the data. A mock-up of the temporal visualization is shown in figure 1. In this mock-up, data on the timeline can be viewed with greater detail in info-flow panes.
 
@@ -51,6 +51,7 @@ To visualize a dataset with Chronsemble, you will need a local data file that co
 
 When you launch the application, you will see the Chronsemble masthead with a pull-down menu labeled *Input Source*. Use this menu to choose and upload your local data file. Once data has been loaded, the *Settings* tab will become active. Choose the *Settings* tab to configure the visualization. Figure 2 shows the components of the *Settings* tab.
 
+### Settings tab
 ![Figure 2. Settings components.](data/img/settingsComponents.png )
 
 **Figure 2. Settings tab components.**
@@ -67,6 +68,7 @@ If no fields are added to the info card, then the visualization will render with
 
 Figure 3 shows a fully rendered data set from the test data supplied with this project.
 
+### Spatio-temporal visualization tab
 ![Figure 3. Visualization components.](data/img/chronsembleComponents.png)
 
 **Figure 3. Component of the spatio-temporal visualization.**
@@ -77,5 +79,44 @@ To interact with the visualization, move the cursor to the bird's-eye-view area 
 
 The visualization consists of the following main components: *Status bar*, *Info-flow*, *Temporal flow*, and *Spatio flow*. Each of the three main components is explained in greater detail.
 
-### Temporal flow pane###
-As previously described the temporal flow is the only required visualization pane and is the means by which users interact with rendered data. This pane consists chiefly of a timeline of the entities/events rendered from the input data. : the *reference time marker*, entities/events rendered on the timelin
+#### Status bar
+The status bar reveals the name of the file being visualized and which of the three flows are included in the visualization.
+
+#### Info-flow pane
+The info-flow pane contains the sequence of info cards highlighted by the vertical cursor and central to the reference time. The data appearing on each info card is defined by the assignments made on the *Settings* tab.
+
+#### Temporal flow pane
+As previously mentioned, the temporal flow is the only required visualization pane and is the means by which users interact with rendered data. This pane consists chiefly of a timeline of the entities/events rendered from the input data and a bird's-eye-view rendering of the entire timeline. Entities/events are rendered on the timeline as either intervals or instants. An entity/event with a *start* and *end* time will render as an interval; items with only a *start* time will render as instants. Intervals are rendered as light blue rectangles; instants are rendered as pink circles.
+
+The temporal flow is created based on the *label* associated with each item (this is the default temporal context). During creation of the temporal flow, layout of items on the timeline proceeds from top to bottom on a first come, first served basis. Items that overlap an item already placed on the timeline will begin a new row. The item *label* will be placed to the right of the of the *start* of the item interval or instant.
+
+Bisecting the temporal flow pane is a dashed vertical line that marks the reference time. The reference time denotes the moment used to compute the cards to render on the info-flow and the events to map on the spatio flow. Items displayed on the info-flow are a detailed view of the timeline items in the row highlighted by the vertical cursor and central to the reference time. The vertical cursor automatically focuses on the timeline row with the entity/event nearest to or with the tightest bound of the reference time. Support for manual control of the vertical cursor is planned in a future release.
+
+The reference time is also used to compute the locations to render on the spatio flow. The locations of the entities/events within the timeline interval window as determined by the scrubber bounds are each rendered on the spatio flow as a color gradient. The intensity of the color used to highlight a location is proportional to the proximity of that entity/event to the reference time. Therefore, the locations with the darkest colors indicate entities/events that either contain the reference time or are nearest to the reference time. Lighter locations indicate those items that are furthest from the reference time.
+
+The numeric value in the upper left corner of the temporal flow pane indicates the interval duration as defined by the width of the scrubber window. The values at the bottom of the temporal flow pane in blue, red, and blue as seen from left to right indicate the beginning time, the duration, and the ending time of the visualization respectively.
+
+The height of the timeline is determined by the total number of rows needed to represent all items without overlapping intervals. The maximum height limit is currently set to 17 rows but this value is configurable with a minor change to the software. If additional rows are needed to render timeline items, they will be rendered below the 17th row off-pane. A vertical scrollbar will be instanced on the right side of the temporal flow pane to allow shifting the view as needed to see all items. This row limitation also governs the height of the bird's-eye-view component and the vertical scroll control  simultaneously scrolls both the temporal flow and bird's-eye-view when operated.
+
+The bird's-eye-view portion of the timeline is the area of the visualization that supports user interactivity and animation control.
+
+#### Bird's-eye-view
+The bird's-eye-view component shows a zoomed out version of the entire temporal flow. When hovered over the bird's-eye-view, the mouse pointer will change to a cross-hair. The bird's-eye-view supports user interactivity through a scrubber control that can be created by clicking and dragging the cross-hair anywhere along the bird's-eye-view. This action will create a scrubber window along an interval matching the location and duration of the drag event. Once the scrubber window is instanced, the temporal flow pane will zoom in on just the items determined by the duration of the scrubber window interval. To interact with and simultaneously animate the flows, drag the scrubber to the left or right to examine former or latter items on the info, temporal, and/or spatio flows. The duration of the scrubber window can be adjusted by selecting either end of the window and dragging to reduce or extend the window size. The scrubber window can also be dismissed by clicking the bird's-eye-view anywhere outside of the window.
+
+#### Spatio flow
+The spatio flow pane will render locations of entities/events using a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map). Future upgrades will support a broad range of mapping functions. If the input data contains trigraph country codes associated with entities/events, the countries associated with the entities/events rendered in the temporal flow pane will also be painted in the spatio flow pane. As previously described, the colors used for rendering locations are based on a gradient proportional to the item's proximity to the reference time with dark colors being closest to the reference time. The color gradient is the same for future and past events. The default color of the map is grey.
+
+### Log tab
+The log tab is currently used to output debugging information. Future updates will include logging user activity.
+
+## Future development
+### UXD
+#### Schema mapping
+
+The *Settings* tab is intended to enable mapping an arbitray data schema to Chronsemble's visualization schema. As of December 2018, this feature is partially implemented with the ability to select data fields from the input source and assign them to events types in Chronsemble's schema using the table data widget. However, the assignments are not currently interrogated and used by the underlying software. One difficulty in building out this capability is in defining the atomic components for each field and then providing code to build the composite data type. In addition, parsing and validating the atomic and composite fields is along with error handling. For instance, a date field may come as a complete composite entry with year, month, day, hour, minute, and second fields. Or it may be provided in pieces such as a date field and time field or further divided into separate year, month, and day fields and so forth. Errors may appear in some or all of the fields.
+
+#### Context assignment
+The *Settings* tab also contains a mechanism for assigning the context for temporal events. The default context for laying out items on the temporal flow timelines are by entity/event labels. The current layout technique assumes all labels are unique, however, this may not always be true.
+
+### Software design
+#### Module design
