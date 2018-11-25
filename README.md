@@ -83,7 +83,7 @@ The visualization consists of the following main components: *Status bar*, *Info
 The status bar reveals the name of the file being visualized and which of the three flows are included in the visualization.
 
 #### Info-flow pane
-The info-flow pane contains the sequence of info cards highlighted by the vertical cursor and central to the reference time. The data appearing on each info card is defined by the assignments made on the *Settings* tab.
+The info-flow pane contains the sequence of info cards highlighted by the vertical cursor and central to the reference time. The data appearing on each info card is defined by the assignments made on the *Settings* tab. Info cards move in unison with the items on the temporal flow pane as controlled by the time scrubber; however, time on the info-flow pane is piecewise linear with each entity/event duration scaled to the width of its respective info card. Info card width is fixed at the time that the visualization is created and is based on the default of four cards per flow (software configurable) fit equally to the width of the browser window. The movement of cards on the info-flow pane then follows the flow of time as determined by the movement of the time scrubber.
 
 #### Temporal flow pane
 As previously mentioned, the temporal flow is the only required visualization pane and is the means by which users interact with rendered data. This pane consists chiefly of a timeline of the entities/events rendered from the input data and a bird's-eye-view rendering of the entire timeline. Entities/events are rendered on the timeline as either intervals or instants. An entity/event with a *start* and *end* time will render as an interval; items with only a *start* time will render as instants. Intervals are rendered as light blue rectangles; instants are rendered as pink circles.
@@ -112,11 +112,29 @@ The log tab is currently used to output debugging information. Future updates wi
 ## Future development
 ### UXD
 #### Schema mapping
-
-The *Settings* tab is intended to enable mapping an arbitray data schema to Chronsemble's visualization schema. As of December 2018, this feature is partially implemented with the ability to select data fields from the input source and assign them to events types in Chronsemble's schema using the table data widget. However, the assignments are not currently interrogated and used by the underlying software. One difficulty in building out this capability is in defining the atomic components for each field and then providing code to build the composite data type. In addition, parsing and validating the atomic and composite fields is along with error handling. For instance, a date field may come as a complete composite entry with year, month, day, hour, minute, and second fields. Or it may be provided in pieces such as a date field and time field or further divided into separate year, month, and day fields and so forth. Errors may appear in some or all of the fields.
+The *Settings* tab is intended to enable mapping an arbitray data schema to Chronsemble's visualization schema. As of December 2018, this feature is partially implemented with the ability to select data fields from the input source and assign them to event types in Chronsemble's schema using the data table widget. However, the assignments are not currently interrogated or used by the underlying software. One difficulty in building out this capability is in defining the atomic components for each field and then providing code to build the composite data type. In addition, parsing and validating the atomic and composite fields is along with error handling. For instance, a date field may come as a complete composite entry with year, month, day, hour, minute, and second fields. Or it may be provided in pieces such as a date field and time field or further divided into separate year, month, and day fields and so forth. Similarly for location fields. Errors may appear in some or all of the fields and a process for dealing with errors needs to be defined.
 
 #### Context assignment
-The *Settings* tab also contains a mechanism for assigning the context for temporal events. The default context for laying out items on the temporal flow timelines are by entity/event labels. The current layout technique assumes all labels are unique, however, this may not always be true.
+The *Settings* tab also contains a mechanism for assigning the context for temporal events. The default context for laying out items on temporal flow timelines are by entity/event labels. The current layout technique assumes all labels are unique, however, this may not always be true. A rudimentary proof-of-concept (poc) implementation of the context assignment feature has been implemented. This can be demonstrated against the *Correlates of War* test file by using the *Event Assignment* menu to set the *loc* field as the *Temporal Context*. As implemented, this demonstration will change the temporal flow context to group items by location. The poc algorithm will sort the data by location and layout entities/events on the timeline with the location containing the largest number of entities/events. The poc implementation does not visualize the remaining data items as of yet. This could be done by a variety of techniques including rendering timelines for each location without focus in bird's-eye-view form or in full as separate timeline swim lanes. The latter approach would grow quite large for some contexts.
+
+#### Temporal flow scaling
+The mock-up show in figure 1 shows two temporal flows in the same visualization. This idea is intended to support visualizing multiple data sets at the same time or to allow instancing a new timeline from an entity/event on an existing timeline. The latter concept would be implemented by means of right-clicking an info card in the info-flow and choosing to instance a new timeline from this entry. As shown in the mock-up, a right-click on the *George Washington* info card brings up a menu to instance a new timeline for a variety of the relevant contexts for this historical figure. An astute observer will realize that presenting relevant contexts for a given entity/event is non-trivial and might require a trained ML algorithm or underlying knowledge graph. The intent of this work has been to support this type of complex analytic visualization elegantly.
+
+#### Visualization tabs
+Support for multiple visualization tabs was also envisioned. In its simplest form, this would allow opening up multiple visualization tabs in the same session that will operate independently. This feature might be better addressed by running multiple instances of Chronsemble in separate browser windows. However, it might be valuable to support this feature internally to allow separating muli-temporal flows into separate tabs or, conversely, combining separate tabs into a single temporal flow. This needs further thought.
+
+#### Vertical cursor control
+The vertical cursor on the temporal flow pane should allow for manual control by way of the up/down arrow keys.
+
+#### Transport controls
+Transport controls will allow the means to animate the visualization by way of a familiar video transport control UI. This will include buttons for play, fast-forward, reverse, fast-reverse, and jump-to-start/end.
 
 ### Software design
+#### Info card data
+Info cards should be able to render multiple media types on a card. The intent of this feature is to provide a detailed summary of the entity/event in a form similar to a [wikipedia info box](https://en.wikipedia.org/wiki/Infobox). As shown in figure 1, support for images is high on the list of media types to support.
+
+#### Network database support
+Chronsemble should support ingest from network databases in addition to local file uploading. This will require careful thought and research of best practices for web application architecture design when supporting these two use cases. Refactoring the current design is expected.
+
 #### Module design
+Refactoring Chronsemble should include adoption and implementation of a leading javascript module format. The leading candidates are ES6 and CommonJS.
