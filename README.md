@@ -120,6 +120,9 @@ The *Settings* tab also contains a mechanism for assigning the context for tempo
 #### Temporal flow scaling
 The mock-up show in figure 1 shows two temporal flows in the same visualization. This idea is intended to support visualizing multiple data sets at the same time or to allow instancing a new timeline from an entity/event on an existing timeline. The latter concept would be implemented by means of right-clicking an info card in the info-flow and choosing to instance a new timeline from this entry. As shown in the mock-up, a right-click on the *George Washington* info card brings up a menu to instance a new timeline for a variety of the relevant contexts for this historical figure. An astute observer will realize that presenting relevant contexts for a given entity/event is non-trivial and might require a trained ML algorithm or underlying knowledge graph. The intent of this work has been to support this type of complex analytic visualization elegantly.
 
+#### Temporal flow rendering
+As of Dec. 2018, the temporal flow does not provide a visual representation of relationships between entities/events. A goal is to, at a minimum, provide an indication of direct causality by grouping  causally related entities/events on adjacent rows and connecting them with a vertical line at the beginning moment of the dependent item. For instance, a parent/child relationship will show a connection between the parent interval and the child interval at the moment of the child's birth. This feature could be implemented as a threshold along a continuum where the relationships are continuous values (i.e. weighted values) where the weights are adjusted based on the visualization context. Think of this as visualizing a knowledge graph where the context is the root node of the graph and the relationships between children of that root and children of those children, etc. are weakened or strengthened by the depth of their connection to the root. For example, if the context were the United States of America and a rendered entity is Thomas Jefferson, there should be a dependent link between that interval and the beginning interval for the Declaration of Independence (as Jefferson is accepted to have penned the first draft.) We would not perhaps expect Jefferson's children to be rendered inthis context (although a very low threshold might allow for many more items to be rendered.)
+
 #### Visualization tabs
 Support for multiple visualization tabs was also envisioned. In its simplest form, this would allow opening up multiple visualization tabs in the same session that will operate independently. This feature might be better addressed by running multiple instances of Chronsemble in separate browser windows. However, it might be valuable to support this feature internally to allow separating muli-temporal flows into separate tabs or, conversely, combining separate tabs into a single temporal flow. This needs further thought.
 
@@ -128,6 +131,15 @@ The vertical cursor on the temporal flow pane should allow for manual control by
 
 #### Transport controls
 Transport controls will allow the means to animate the visualization by way of a familiar video transport control UI. This will include buttons for play, fast-forward, reverse, fast-reverse, and jump-to-start/end.
+
+#### Use of color
+The temporal flow uses a single color to shade intervals and a single color to shade instants. A better use of color will permit assigning distinct colors to distinct temporal entities/events and retaining consistency of color between the three flows (e.g. use the same spatio flow and info-flow color/shade as used on the temporal flow for a given entity/event.)
+
+#### Spatio flow rendering
+The spatio flow rendering is (as of Dec. 2018) very inefficient. For each update to the map, the entire map is redrawn over the previous map and then the previous map is discarded. To improve the performance of the visualization, this should be made to update only the areas that are changed between scenes. In addition, the gradients used to denote approaching/receding events should be made to be smooth and follow an exponential function based on the temporal velocity and granularity for the view.
+
+#### Path rendering
+Location data should be analyzed for rendering either as part of a path or as a stationary point. Paths and points should be rendered by modulating the intensity as an exponential function based on temporal velocity (e.g. intensity begins low and increases as the entity/event epoch approaches; the converse as the epoch decreases). Path interpolation may be desirable based on resolution of view. Path uncertainty can be conveyed by path thickness. Stationary locations should be rendered by anticipating the location's moment using a circle with a radius of uncertainty that where the radius decreases and the intensity increases as the moment approaches; as the moment recedes, the reverse animation should be used.
 
 ### Software design
 #### Info card data
