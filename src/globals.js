@@ -1,12 +1,46 @@
+/**
+ * @fileoverview Variables, objects, and functions that are
+ * used globally throughout this application.
+ * @author John Harkins <jgharkin@ncsu.edu>
+ */
 // timeline geometry
 
-var sortDirection = { unsorted: 0, forward : 1, reverse : 2};
-// pwlTrackDomains is the 2D array that holds the piecewise linear temporal values
-//  for the events in a timeline row.
-// pwlTrackRanges is the 2D array that holds the piecewise linear ranges that
-//  map to the correspionding pwlTrackDomains.
+/**
+* @description Enum for temporal sort direction.
+* @global
+* @readonly
+* @enum {number}
+*/
+var sortDirection = {
+ /** 0 = unsorted */
+ unsorted: 0,
+ /** 1 = forward */
+ forward : 1,
+ /** 2 = reverse */
+ reverse : 2};
+
+/**
+* @description 2D array that holds the piecewise linear temporal values
+* for the events in a timeline row. This array is used to set the
+* d3.time.scale().domain property that is used with the d3.time.scale().range
+* property to compute the rate of motion for info-flow cards as the timeline
+* scrubber is moved. Each card moves at a rate proportional to the card's
+* width over the entity duration.
+* @global
+*/
 var pwlTrackDomains = [];
+
+/**
+* @description 2D array that holds the piecewise linear ranges that map to
+* for the events in a timeline row. This array is used to set the
+* d3.time.scale().range property that is used with the d3.time.scale().domain
+* property to compute the rate of motion for info-flow cards as the timeline
+* scrubber is moved. Each card moves at a rate proportional to the card's
+* width over the entity duration.
+* @global
+*/
 var pwlTrackRanges = [];
+
 var fileList = [];
 var fileData = null;
 var configData = [];
@@ -148,62 +182,36 @@ function isString (obj) {
 
 var processFileData = function (dataObject, aFile) {
   var tempSize = 0;
+  var extMatch = null;
+  var pattern = /[^\\\/]\.([^.\\\/]+)$/;
   //console.log(csvObject);
   timelineGeometry.maxWidth = Math.max(window.innerWidth || document.documentElement.clientWidth ||
             document.body.clientWidth, 767) - 30;
-  if (aFile.type === 'text/csv') {
+  if (aFile.type === 'text/csv' || aFile.type === 'text/x-csv' ||
+    aFile.type === 'application/vnd.ms-excel' || aFile.type === 'text/plain') {
     fileData=d3.csv.parse(dataObject);
-  } else if (aFile.type === 'text/json' || aFile.type === 'application/json') {
+  } else if (aFile.type === 'text/json' || aFile.type === 'text/x-json' ||
+    aFile.type === 'application/json') {
     fileData=JSON.parse(dataObject);
   } else {
-    console.warn("ERROR: bad file type: " + aFile.type);
-    clearFileInput(document.getElementById("file-read"));
-    return;
+    extMatch = (aFile.name.toLowerCase().match(pattern) || [null]).pop();
+    if (extMatch === 'csv' || extMatch === null) {
+    console.log("File ext: <", extMatch, '>');
+    fileData=d3.csv.parse(dataObject);
+    } else if (extMatch === 'json') {
+      console.log("File ext: <json>");
+      fileData=JSON.parse(dataObject);
+    } else {
+      console.warn("ERROR: unrecognized file type: " + (aFile.type || "<null>"));
+      clearFileInput(document.getElementById("file-read"));
+      return;
+    }
   }
 
-  //confiData = d3.keys(fileData[0]);
-  //console.log(confiData);
-  //$('#table1').DataTable().column(1).header().textContent='Hello World';
-  //console.log($('#table1').DataTable().column(1).header());
-
   tabSettings = new Settings('Settings', fileData);
-  //console.log(tabSettings[translationTable.headings[0].key]); //dataField
-  //console.log(tabSettings[translationTable.headings[1].key]); //sampleA
-  //console.log(tabSettings[translationTable.headings[2].key]); //sampleB
-  //console.log(tabSettings.tableRows);
 
-//  setElementState(event, 'tabVisualization', 'enabled');
   setElementState(null, 'tabSettings', 'enabled');
   setElementState(null, 'menuItemCloseFile', 'enabled');
-/*
-  if (fileData[0].loc === undefined) hasSpatioFlow = false;
-  else hasSpatioFlow = true;
-
-  //console.log("File: " + aFile.name + " read complete!", fileData);
-  timelineStatusBar(domStatusBar, aFile.name);
-  if (hasSpatioFlow) spatioFlow(domSpatioFlow);
-
-  timeline(domTimeline, domSpatioFlow, domInfoFlow)
-      .data(fileData)
-      .defineInfoflowPane( )
-      .defineInfoflowArea( )
-      .defineTimelinePane( )
-      .defineTimeflowArea( )
-      .band("timeFlow", false)
-      .mainReference("timeFlow")
-      .xAxis("timeFlow")
-      .tooltips("timeFlow")
-      .defineBirdViewArea( )
-      .band("birdView", true)
-      .xAxis("birdView")
-      .labels("timeFlow")
-      .labels("birdView")
-      .brush("birdView", ["timeFlow", "infoFlow"])
-      .band("infoFlow", false)
-      .vScroll( )
-//            .defineVerticalScrollArea( )
-      .redraw();
-*/
 /* Here might go algorithm to do statistical inference of data to locate
    temporal and spatial features. For now - rely on manual assignment only.
 
@@ -215,8 +223,7 @@ var processFileData = function (dataObject, aFile) {
       })
 
       */
-      return fileData;
-
+  return fileData;
 };
 
 function buildVisualization(fileData) {
@@ -334,7 +341,7 @@ function handleFileSelect(evt) {
   var output = [];
 
   for (var i = 0, f; f = fileList[i]; i++) {
-    output.push('• Filename: ' + escape(f.name) + ' (' + (f.type || 'n/a') + '), ' +
+    output.push('• Filename: ' + escape(f.name) + ', type: ' + (f.type || '<null>') + ', ' +
           f.size + ' bytes, last modified: ' +
           (f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a'
         ));
