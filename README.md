@@ -71,7 +71,7 @@ Figure 3 shows a fully rendered data set from the test data supplied with this p
 ### Spatio-temporal visualization tab
 ![Figure 3. Visualization components.](data/img/chronsembleComponents.png)
 
-**Figure 3. Component of the spatio-temporal visualization.**
+**Figure 3. Components of the spatio-temporal visualization.**
 
 Once the visualization is selected, the status bar will reveal the name of the uploaded file and which of the three flow panes (info-flow, temporal flow, spatio flow) have been rendered. There will always be a temporal flow pane but the info-flow and spatio flow panes will only render if the uploaded file contains location data and at least one data field was assigned to an info card in the *Settings* tab.
 
@@ -158,3 +158,10 @@ Part of the initial vision for this visualization was the inclusion of a node-li
 One of the desired use cases for this tool is to be able to ingest forum data and render it on a timeline. For instance, some forums (e.g. [ars TECHNICA](https://arstechnica.com)), do not thread comments which can make it difficult to navigate conversations that often arise on commented articles. A timeline can be a useful representation of a conversation thread. Consider viewing forum data "by root comment rating". Scores might be grouped by some distribution and rendered on the timeline with replies to a root comment or branch comment represented by vertical dependence from the root. Similarly, a context of "by moniker", might render root comments by an entity moniker with an interval length corresponding to the comment submission time and ending on the submission time of the last direct reply to that comment. To simplify layout and reduce connective clutter, replies to a root comment should render in the root's swim lane. Replies will render again in the moniker's swim lane with no connection to a root comment (i.e. duplicate the comment for the moniker's timeline).
 
 ### Testing
+#### Data
+Several test files can be found in the "data" folder. Three of these files have been altered by hand to match the Chronsemble schema (i.e. they contain the field headings: "label", "start", "end", and "loc") which makes them suitable for testing:
+
+1. **Intra-StateWarData_v4.1.3.csv** is data from [The Correlates of War Project](http://www.correlatesofwar.org). Component date fields which were originally disjoint in the original file have been combined for more granular timelines.
+1. **philosophers.csv** is data from the original [timeline example](https://github.com/rengel-de/timeline).
+1. **philosophers3.json** was converted to json from the csv file; one record was given an additional field called "description".
+1. **Inter-StateWarData_v4.0.1.csv** is also from [The Correlates of War Project](http://www.correlatesofwar.org) but the date fields remain disjoint so the visualization renders timeline events with year granularity. Locations were not translated into trigraphs so no spatio flow will be generated.
