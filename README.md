@@ -159,9 +159,13 @@ One of the desired use cases for this tool is to be able to ingest forum data an
 
 ### Testing
 #### Data
-Several test files can be found in the "data" folder. Three of these files have been altered by hand to match the Chronsemble schema (i.e. they contain the field headings: "label", "start", "end", and "loc") which makes them suitable for testing:
+Several test files can be found in the "data" folder. Four of these files have been altered by hand to match the Chronsemble schema (i.e. they contain the field headings: "label", "start", "end", and "loc") which makes them suitable for testing:
 
 1. **Intra-StateWarData_v4.1.3.csv** is data from [The Correlates of War Project](http://www.correlatesofwar.org). Component date fields which were originally disjoint in the original file have been combined for more granular timelines.
-1. **philosophers.csv** is data from the original [timeline example](https://github.com/rengel-de/timeline).
+1. **philosophers.csv** is data from the original [timeline](https://github.com/rengel-de/timeline) example.
 1. **philosophers3.json** was converted to json from the csv file; one record was given an additional field called "description".
 1. **Inter-StateWarData_v4.0.1.csv** is also from [The Correlates of War Project](http://www.correlatesofwar.org) but the date fields remain disjoint so the visualization renders timeline events with year granularity. Locations were not translated into trigraphs so no spatio flow will be generated.
+1. **Inter-StateWarData_v4.0.csv** is an original file from [The Correlates of War Project](http://www.correlatesofwar.org). This file will not render.
+1. **Intra-StateWarData_v4.1.2.csv** is data from [The Correlates of War Project](http://www.correlatesofwar.org). This file includes locations but date fields have not been combined.
+1. **Intra-StateWarData_v4.1.csv** is an original file from [The Correlates of War Project](http://www.correlatesofwar.org). This file will not render.
+1. **philosophers.json** was converted to json from the csv file; the json format is hierarchical rather than flat which fails to render.
