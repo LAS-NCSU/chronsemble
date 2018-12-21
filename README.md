@@ -158,6 +158,10 @@ Part of the initial vision for this visualization was the inclusion of a node-li
 One of the desired use cases for this tool is to be able to ingest forum data and render it on a timeline. For instance, some forums (e.g. [ars TECHNICA](https://arstechnica.com)), do not thread comments which can make it difficult to navigate conversations that often arise on commented articles. A timeline can be a useful representation of a conversation thread. Consider viewing forum data "by root comment rating". Scores might be grouped by some distribution and rendered on the timeline with replies to a root comment or branch comment represented by vertical dependence from the root. Similarly, a context of "by moniker", might render root comments by an entity moniker with an interval length corresponding to the comment submission time and ending on the submission time of the last direct reply to that comment. To simplify layout and reduce connective clutter, replies to a root comment should render in the root's swim lane. Replies will render again in the moniker's swim lane with no connection to a root comment (i.e. duplicate the comment for the moniker's timeline).
 
 ### Testing
+In order to test the app, a server must be used to supply resources to the browser. The app has been successfully tested with two light-weight client side servers: (1) browser-sync, and (2) wepack-dev-server. For a local install of browser-sync, the following command can be run from the top level folder (where index.html) to launch the server:
+
+./node_modules/.bin/browser-sync  start --server --browser "Google Chrome" --files "src/\*.js, css/\*.css, \*.html"
+
 #### Data
 Several test files can be found in the "data" folder. Four of these files have been altered by hand to match the Chronsemble schema (i.e. they contain the field headings: "label", "start", "end", and "loc") which makes them suitable for testing:
 
