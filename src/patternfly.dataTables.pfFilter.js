@@ -1,7 +1,49 @@
 /**
  * @summary     pfFilter for DataTables
- * @description A collection of API methods providing simple filter functionality for DataTables. This ensures
- * DataTables meets the Patternfly design pattern with a toolbar.
+ * @description A collection of API methods providing simple filter
+ * functionality for DataTables. This ensures DataTables meets the Patternfly
+ * design pattern with a toolbar.
+ *
+ * Description of changes made by the US Government to this file:
+ * Changes to this file were made to support a new filtering feature that allows
+ * designers to hard-code one or more specific filters. Filters of this type
+ * can be acted upon immediately rather than require a search string definition.
+ * Henceforth, all changes made by the US Government will be identified by being
+ * brackets with the following opening and closing comment blocks:
+ */
+
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ */
+
+/**
+ * End change
+ */
+
+ /**
+  * @license Modifications to patternfly.dataTables.pfFilter.js were made by
+  * John Harkins <jgharkin@ncsu.edu> on behalf of the US Government and are
+  * released into the public domain as a joint work. The resulting joint work as
+  * a whole is protected by the copyrights of the non-government authors
+  * (Red Hat) and may be released according to the terms of the original license
+  * (the Apache License 2.0).
+  *
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
  *
  * There are two types of filters: (1) search string driven, and (2) immediate with
  * option to refine using search string. Filters of the first type allow the user to
@@ -20,12 +62,29 @@
  * a search string in the filter input field. This search term will be applied to the
  * column defined in the pfConfig.filtercols array.
  *
+ * In the example below, the following lines were altered or added to reflect
+ * the new features:
+ *
+ *               <li><a href="#" id="filter7">Apple Platforms</a></li>
+ *
+ *         }, ...
+ *            { // filter type 2
+ *           optionSelector: "#filter7",
+ *           placeholder: "Filter By Apple Platforms...",
+ *           columnNum: 3,
+ *           filterOnSelect: true,
+ *           useCustomFilter: function platformTest(dtSettings,searchData,index,rawData,counter){
+ *           return (searchData[3].search("OSX") != -1 || searchData[3].search("Mac") != -1 || searchData[3].search("iPod") != -1);}
+ *
+ * End change
+ *
  * After a filter has been applied, the filter results text, active filter
  * controls, and a clear all control are shown.
  *
+ *
  * The toolbar and empty state layouts are expected to contain the classes as shown in the example below.
  *
- * Example:
+ * @example
  *
  * <!-- NOTE: Some configuration may be omitted for clarity -->
  * <div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
@@ -160,8 +219,19 @@
   var FILTER_LABEL_SELECTOR = FILTER_SELECTOR + " label"; // Filter label
   var RESULTS_SELECTOR = ".toolbar-pf-results"; // Toolbar results row
   var FILTER_RESULTS_SELECTOR = RESULTS_SELECTOR + " h5"; // Toolbar filter results
+
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * FILTER_INPUT_PLACEHOLDER and FILTER_BUTTON_TEXT are variables used to
+ * temporarily store the prior values of the filter input field an filter
+ * button s.t. they can be restored to prior state on a clear operation.
+ */
   var FILTER_INPUT_PLACEHOLDER = null; // document.getElementById("inputFilter").placeholder;
   var FILTER_BUTTON_TEXT = null; // document.getElementById("filter").text;
+/**
+ * End change
+ */
 
   DataTable.pfFilter = {};
 
@@ -188,8 +258,21 @@
     ctx._pfFilter.results = $(RESULTS_SELECTOR, opts.toolbarSelector); // Toolbar results row
     ctx._pfFilter.filterCaseInsensitive = opts.filterCaseInsensitive; // Filter filter case insensitive
     ctx._pfFilter.filterResults = $(FILTER_RESULTS_SELECTOR, opts.toolbarSelector); // Toolbar filter results
+
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Add two properties to manage the new features:
+ * filterOnSelect is a boolean; when true, the filter is applied immediately
+ *                after it is selected from teh pull-down menu.
+ * filterFunction is the filter function that is applied for an immediate
+ *                filter.
+ */
     ctx._pfFilter.filterOnSelect = false; // Set applying filter behavior
     ctx._pfFilter.filterFunction = null; // Filter function placeholder
+/**
+ * End change
+ */
 
     if (ctx._pfFilter.filterCols === undefined) {
       return;
@@ -224,9 +307,18 @@
       // Must match all filters
       if (ctx._pfFilter) {
         $.each(ctx._pfFilter.filters, function (index, filter) {
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Custom filters are evaluated elsewhere so return true here if a custom fitler.
+ */
           if (filter.customFilter) {
             return true;
           }
+/**
+ * End change
+ */
+
           if (ctx._pfFilter.filterCaseInsensitive !== undefined && ctx._pfFilter.filterCaseInsensitive === true) {
             if (data[filter.column].toLowerCase().indexOf(filter.value.toLowerCase()) === -1) {
               showThisRow = false;
@@ -236,7 +328,15 @@
               showThisRow = false;
             }
           }
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Added return to satisfy linter.
+ */
           return showThisRow;
+/**
+ * End change
+ */
         });
       }
       return showThisRow;
@@ -253,8 +353,14 @@
    * @param {string} filter.column - Column associated with DataTable
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
+   *
+   * @author John Harkins on behalf of the US Government
+   * Begin change
+   * Added two new filter properties to accomodate new filter on select feature.
    * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
    * @param {function} filter.customFilter - function for custom filtering
+   * End change
+   *
    * @private
    */
   function addActiveFilterControl (dt, filter) {
@@ -262,13 +368,29 @@
     var i;
 
     // Append active filter control
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Added condition to exclude ":" when an onSelect filter is used since
+ * there is no trailing value to display in that case.
+ */
     ctx._pfFilter.activeFilterControls.append('<li><span class="label label-info">' + filter.name + ((filter.onSelect) ? ' ' : ': ') +
       filter.value + '<a href="#"><span class="pficon pficon-close"/></a></span></li>');
+/**
+ * End change
+ */
 
     // Handle click to clear active filter
     $("a", ctx._pfFilter.activeFilterControls).last().on("click", function (e) {
       // Find existing filter and remove
       for (i = 0; i < ctx._pfFilter.filters.length; i++) {
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Remove a custom filter from filter stack and search string from search stack.
+ * Note that a search string may also be entered for a filter designated as
+ * a custom filter even though this is not typical.
+ */
         if (filter.customFilter) {
           if (ctx._pfFilter.filters[i].name === filter.name) {
             ctx._pfFilter.filters.splice(i, 1);
@@ -276,6 +398,9 @@
             $(this).parents("li").remove();
             break;
           }
+/**
+ * End change
+ */
         } else {
           if (ctx._pfFilter.filters[i].column === filter.column && ctx._pfFilter.filters[i].value === filter.value) {
             ctx._pfFilter.filters.splice(i, 1);
@@ -286,9 +411,17 @@
       }
       if (ctx._pfFilter.filters.length === 0) {
         ctx._pfFilter.activeFilters.addClass("hidden"); // Hide
-        console.log("restoring placeholder:", FILTER_INPUT_PLACEHOLDER);
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Restore placeholder string and button text to the filter input field and
+ * button.
+ */
         document.getElementById("filterInputB").placeholder = FILTER_INPUT_PLACEHOLDER;
         document.getElementById("filterB").innerHTML = FILTER_BUTTON_TEXT;
+/**
+ * End change
+ */
       }
       dt.draw();
       updateFilterResults(dt);
@@ -305,8 +438,13 @@
    * @param {string} filter.column - Column associated with DataTable
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
+   *
+   * @author John Harkins on behalf of the US Government
+   * Begin change
    * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
    * @param {function} filter.customFilter - function for custom filtering
+   * End change
+   *
    * @private
    */
   function addFilter (dt, filter) {
@@ -315,10 +453,18 @@
 
     // Find existing entry
     $.grep(ctx._pfFilter.filters, function (f) {
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Check for prior addition of this custom filter.
+ */
       if (f.customFilter) {
         if (f.name === filter.name && f.value === filter.value) {
           found = true;
         }
+/**
+ * End change
+ */
       } else if (f.column === filter.column && f.value === filter.value) {
         found = true;
       }
@@ -326,11 +472,26 @@
 
     // Add new filter
     if (!found) {
-      console.log("adding filter:", filter);
       ctx._pfFilter.filters.push(filter);
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Removed/relocated three lines responsible for re-drawing the table, adding
+ * active filter controls and updating filter results. Those functions are now
+ * external and subsequent to the call to addFilter.
+ * End change
+ */
     }
-
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Removed/relocated single line responsible for clearing the filter input field.
+ * Added function return to satisfy linter.
+ */
     return !found;
+/**
+ * End change
+ */
   }
 
   /**
@@ -342,12 +503,26 @@
   function clearFilters (dt) {
     var ctx = dt.settings()[0];
     ctx._pfFilter.filters.length = 0; // Reset filters
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ */
     $.fn.dataTable.ext.search.length = 1; // Remove all but simple filter from DataTable
+/**
+ * End change
+ */
     ctx._pfFilter.activeFilterControls.html(""); // Remove active filter controls
     ctx._pfFilter.activeFilters.addClass("hidden"); // Hide active filters area
-    console.log("restoring placeholder:", FILTER_INPUT_PLACEHOLDER);
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Restore filter input field placeholder string and button text.
+ */
     document.getElementById("filterInputB").placeholder = FILTER_INPUT_PLACEHOLDER;
     document.getElementById("filterB").innerHTML = FILTER_BUTTON_TEXT;
+/**
+ * End change
+ */
     dt.draw();
   }
 
@@ -367,16 +542,21 @@
     });
   }
 
-  /**
-   * Provide function to prevent configuration errors from hard fail. this
-   * function will not filter any rows.
-   *
-   * @private
-   */
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Provide function to prevent configuration errors from hard fail. this
+ * function will not filter any rows.
+ *
+ * @private
+ */
   function allPass () {
     // console.warn('WARNING: custom filter function for option: \"', ctx._pfFilter.filterCols[i].placeholder,'\" set to non-function type; using all-pass filter instead.');
     return true;
   }
+/**
+ * End change
+ */
 
   /**
    * Handle actions when enter is pressed within filter input
@@ -391,6 +571,11 @@
     }
     ctx._pfFilter.filterInput.on("keypress", function (e) {
       var keycode = (e.keyCode ? e.keyCode : e.which);
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Capture filter properties in newFilter object.
+ */
       var newFilter = {
         column: ctx._pfFilter.filterColumn,
         name: ctx._pfFilter.filterName,
@@ -400,10 +585,19 @@
         // added to the filter stack so we set it to null here.
         customFilter: (ctx._pfFilter.filterOnSelect) ? null : ctx._pfFilter.filterFunction
       };
-
+/**
+ * End change
+ */
       if (keycode === 13) {
         e.preventDefault();
         if (this.value.trim().length > 0) {
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * This code allows a user to specify a search string for both a simple filter
+ * and a custom filter. It is atypical to supply a search string with a custom
+ * however, it is supported.
+ */
           if (addFilter(dt, newFilter)) {
             if (newFilter.customFilter) {
               $.fn.dataTable.ext.search.push(newFilter.customFilter);
@@ -414,6 +608,9 @@
           }
           ctx._pfFilter.filterInput.val(""); // Clear input
         }
+/**
+ * End change
+ */
         return false;
       }
       return true;
@@ -429,20 +626,25 @@
    */
   function handleFilterOption (dt, i) {
     var ctx = dt.settings()[0];
-
     if (ctx._pfFilter.filterCols[i] === null || ctx._pfFilter.filterCols[i].optionSelector === undefined) {
       return;
     }
     $(ctx._pfFilter.filterCols[i].optionSelector).on("click", function (e) {
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Declare an object to hold new filter properties and save off filter button
+ * text with filter input field placeholder string on first invocation.
+ */
       var newFilter = new Object();
       if (FILTER_BUTTON_TEXT === null) {// Save off initial button and Placeholder
                                         // text to restore when filters are cleared.
         FILTER_INPUT_PLACEHOLDER = document.getElementById("filterInputB").placeholder;
         FILTER_BUTTON_TEXT = document.getElementById("filterB").innerHTML;
-        console.log("saving placeholder:", FILTER_INPUT_PLACEHOLDER);
-        console.log("saving text:", FILTER_BUTTON_TEXT);
       }
-
+/**
+ * End change
+ */
       // Set input placeholder
       if (ctx._pfFilter.filterInput !== undefined && ctx._pfFilter.filterInput.length !== 0) {
         ctx._pfFilter.filterInput.get(0).placeholder = ctx._pfFilter.filterCols[i].placeholder;
@@ -455,8 +657,12 @@
       if (ctx._pfFilter.filterButton !== undefined && ctx._pfFilter.filterButton.length !== 0) {
         ctx._pfFilter.filterButton.html($(this).text() + ' <span class="caret"></span>');
       }
-      // Save filter column when applying filter; maintain backwards compatibility
-      // with behavior prior to columnNum field.
+/**
+ * @author John Harkins on behalf of the US Government
+ * Begin change
+ * Save filter column when applying filter; maintain backwards compatibility
+ * with behavior prior to addition of columnNum field.
+ */
       ctx._pfFilter.filterColumn =
         (ctx._pfFilter.filterCols[i].columnNum > 0 && ctx._pfFilter.filterCols[i].columnNum < ctx._pfFilter.filterCols.length) ?
         ctx._pfFilter.filterCols[i].columnNum : i; // Save filter column when applying filter
@@ -469,6 +675,8 @@
         : null;
       ctx._pfFilter.filterName = $(this).text(); // Save filter name for active filter control
 
+      // If this is a custom filter with filter on select, add it to the filter
+      // stack and redraw the dataTable.
       if (ctx._pfFilter.filterOnSelect) {
         newFilter.column = ctx._pfFilter.filterColumn;
         newFilter.name = ctx._pfFilter.filterName;
@@ -487,6 +695,9 @@
       }
       return true;
     });
+/**
+ * End change
+ */
   }
 
   /**
@@ -512,15 +723,23 @@
    * Example: dt.table().pfFilter.addFilter({
    *   column: 2,
    *   name: "Browser",
-   *   value: "Firefox"
+   *   value: "Firefox",
+   * @author John Harkins on behalf of the US Government
+   * Begin change
+   *   onSelect: false,
+   *   customFilter: null
+   * End change
    * });
    *
    * @param {object} filter Properties associated with a new filter
    * @param {string} filter.column - Column associated with DataTable
    * @param {string} filter.name - Name of the filter
    * @param {string} filter.value - Value of the filter
+   * @author John Harkins on behalf of the US Government
+   * Begin change
    * @param {boolean} filter.onSelect - true causes filter to take effect when selected in pull-down menu
    * @param {function} filter.customFilter - function for custom filtering
+   * End change
    */
   DataTable.Api.register("pfFilter.addFilter()", function (filter) {
     return this.iterator("table", function (ctx) {
