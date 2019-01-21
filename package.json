@@ -28,12 +28,13 @@
     "info-flow"
   ],
   "author": "John Harkins",
-  "license": "GPL-3.0",
+  "license": "PD-USGov: Public Domain",
   "bugs": {
     "url": "https://github.com/LAS-NCSU/chronsemble/issues"
   },
   "homepage": "https://github.com/LAS-NCSU/chronsemble#readme",
   "dependencies": {
+    "browser-sync": "^2.26.3",
     "console-log-html": "^2.0.2",
     "d3": "^3.5.17",
     "d3-geomap": "^1.0.2",
