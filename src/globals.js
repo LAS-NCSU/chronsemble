@@ -1,7 +1,8 @@
 /**
  * @fileoverview Variables, objects, and functions that are
  * used globally throughout this application.
- * @author John Harkins <jgharkin@ncsu.edu>
+ * @author John Harkins <jgharkin@ncsu.edu> on behalf of the US Government
+ * @license This work is released into the public domain by the US Government.
  */
 // timeline geometry
 
@@ -73,17 +74,79 @@ var translationTable = {
 var tabSettings = {};
 var statusFieldSeparator = " " + symbolsUnicode.lightDashedHorizontal + symbolsUnicode.lightDashedHorizontal + " ";
 
+
+/**
+* @description object that holds constants used to define the geometry of the
+* visualization components.
+* @global
+* @type {object}
+* @property {number} maxWidth - maximum width of the timeflow and all other panes. The width is the larger of 767 pixels or window.innerWidth or document.documentElement.clientWidth or
+          document.body.clientWidth
+* @property {number} uiMastheadHeight - height of the application masthead. Constant 90 pixels.
+* @property {number} infoFlowHeight - height of the infoflow pane. Constant 200 pixels.
+* @property {object} margin - object that defines margins surrounding *flow panes.
+* @property {number} margin.top - top margin for *flow panes. Constant 20 pixels.
+* @property {number} margin.right - right margin for *flow panes. Constant 20 pixels.
+* @property {number} margin.bottom - bottom margin for *flow panes. Constant 20 pixels.
+* @property {number} margin.left - left margin for *flow panes. Constant 20 pixels.
+* @property {object} axis - object that defines the geometry for timeline axis.
+* @property {number} axis.labelHeight - height of axis text labels. Constant 10 pixels.
+* @property {number} axis.tickHeight - height of axis tick marks. Constant 6 pixels.
+* @property {number} axis.lineStroke - stroke weight for axis lines. Constant 1 pixel.
+* @property {object} axis.margin - object that defines axis margins.
+* @property {number} axis.margin.top - top margin for axis. Constant 1 pixel.
+* @property {number} axis.margin.bottom - bottom margin for axis. Constant 3 pixels.
+* @property {object} statusBar - object that defines geometry for the status bar.
+* @property {number} statusBar.lines - number of text lines reserved for the status bar. Constant 1 line.
+* @property {number} statusBar.height - status bar text height. Constant 20 pixels.
+* @property {object} statusBar.margin - status bar margins.
+* @property {number} statusBar.margin.top - top margin for status bar. Constant 1 pixel.
+* @property {number} statusBar.margin.bottom - bottom margin for status bar. Constant 2 pixels.
+* @property {object} infoFlow - object that defines geometry for the info-flow pane.
+* @property {number} infoFlow.maxTracks - sets the upper limit on the number of infoFlow tracks that can be viewed in the pane. Constant 1 track.
+* @property {number} infoFlow.minTracks - sets the lower limit on the number of infoFlow tracks that can be viewed in the pane. Constant 1 track.
+* @property {number} infoFlow.maxHeight - sets the upper limit on the number of pixels that define the infoFlow pane height. Constant 2880 pixels.
+* @property {object} infoFlow.margin - object that defines info-flow pane margins.
+* @property {number} infoFlow.margin.top - top margin for info-flow pane. Constant 0 pixels.
+* @property {number} infoFlow.margin.bottom - bottom margin for info-flow pane. Constant 0 pixels.
+* @property {object} infoFlow.track - object that defines info-flow track geometries.
+* @property {number} infoFlow.track.maxHeight - set the upper limit on info-flow track heights. Constant 160 pixels.
+* @property {number} infoFlow.track.height - set the info-flow track height. Constant 160 pixels.
+* @property {number} infoFlow.track.space - set the spacing between info-flow tracks. Constant 2 pixels.
+* @property {object} infoFlow.card - object that defines info-flow card geometries.
+* @property {number} infoFlow.card.numberInPane - set the number of info-flow cards to view in the pane. Constant 4 cards. This value combined with pane width determin the width of each info-flow card.
+* @property {number} infoFlow.card.width - variable that is defined at runtime by the values of other properties.
+* @property {object} timeFlow - object that defines geometry for the timeFlow pane.
+* @property {number} timeFlow.maxTracks - sets the upper limit on the number of timeFlow tracks that can be viewed in the pane. Constant 17 tracks.
+* @property {number} timeFlow.minTracks - sets the lower limit on the number of timeFlow tracks that can be viewed in the pane. Constant 3 tracks.
+* @property {number} timeFlow.maxHeight - sets the upper limit on the number of pixels that define the timeFlow pane height. Constant 292 pixels.
+* @property {object} timeFlow.margin - object that defines timeFlow pane margins.
+* @property {number} timeFlow.margin.top - top margin for timeFlow pane. Constant 3 pixels.
+* @property {number} timeFlow.margin.bottom - bottom margin for timeFlow pane. Constant 3 pixels.
+* @property {object} timeFlow.track - object that defines timeFlow track geometries.
+* @property {number} timeFlow.track.maxHeight - set the upper limit on info-flow track heights. Constant 14 pixels.
+* @property {number} timeFlow.track.height - set the info-flow track height. Constant 14 pixels.
+* @property {number} timeFlow.track.space - set the spacing between info-flow tracks. Constant 3 pixels.
+* @property {object} birdView - object that defines geometry for the birdView pane.
+* @property {number} birdView.maxTracks - sets the upper limit on the number of birdView tracks that can be displayed in the pane. Constant 17 tracks.
+* @property {number} birdView.minTracks - sets the lower limit on the number of birdView tracks that can be displayed in the pane. Constant 17 tracks.
+* @property {number} birdView.maxHeight - sets the upper limit on the number of pixels that define the birdView pane height. Constant 17 pixels.
+* @property {object} birdView.margin - object that defines birdView pane margins.
+* @property {number} birdView.margin.top - top margin for birdView pane. Constant 3 pixels.
+* @property {number} birdView.margin.bottom - bottom margin for birdView pane. Constant 3 pixels.
+* @property {object} birdView.track - object that defines birdView track geometries.
+* @property {number} birdView.track.maxHeight - set the upper limit on birdView track heights. Constant 1 pixels.
+* @property {number} birdView.track.height - set the birdView track height. Constant 1 pixels.
+* @property {number} birdView.track.space - set the spacing between birdView tracks. Constant 0 pixels.
+*/
 var timelineGeometry = {
+  maxWidth: Math.max(window.innerWidth || document.documentElement.clientWidth ||
+            document.body.clientWidth, 767) - 30,
   // The height of the timeflow pane is determined by the value of
   // - timeFlow.maxTracks this sets the maximum number of tracks that can be
   //                      viewed simultaneously on the timeflow pane.
-  //maxWidth: 938,    // Maximum width of the timeflow and all other panes
-  maxWidth: Math.max(window.innerWidth || document.documentElement.clientWidth ||
-            document.body.clientWidth, 767) - 30,
   uiMastheadHeight: 90,
-  infoFlowHeight: 200,    // Height of infoflow pane - width is based on timeflow pane
-//  infoFlowCardWidth: 182,    // Width of infoflow cards
-  // margin surrounding the three *flow panes
+  infoFlowHeight: 200,
   margin: {top: 20 , right: 20, bottom: 20, left: 20},
   // axis geometry includes a top and bottom margin used to set off from
   // elements above and below

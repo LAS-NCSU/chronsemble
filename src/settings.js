@@ -1,3 +1,11 @@
+/**
+ * @fileoverview Uses dataTables.net as part of Patternfly's table UI to enable
+ * users to choose input file data to render on info cards and map the input
+ * file schema to Chronsemble's internal schema.
+ * @author John Harkins <jgharkin@ncsu.edu> on behalf of the US Government
+ * @license This work is released into the public domain by the US Government.
+ */
+ 
 /*
 function SettingsTableHeadings(heading1, heading2, heading3, heading4, heading5) {
   this.heading1 = heading1 || "Data Field";

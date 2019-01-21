@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Creates the SVG container used to hold the status bar text
+ * elements for the visualization.
+ * @author John Harkins <jgharkin@ncsu.edu> on behalf of the US Government
+ * @license This work is released into the public domain by the US Government.
+ */
+
 function timelineStatusBar(domElement, dataFilename) {
 
   //--------------------------------------------------------------------------
@@ -71,19 +78,5 @@ function timelineStatusBar(domElement, dataFilename) {
       .attr("id", "SpatioFlowButtonLabel")
 //    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
       .text("Spatio flow");
-/*
-    textLabel = d3.select(domElement).select("g").append("text")
-      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 110) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
-      .attr("class", "textStatusBar")
-      .attr("id", "NodeLinkButton")
-//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
-      .text(statusFieldSeparator + symbolsUnicode.pushButtonOff);
 
-    textLabel = d3.select(domElement).select("g").append("text")
-      .attr("transform", "translate(" + (timelineGeometry.maxWidth/2 + 150) + "," + (timelineGeometry.statusBar.height - timelineGeometry.statusBar.margin.bottom - 5) +  ")")
-      .attr("class", "textStatusBar")
-      .attr("id", "NodeLinkButtonLabel")
-//    .text("Filename: " + dataFilename + statusFieldSeparator + symbolsUnicode.pushButtonOn + "Spatio flow " + statusFieldSeparator + symbolsUnicode.pushButtonOff + " Node-link");
-      .text("Node-link");
-*/
 }
