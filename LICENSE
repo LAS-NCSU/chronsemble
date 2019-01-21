@@ -1,0 +1,24 @@
+This source code is a joint work based on the work of Reinhard Engel's
+timeline javascript implementation:
+
+https://github.com/rengel-de/timeline
+
+Extensive modifications to that source were made during the period
+between July 2017 to January 2019 which resulted in this joint work.
+The components of this joint work that were made by an officer or
+employee of the United States are released in the public domain in the
+United States because it is a work prepared as part of that person’s
+official duties under the terms of Title 17, Chapter 1, Section 105 of
+the US Code. The resulting joint work as a whole is protected by the
+copyrights Reinhard Engel and may be released according to the terms of
+the original timeline.js license, GPLv3.0. However, the public domain
+portions may be extracted from this joint work and used by anyone for
+any purpose. 
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
