@@ -3,7 +3,7 @@
  * Reinhard Engel July 2017:
  * https://github.com/rengel-de/timeline
  * Extensive modifications to the original source were made by John Harkins
- * <jgharkin@ncsu.edu> on behalf of the US Government from July 2017 to Jan
+ * <johnny.hark@gmail.com> on behalf of the US Government from July 2017 to Jan
  * 2019. Modifications to timeline.js are released into the public domain by
  * the US Government as a joint work. The resulting joint work as a whole is
  * protected by the copyrights Reinhard Engel and may be released according to

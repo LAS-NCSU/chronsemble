@@ -1,7 +1,7 @@
 /**
  * @fileoverview Create the SVG container used to render the spatio flow
  * component of the visualization.
- * @author John Harkins <jgharkin@ncsu.edu> on behalf of the US Government
+ * @author John Harkins <johnny.hark@gmail.com> on behalf of the US Government
  * @license This work is released into the public domain by the US Government.
  */
 

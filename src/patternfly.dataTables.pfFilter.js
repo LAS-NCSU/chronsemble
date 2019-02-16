@@ -23,7 +23,7 @@
 
  /**
   * @license Modifications to patternfly.dataTables.pfFilter.js were made by
-  * John Harkins <jgharkin@ncsu.edu> on behalf of the US Government and are
+  * John Harkins <johnny.hark@gmail.com> on behalf of the US Government and are
   * released into the public domain as a joint work. The resulting joint work as
   * a whole is protected by the copyrights of the non-government authors
   * (Red Hat) and may be released according to the terms of the original license
