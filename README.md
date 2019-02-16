@@ -1,7 +1,7 @@
 # chronsemble
 
 ### Team Members
-* Lead: @johnnyNcsu /jgharkin@ncsu.edu
+* Lead: @johnnyNcsu /johnny.hark@gmail.com
 
 ## Summary
 The goal of this project is to design a visualization tool to help investigators discover evidence associated with human trafficking through spatio-temporal analysis. While the project has its roots in combating trafficking, the visualization should have application to many analytic problems.
