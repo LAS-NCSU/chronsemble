@@ -1,15 +1,36 @@
 /**
  * @fileoverview A timeline component for d3. Original source code courtesy of
- * Reinhard Engel July 2017:
+ * Reinhard Engel, Copyright (C) 2017:
  * https://github.com/rengel-de/timeline
  * Extensive modifications to the original source were made by John Harkins
  * <johnny.hark@gmail.com> on behalf of the US Government from July 2017 to Jan
- * 2019. Modifications to timeline.js are released into the public domain by
- * the US Government as a joint work. The resulting joint work as a whole is
- * protected by the copyrights Reinhard Engel and may be released according to
- * the terms of the original license, GPLv3.0.
- * @license GPLv3
+ * 2019. These modifications to the original timeline.js are released into the
+ * public domain by the US Government as a joint work. The resulting joint work
+ * as a whole is protected by the copyrights of Reinhard Engel and may be
+ * released according to the terms of the original license, GPLv3.0.
+ * @license GPLv3 + Public Domain
  */
+
+/**
+GPLv3 Terms:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+A copy of the GNU General Public License V3 is available in the license file
+in this repository and also available on-line:
+<https://www.gnu.org/licenses/>.
+
+The GNU General Public License does not permit incorporating GPL code
+into proprietary programs.
+
+**/
 
 function timeline(domTimelineElement, domSpatioFlowElement, domInfoFlowElement) {
 
