@@ -22,7 +22,8 @@
  */
 
  /**
-  * @license Modifications to patternfly.dataTables.pfFilter.js were made by
+  * @license Apache 2.0 + Public Domain
+  * Modifications to patternfly.dataTables.pfFilter.js were made by
   * John Harkins <johnny.hark@gmail.com> on behalf of the US Government and are
   * released into the public domain as a joint work. The resulting joint work as
   * a whole is protected by the copyrights of the non-government authors
